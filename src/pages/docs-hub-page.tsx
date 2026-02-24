@@ -110,7 +110,7 @@ export function DocsHubPage() {
             />
             <PathCard
               title="Evaluate business potential"
-              steps={['Roadmap', 'Monetization (planned)', 'Operator Access (planned)']}
+              steps={['Roadmap', 'Monetization Options', 'Operator Access']}
               description="Best path for understanding how product direction and future business models are being considered."
             />
             <PathCard
