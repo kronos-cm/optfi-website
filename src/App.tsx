@@ -10,6 +10,7 @@ import { DocsOperatorAccessPage } from './pages/docs-operator-access-page'
 import { DocsMonetizationPage } from './pages/docs-monetization-page'
 import { RoadmapPage } from './pages/roadmap-page'
 import { StatusPage } from './pages/status-page'
+import { TransparencyPage } from './pages/transparency-page'
 import { NotFoundPage } from './pages/not-found-page'
 
 function AppRoutes() {
@@ -25,6 +26,7 @@ function AppRoutes() {
       <Route path="/docs/monetization" element={<DocsMonetizationPage />} />
       <Route path="/roadmap" element={<RoadmapPage />} />
       <Route path="/status" element={<StatusPage />} />
+      <Route path="/transparency" element={<TransparencyPage />} />
       <Route path="/index.html" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

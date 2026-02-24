@@ -44,6 +44,9 @@ export function SiteShell({ children }: PropsWithChildren) {
             <NavLink to="/status" className={navClass}>
               Status
             </NavLink>
+            <NavLink to="/transparency" className={navClass}>
+              Transparency
+            </NavLink>
           </nav>
         </div>
 

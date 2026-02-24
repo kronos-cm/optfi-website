@@ -21,6 +21,7 @@ export function StatusPage() {
       <section className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatusCard icon={Globe} title="optfi.eu" state="Live" detail="GitHub Pages with custom domain and HTTPS." variant="success" />
         <StatusCard icon={Activity} title="Method Validation" state="In Progress" detail="Evidence collection and review continue in parallel." variant="warning" />
+        <StatusCard icon={CheckCircle2} title="Transparency Page" state="Live" detail="Public disclosure policy and summary boundaries are now documented." variant="success" />
         <StatusCard icon={Server} title="Private Services" state="Planned" detail="Private service deployment is staged as a later promotion step." variant="default" />
         <StatusCard icon={Lock} title="app.optfi.eu" state="Planned" detail="Private operator app with restricted access controls." variant="default" />
       </section>
