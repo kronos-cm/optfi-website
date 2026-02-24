@@ -1,4 +1,5 @@
 import { AlertCircle, BookOpenCheck, Clock3, ShieldCheck, Sparkles, TriangleAlert } from 'lucide-react'
+import { publicReporting } from '../content/public-reporting'
 import { PageContainer, PageHero, SectionHeading } from '../components/page-primitives'
 import { Badge } from '../components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
@@ -27,6 +28,8 @@ const principles = [
 ] as const
 
 export function TransparencyPage() {
+  const updates = publicReporting.transparencyUpdates
+
   return (
     <PageContainer>
       <PageHero
@@ -99,7 +102,7 @@ export function TransparencyPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-[color:var(--brand-700)]" />
-              <CardTitle>Publishing Workflow (Planned)</CardTitle>
+              <CardTitle>Publishing Workflow</CardTitle>
             </div>
             <CardDescription>A practical workflow for turning private reviews into public-safe updates.</CardDescription>
           </CardHeader>
@@ -134,6 +137,57 @@ export function TransparencyPage() {
             </div>
           </CardContent>
         </Card>
+      </section>
+
+      <section className="mt-12 space-y-4">
+        <SectionHeading
+          kicker="Transparency Feed"
+          title="Reviewed public updates"
+          description="This timeline is driven by a structured public reporting feed produced from reviewed internal summaries. It is curated and sanitized by design."
+        />
+        <div className="grid gap-4">
+          {updates.map((update) => (
+            <Card key={update.id} className="glass">
+              <CardHeader>
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  <Badge variant={update.severity === 'warning' ? 'warning' : update.severity === 'attention' ? 'default' : 'success'}>
+                    {update.severity}
+                  </Badge>
+                  <Badge variant="default">{update.category}</Badge>
+                  <span className="text-xs text-[color:var(--muted-foreground)]">
+                    {new Date(update.publishedAt).toLocaleString()}
+                  </span>
+                </div>
+                <CardTitle>{update.title}</CardTitle>
+                <CardDescription>{update.summary}</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 lg:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-xs font-mono tracking-[0.16em] text-[color:var(--muted-foreground)]">SUMMARY</p>
+                  <ul className="space-y-2 text-sm leading-6 text-[color:var(--muted-foreground)]">
+                    {update.bullets.map((bullet) => (
+                      <li key={bullet} className="flex gap-3">
+                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-sky-600" />
+                        <span>{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs font-mono tracking-[0.16em] text-[color:var(--muted-foreground)]">NEXT</p>
+                  <ul className="space-y-2 text-sm leading-6 text-[color:var(--muted-foreground)]">
+                    {update.nextSteps.map((step) => (
+                      <li key={step} className="flex gap-3">
+                        <span className="mt-2 h-1.5 w-1.5 rounded-full bg-amber-500" />
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </section>
     </PageContainer>
   )

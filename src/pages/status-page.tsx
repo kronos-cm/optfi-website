@@ -1,9 +1,13 @@
 import { Activity, AlertCircle, CheckCircle2, Globe, Lock, Server, Shield, Wifi } from 'lucide-react'
+import { publicReporting } from '../content/public-reporting'
 import { PageContainer, PageHero } from '../components/page-primitives'
 import { Badge } from '../components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 
 export function StatusPage() {
+  const methodValidationCard = publicReporting.methodValidationCard
+  const latestTransparencyUpdate = publicReporting.transparencyUpdates[0]
+
   return (
     <PageContainer>
       <PageHero
@@ -20,7 +24,13 @@ export function StatusPage() {
 
       <section className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatusCard icon={Globe} title="optfi.eu" state="Live" detail="GitHub Pages with custom domain and HTTPS." variant="success" />
-        <StatusCard icon={Activity} title="Method Validation" state="In Progress" detail="Evidence collection and review continue in parallel." variant="warning" />
+        <StatusCard
+          icon={Activity}
+          title={methodValidationCard.title}
+          state={methodValidationCard.state}
+          detail={methodValidationCard.detail}
+          variant={methodValidationCard.variant}
+        />
         <StatusCard icon={CheckCircle2} title="Transparency Page" state="Live" detail="Public disclosure policy and summary boundaries are now documented." variant="success" />
         <StatusCard icon={Server} title="Private Services" state="Planned" detail="Private service deployment is staged as a later promotion step." variant="default" />
         <StatusCard icon={Lock} title="app.optfi.eu" state="Planned" detail="Private operator app with restricted access controls." variant="default" />
@@ -57,6 +67,30 @@ export function StatusPage() {
           </CardContent>
         </Card>
       </section>
+
+      {latestTransparencyUpdate ? (
+        <section className="mt-12">
+          <Card className="glass">
+            <CardHeader>
+              <CardTitle>Latest Public Transparency Update</CardTitle>
+              <CardDescription>
+                Reviewed update from the structured public reporting feed (last feed refresh: {new Date(publicReporting.updatedAt).toLocaleString()}).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm leading-6 text-[color:var(--muted-foreground)]">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant={latestTransparencyUpdate.severity === 'warning' ? 'warning' : latestTransparencyUpdate.severity === 'attention' ? 'default' : 'success'}>
+                  {latestTransparencyUpdate.severity}
+                </Badge>
+                <Badge variant="default">{latestTransparencyUpdate.category}</Badge>
+                <span>{new Date(latestTransparencyUpdate.publishedAt).toLocaleString()}</span>
+              </div>
+              <p className="text-base font-medium text-[color:var(--foreground)]">{latestTransparencyUpdate.title}</p>
+              <p>{latestTransparencyUpdate.summary}</p>
+            </CardContent>
+          </Card>
+        </section>
+      ) : null}
     </PageContainer>
   )
 }

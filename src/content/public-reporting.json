@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "updatedAt": "2026-02-24T13:26:10.715Z",
+  "methodValidationCard": {
+    "title": "Method Validation",
+    "state": "In Progress",
+    "detail": "Evidence collection and review continue under constrained operation.",
+    "variant": "warning"
+  },
+  "transparencyUpdates": [
+    {
+      "id": "2026-02-24T13-25-53-70798000-00-validation",
+      "publishedAt": "2026-02-24T13:26:10.715Z",
+      "category": "validation",
+      "severity": "attention",
+      "title": "Validation review update",
+      "summary": "Validation work continues with disciplined monitoring and public-safe progress reporting.",
+      "bullets": [
+        "Validation work continues with public-facing documentation and monitoring improvements while private methods remain non-public.",
+        "Current validation gate status remains within the expected operating envelope.",
+        "Public summaries continue to describe maturity, process changes, and disclosure boundaries without exposing private internals."
+      ],
+      "nextSteps": [
+        "Continue evidence collection before expanding operational scope.",
+        "Review internal monitoring outputs on a regular cadence.",
+        "Publish curated progress summaries through public status and transparency pages."
+      ]
+    },
+    {
+      "id": "2026-02-24-validation-review",
+      "publishedAt": "2026-02-24T13:10:00Z",
+      "category": "validation",
+      "severity": "info",
+      "title": "Validation review update",
+      "summary": "Validation work continues with disciplined monitoring and public-safe progress reporting.",
+      "bullets": [
+        "Validation work continues with public-facing documentation and monitoring improvements while private operating methods remain non-public.",
+        "Current gate status remains within the expected operating envelope.",
+        "Public summaries continue to prioritize maturity, process changes, and disclosure boundaries over implementation details."
+      ],
+      "nextSteps": [
+        "Continue evidence collection before scaling scope.",
+        "Review internal monitoring outputs on a regular cadence.",
+        "Publish curated progress summaries through status and transparency pages."
+      ]
+    }
+  ]
+}

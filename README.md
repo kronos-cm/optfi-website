@@ -26,6 +26,34 @@ npm run build
 npm run preview
 ```
 
+## Public Reporting Feed Pipeline
+
+`/status` and `/transparency` are powered by a structured public feed:
+
+- `/Users/A83283214/Projects/Personal/CascadeProjects/windsurf-project/optfi-website/src/content/public-reporting.json`
+
+The intended workflow is:
+
+1. Generate a sanitized draft in the private `optfi` repo using the internal reporting CLI:
+
+```bash
+cd /Users/A83283214/Projects/Personal/CascadeProjects/windsurf-project/optfi
+# internal reporting command (kept in the private repo)
+# writes: data/reports/public-update-draft.json
+```
+
+2. Review the draft for disclosure safety.
+3. Import into this repo:
+
+```bash
+cd /Users/A83283214/Projects/Personal/CascadeProjects/windsurf-project/optfi-website
+npm run import:public-draft -- ../optfi/data/reports/public-update-draft.json
+```
+
+4. Review the site diff and publish.
+
+This pipeline is intentionally curated and human-reviewed. It is not a direct publish-from-telemetry path.
+
 ## GitHub Pages Setup
 
 1. In GitHub -> `kronos-cm/optfi-website` -> `Settings` -> `Pages`
