@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OptFi — Tax-aware crypto compounding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4efe2;
+    --paper-2: #efe9d8;
+    --ink: #11151c;
+    --ink-2: #2a3140;
+    --muted: #6b7180;
+    --rule: #d9d1bb;
+    --accent: #b8462a;       /* burnt sienna */
+    --accent-soft: #e4c7b6;
+    --green: #2d6a4f;        /* live indicator */
+    --shadow: 0 1px 0 rgba(17,21,28,0.04), 0 12px 36px -18px rgba(17,21,28,0.18);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased}
+  body{font-family:'Geist',ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.55}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .serif{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-0.01em}
+  .mono{font-family:'Geist Mono',ui-monospace,monospace;font-feature-settings:"ss01";}
+  .container{max-width:1240px;margin:0 auto;padding:0 32px}
+  .rule{border:0;border-top:1px solid var(--rule);margin:0}
+
+  /* ───── Nav ───── */
+  .nav{padding:22px 0;border-bottom:1px solid var(--rule);background:var(--paper);position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(8px);background:rgba(244,239,226,0.92)}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;gap:32px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Instrument Serif',serif;font-size:24px;letter-spacing:-0.01em}
+  .brand-mark{width:24px;height:24px;border-radius:6px;background:var(--ink);position:relative}
+  .brand-mark::after{content:"";position:absolute;inset:6px 6px auto auto;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+  .nav-links{display:flex;gap:28px;font-size:14px;color:var(--ink-2)}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  .pill-live{display:inline-flex;align-items:center;gap:8px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-2);padding:6px 10px;border:1px solid var(--rule);border-radius:999px;background:rgba(255,255,255,0.4)}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(45,106,79,0.18);animation:pulse 2.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(45,106,79,0.18)}50%{box-shadow:0 0 0 7px rgba(45,106,79,0.05)}}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:999px;font-size:14px;font-weight:500;border:1px solid transparent;transition:all .2s ease;cursor:pointer}
+  .btn-primary{background:var(--ink);color:var(--paper)}
+  .btn-primary:hover{background:var(--accent);color:#fff}
+  .btn-ghost{color:var(--ink);border-color:var(--rule);background:transparent}
+  .btn-ghost:hover{border-color:var(--ink)}
+  .btn .arrow{transition:transform .2s ease}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  /* ───── Hero ───── */
+  .hero{padding:72px 0 56px;position:relative;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:64px;align-items:start}
+  .hero-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:24px}
+  .hero-eyebrow::before{content:"";width:24px;height:1px;background:var(--accent)}
+  .hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(48px,7vw,96px);line-height:0.96;letter-spacing:-0.02em;margin:0 0 24px}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero-sub{font-size:19px;line-height:1.5;color:var(--ink-2);max-width:540px;margin:0 0 32px}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .hero-meta{margin-top:36px;display:flex;gap:32px;color:var(--muted);font-size:13px}
+  .hero-meta strong{color:var(--ink);font-family:'Geist Mono',monospace;font-size:18px;font-weight:500;display:block;margin-bottom:2px}
+
+  /* hero card / live snapshot */
+  .snapshot{background:#fbf8ee;border:1px solid var(--rule);border-radius:18px;padding:24px;box-shadow:var(--shadow);position:relative}
+  .snapshot-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+  .snapshot-title{font-size:13px;color:var(--muted);font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:0.06em}
+  .snapshot-rows{display:grid;gap:0}
+  .snap-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:14px 0;border-bottom:1px dashed var(--rule);align-items:center}
+  .snap-row:last-child{border-bottom:0}
+  .snap-row .label{font-size:14px;color:var(--ink-2)}
+  .snap-row .value{font-family:'Geist Mono',monospace;font-size:15px;color:var(--ink);font-weight:500}
+  .snap-row .value.good{color:var(--green)}
+  .snap-row .value.accent{color:var(--accent)}
+  .snap-chart{margin-top:18px;display:flex;align-items:flex-end;gap:3px;height:64px}
+  .snap-chart span{flex:1;background:var(--accent-soft);border-radius:2px}
+  .snap-chart span.hi{background:var(--accent)}
+  .snap-foot{display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);margin-top:8px;text-transform:uppercase;letter-spacing:0.05em}
+
+  /* ───── Trust strip ───── */
+  .trust{padding:24px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:rgba(255,255,255,0.4)}
+  .trust-row{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+  .trust-label{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+  .trust-items{display:flex;align-items:center;gap:36px;flex-wrap:wrap}
+  .trust-item{display:flex;align-items:center;gap:8px;color:var(--ink-2);font-size:14px}
+  .trust-item svg{flex-shrink:0}
+
+  /* ───── Section primitive ───── */
+  section.block{padding:88px 0;border-bottom:1px solid var(--rule)}
+  .kicker{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .kicker .num{color:var(--muted)}
+  .block h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(36px,4.6vw,60px);line-height:1.02;letter-spacing:-0.015em;margin:0 0 18px;max-width:18ch}
+  .block .lede{font-size:18px;color:var(--ink-2);max-width:60ch;line-height:1.55;margin:0}
+
+  /* ───── Problem section ───── */
+  .problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px}
+  .prob-col h3{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0 0 16px}
+  .prob-list{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+  .prob-list li{display:flex;gap:14px;align-items:flex-start;font-size:16px;line-height:1.5}
+  .prob-list .mark{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;margin-top:2px}
+  .mark.x{background:rgba(184,70,42,0.12);color:var(--accent)}
+  .mark.v{background:rgba(45,106,79,0.14);color:var(--green)}
+
+  /* ───── Proof sequence ───── */
+  .proof-stages{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:56px;position:relative;border:1px solid var(--rule);border-radius:18px;overflow:hidden;background:#fbf8ee}
+  .stage{padding:32px 28px;border-right:1px solid var(--rule);position:relative}
+  .stage:last-child{border-right:0}
+  .stage-num{font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase}
+  .stage-name{font-family:'Instrument Serif',serif;font-size:32px;line-height:1.1;margin:12px 0 8px}
+  .stage-status{display:inline-flex;align-items:center;gap:6px;font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;padding:4px 8px;border-radius:999px;margin-bottom:18px}
+  .stage-status.live{background:rgba(45,106,79,0.14);color:var(--green)}
+  .stage-status.gated{background:rgba(17,21,28,0.06);color:var(--muted)}
+  .stage-body{font-size:14px;color:var(--ink-2);line-height:1.55;margin:0 0 24px}
+  .stage-gate{font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding-top:16px;border-top:1px dashed var(--rule)}
+  .stage-gate strong{display:block;color:var(--ink);margin-top:4px;font-size:13px}
+
+  /* ───── Pillars ───── */
+  .pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px}
+  .pillar{padding-top:24px;border-top:1px solid var(--ink)}
+  .pillar-num{font-family:'Geist Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.06em}
+  .pillar-title{font-family:'Instrument Serif',serif;font-size:24px;margin:10px 0 10px;line-height:1.15}
+  .pillar-body{font-size:14px;color:var(--ink-2);line-height:1.55;margin:0}
+
+  /* ───── Compare panel ───── */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:48px;border:1px solid var(--rule);border-radius:18px;overflow:hidden}
+  .compare-col{padding:32px}
+  .compare-col.bad{background:#fbf6ec}
+  .compare-col.good{background:var(--ink);color:var(--paper)}
+  .compare-col h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 24px;color:inherit;opacity:.7}
+  .compare-row{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px dashed currentColor}
+  .compare-row:last-child{border-bottom:0}
+  .compare-row .k{font-size:14px;opacity:.85}
+  .compare-row .v{font-family:'Geist Mono',monospace;font-size:15px;font-weight:500}
+  .compare-col.good .v.accent{color:#f0c6b0}
+
+  /* ───── Blog ───── */
+  .journal-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px}
+  .journal{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px;margin-top:48px}
+  .post{display:flex;flex-direction:column;border-top:1px solid var(--ink);padding-top:18px}
+  .post.lead{grid-row:span 1}
+  .post-meta{display:flex;gap:14px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:14px}
+  .post-meta .cat{color:var(--accent)}
+  .post-title{font-family:'Instrument Serif',serif;font-size:28px;line-height:1.1;margin:0 0 10px}
+  .post.lead .post-title{font-size:42px;margin-bottom:14px}
+  .post-excerpt{font-size:14px;color:var(--ink-2);line-height:1.55;margin:0 0 16px}
+  .post-thumb{aspect-ratio:16/9;background:linear-gradient(135deg,var(--accent-soft) 0%,#d6a07e 100%);border-radius:8px;margin-bottom:18px;position:relative;overflow:hidden}
+  .post-thumb.style2{background:linear-gradient(135deg,#cdb993 0%,#8b7d5e 100%)}
+  .post-thumb.style3{background:linear-gradient(135deg,#a9b8c4 0%,#5a6c7d 100%)}
+  .post-thumb::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 30% 40%,rgba(255,255,255,0.25),transparent 40%)}
+  .post-read{font-family:'Geist Mono',monospace;font-size:12px;color:var(--ink);text-transform:uppercase;letter-spacing:0.06em;margin-top:auto;display:inline-flex;align-items:center;gap:8px}
+  .post-read .arrow{transition:transform .2s}
+  .post:hover .post-read .arrow{transform:translateX(4px)}
+  .post:hover .post-title{color:var(--accent)}
+
+  /* ───── FAQ ───── */
+  .faq{margin-top:48px;max-width:880px}
+  .faq details{border-top:1px solid var(--rule);padding:24px 0}
+  .faq details:last-child{border-bottom:1px solid var(--rule)}
+  .faq summary{font-family:'Instrument Serif',serif;font-size:24px;line-height:1.2;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+";font-family:'Geist Mono',monospace;font-size:24px;color:var(--accent);transition:transform .2s ease}
+  .faq details[open] summary::after{content:"−"}
+  .faq p{margin:16px 0 0;color:var(--ink-2);font-size:16px;line-height:1.6;max-width:75ch}
+
+  /* ───── Closing CTA ───── */
+  .closing{padding:120px 0;background:var(--ink);color:var(--paper);position:relative;overflow:hidden}
+  .closing::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 400px at 80% 0%,rgba(184,70,42,0.25),transparent 60%)}
+  .closing-inner{position:relative;text-align:center}
+  .closing h2{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(48px,6vw,80px);line-height:1.02;letter-spacing:-0.015em;margin:0 auto 24px;max-width:18ch}
+  .closing h2 em{color:#f0c6b0;font-style:italic}
+  .closing p{font-size:19px;color:rgba(244,239,226,0.75);max-width:48ch;margin:0 auto 36px;line-height:1.5}
+  .waitlist-form{display:flex;gap:8px;max-width:480px;margin:0 auto;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:999px;padding:6px}
+  .waitlist-form input{flex:1;background:transparent;border:0;color:var(--paper);padding:10px 18px;font-family:inherit;font-size:15px;outline:none}
+  .waitlist-form input::placeholder{color:rgba(244,239,226,0.5)}
+  .waitlist-form button{background:var(--paper);color:var(--ink);border:0;padding:10px 22px;border-radius:999px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .waitlist-form button:hover{background:var(--accent);color:#fff}
+  .closing-foot{margin-top:28px;font-family:'Geist Mono',monospace;font-size:12px;color:rgba(244,239,226,0.5);text-transform:uppercase;letter-spacing:0.06em}
+
+  /* ───── Footer ───── */
+  footer{background:var(--ink);color:rgba(244,239,226,0.7);padding:48px 0;font-size:14px;border-top:1px solid rgba(255,255,255,0.08)}
+  .foot-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px}
+  .foot-col h5{font-family:'Geist Mono',monospace;font-size:11px;color:rgba(244,239,226,0.4);text-transform:uppercase;letter-spacing:0.08em;margin:0 0 16px}
+  .foot-col ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .foot-col a:hover{color:var(--paper)}
+  .foot-brand{font-family:'Instrument Serif',serif;font-size:24px;color:var(--paper);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+  .foot-bottom{margin-top:48px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:12px;color:rgba(244,239,226,0.4);text-transform:uppercase;letter-spacing:0.06em}
+
+  @media (max-width: 980px){
+    .hero-grid,.problem-grid,.compare,.foot-row{grid-template-columns:1fr;gap:32px}
+    .pillars{grid-template-columns:repeat(2,1fr)}
+    .proof-stages{grid-template-columns:1fr}
+    .stage{border-right:0;border-bottom:1px solid var(--rule)}
+    .stage:last-child{border-bottom:0}
+    .journal{grid-template-columns:1fr}
+    .nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ───────── Nav ───────── -->
+<nav class="nav">
+  <div class="container nav-row">
+    <a class="brand" href="#">
+      <span class="brand-mark"></span>
+      OptFi
+    </a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#proof">Proof sequence</a>
+      <a href="#journal">Journal</a>
+      <a href="#status">Status</a>
+      <a href="#docs">Docs</a>
+    </div>
+    <div class="nav-cta">
+      <span class="pill-live"><span class="dot"></span>Canary live</span>
+      <a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- ───────── Hero ───────── -->
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-eyebrow">Tax-aware crypto wealth engine · Germany-first</div>
+      <h1>Keep more of what crypto<br>actually <em>compounds.</em></h1>
+      <p class="hero-sub">OptFi is a disciplined, tax-aware crypto engine that proves its own economics before risking a euro of yours. Built for people who think in after-tax returns — not gross headline numbers.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#proof">See the proof sequence</a>
+      </div>
+      <div class="hero-meta">
+        <div><strong>€0</strong>Operator capital at risk during canary</div>
+        <div><strong>147d</strong>Proof window cleared so far</div>
+        <div><strong>100%</strong>Trades on immutable audit log</div>
+      </div>
+    </div>
+
+    <!-- live snapshot -->
+    <aside class="snapshot">
+      <div class="snapshot-header">
+        <div>
+          <div class="snapshot-title">Canary · live snapshot</div>
+          <div style="font-family:'Instrument Serif',serif;font-size:32px;margin-top:6px">After-tax compounding</div>
+        </div>
+        <span class="pill-live"><span class="dot"></span>Live</span>
+      </div>
+      <div class="snapshot-rows">
+        <div class="snap-row"><span class="label">Strategy candidates qualified</span><span class="value">04 / 12</span></div>
+        <div class="snap-row"><span class="label">Proof-window progress</span><span class="value good">73%</span></div>
+        <div class="snap-row"><span class="label">Tax drag (modelled)</span><span class="value accent">−1.8%</span></div>
+        <div class="snap-row"><span class="label">Hardware-signed txns</span><span class="value">100%</span></div>
+        <div class="snap-row"><span class="label">Allocation cap</span><span class="value">€25k</span></div>
+      </div>
+      <div class="snap-chart" aria-hidden="true">
+        <span style="height:38%"></span><span style="height:46%"></span><span style="height:42%"></span><span style="height:55%"></span>
+        <span style="height:58%"></span><span style="height:62%"></span><span style="height:60%"></span><span style="height:68%"></span>
+        <span style="height:72%"></span><span style="height:74%"></span><span style="height:71%"></span><span style="height:79%"></span>
+        <span style="height:82%" class="hi"></span><span style="height:85%" class="hi"></span><span style="height:88%" class="hi"></span>
+      </div>
+      <div class="snap-foot">
+        <span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<!-- ───────── Trust strip ───────── -->
+<section class="trust">
+  <div class="container trust-row">
+    <span class="trust-label">Built around accountability — not marketing claims</span>
+    <div class="trust-items">
+      <div class="trust-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1l5.5 2.5v4c0 3.5-2.4 6.5-5.5 7.5-3.1-1-5.5-4-5.5-7.5v-4L8 1z" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 8l1.8 1.8L10.5 6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Hardware-wallet signing gate</div>
+      <div class="trust-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M5 5h6M5 11h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Immutable audit log</div>
+      <div class="trust-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M8 4v4l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Proof-windowed promotion</div>
+      <div class="trust-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 13.5L5 9l3 3 5-7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Walk-forward validated</div>
+      <div class="trust-item"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2.5" y="3" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M6 6h4M6 9h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Germany-first tax accounting</div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Problem / value ───────── -->
+<section class="block" id="problem">
+  <div class="container">
+    <div class="kicker"><span class="num">01</span><span>The problem</span></div>
+    <h2>Gross returns lie. Compounding is what survives the tax bill.</h2>
+    <p class="lede">Most crypto products optimise for screenshots: big green numbers, paper APYs, narrative tokens. Almost none of them account for the boring, brutal arithmetic that decides whether you actually end up wealthier — fees, slippage, signing risk, and the way Germany taxes every disposal.</p>
+
+    <div class="problem-grid">
+      <div class="prob-col">
+        <h3>What most platforms show you</h3>
+        <ul class="prob-list">
+          <li><span class="mark x">×</span><span><strong>Gross APR</strong> with no fee, slippage, or tax line. The number you'd take home is materially lower.</span></li>
+          <li><span class="mark x">×</span><span><strong>In-sample backtests</strong> tuned to look great on the chart that ships in the marketing deck.</span></li>
+          <li><span class="mark x">×</span><span><strong>Custodial control</strong> with a "trust us" wallet model and no public audit trail.</span></li>
+          <li><span class="mark x">×</span><span><strong>One-click yield</strong> on protocols that haven't survived a single risk-off cycle.</span></li>
+        </ul>
+      </div>
+      <div class="prob-col">
+        <h3>What OptFi commits to instead</h3>
+        <ul class="prob-list">
+          <li><span class="mark v">✓</span><span><strong>After-tax, after-fee compounding</strong> as the only metric that promotes a strategy to the next stage.</span></li>
+          <li><span class="mark v">✓</span><span><strong>Walk-forward proof</strong> on out-of-sample data before a candidate is allowed near a real order.</span></li>
+          <li><span class="mark v">✓</span><span><strong>Hardware-wallet signing gate</strong> on every transaction above a configured notional threshold.</span></li>
+          <li><span class="mark v">✓</span><span><strong>Public audit trail</strong> of every decision, gate evaluation, and signing event.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Proof sequence ───────── -->
+<section class="block" id="proof">
+  <div class="container">
+    <div class="kicker"><span class="num">02</span><span>The proof sequence</span></div>
+    <h2>Three stages. Each one earns the next, or it doesn't run.</h2>
+    <p class="lede">Promotion between stages is enforced by the system, not by deadlines, optimism, or operator impatience. A strategy stays in proof until measured outcomes clear the gate — or it never deploys.</p>
+
+    <div class="proof-stages">
+      <div class="stage">
+        <div class="stage-num">Stage 01</div>
+        <div class="stage-name">Paper</div>
+        <span class="stage-status live"><span class="dot"></span>Active</span>
+        <p class="stage-body">Simulated execution against live market data. Zero capital at risk. Establishes baseline behaviour and surfaces the few candidates worth promoting.</p>
+        <div class="stage-gate">Gate to next stage<strong>Walk-forward proof on out-of-sample data</strong></div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">Stage 02</div>
+        <div class="stage-name">Canary</div>
+        <span class="stage-status live"><span class="dot"></span>Active</span>
+        <p class="stage-body">Constrained live execution with hard allocation caps. Proves real-world economics — slippage, signing latency, tax lots — under a measured time-window.</p>
+        <div class="stage-gate">Gate to next stage<strong>After-tax compounding clears threshold</strong></div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">Stage 03</div>
+        <div class="stage-name">Live</div>
+        <span class="stage-status gated">Gated</span>
+        <p class="stage-body">Full capital deployment. Unlocked only when the canary's measured outcomes have justified the transition — and stay justified.</p>
+        <div class="stage-gate">Locked until<strong>Canary proof window clears in full</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Pillars ───────── -->
+<section class="block" id="how">
+  <div class="container">
+    <div class="kicker"><span class="num">03</span><span>What makes it different</span></div>
+    <h2>Built like a private bank should have been built for crypto.</h2>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-num">/ 01</div>
+        <h3 class="pillar-title">Safety gates first</h3>
+        <p class="pillar-body">No system can promote itself to live trading without clearing a measured proof window. Operator impatience is not a valid override.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">/ 02</div>
+        <h3 class="pillar-title">Tax-aware by design</h3>
+        <p class="pillar-body">German tax accounting is wired into every trade decision. After-tax, after-fee returns drive the economics — not gross figures.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">/ 03</div>
+        <h3 class="pillar-title">Observable at every layer</h3>
+        <p class="pillar-body">Every execution decision, signing event, and risk gate evaluation is logged. The audit trail is the foundation of trust — not optional.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">/ 04</div>
+        <h3 class="pillar-title">Evidence-led promotion</h3>
+        <p class="pillar-body">Paper proves behaviour. Canary proves economics. Live earns the right to compound. Each stage requires measured outcomes, not confidence.</p>
+      </div>
+    </div>
+
+    <!-- comparison panel -->
+    <div class="compare">
+      <div class="compare-col bad">
+        <h4>Typical "yield" platform</h4>
+        <div class="compare-row"><span class="k">Headline APR</span><span class="v">8.4%</span></div>
+        <div class="compare-row"><span class="k">Trading & gas fees</span><span class="v">−1.1%</span></div>
+        <div class="compare-row"><span class="k">Tax drag (DE, 26.4%)</span><span class="v">−2.2%</span></div>
+        <div class="compare-row"><span class="k">Operational risk premium</span><span class="v">unpriced</span></div>
+        <div class="compare-row"><span class="k"><strong>Take-home compounding</strong></span><span class="v"><strong>~5.1%</strong></span></div>
+      </div>
+      <div class="compare-col good">
+        <h4>OptFi after-tax target</h4>
+        <div class="compare-row"><span class="k">Gross strategy return</span><span class="v">target-set</span></div>
+        <div class="compare-row"><span class="k">Fees & slippage</span><span class="v">priced in</span></div>
+        <div class="compare-row"><span class="k">DE tax lots</span><span class="v">priced in</span></div>
+        <div class="compare-row"><span class="k">Risk gates</span><span class="v">priced in</span></div>
+        <div class="compare-row"><span class="k"><strong>What we promote on</strong></span><span class="v accent"><strong>Take-home only</strong></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Journal ───────── -->
+<section class="block" id="journal">
+  <div class="container">
+    <div class="kicker"><span class="num">04</span><span>The journal</span></div>
+    <div class="journal-head">
+      <h2>Notes from building a tax-aware crypto engine in public.</h2>
+      <a class="btn btn-ghost" href="#">All entries <span class="arrow">→</span></a>
+    </div>
+
+    <div class="journal">
+      <article class="post lead">
+        <div class="post-thumb"></div>
+        <div class="post-meta"><span class="cat">DeFi · Field notes</span><span>14 min read</span><span>Aug 12</span></div>
+        <h3 class="post-title">Why we deferred DeFi execution — and what would change our mind.</h3>
+        <p class="post-excerpt">DeFi promises composability and self-custody, but the bar isn't "interesting" — it's "beats the best centralised path on after-tax compounding with a clean audit trail." Here's the scorecard we use, and where DeFi sits on it today.</p>
+        <a class="post-read" href="#">Read entry <span class="arrow">→</span></a>
+      </article>
+      <article class="post">
+        <div class="post-thumb style2"></div>
+        <div class="post-meta"><span class="cat">Tax · Germany</span><span>8 min</span></div>
+        <h3 class="post-title">The 12-month rule, FIFO, and the maths most strategies quietly ignore.</h3>
+        <a class="post-read" href="#">Read entry <span class="arrow">→</span></a>
+      </article>
+      <article class="post">
+        <div class="post-thumb style3"></div>
+        <div class="post-meta"><span class="cat">Operator log</span><span>6 min</span></div>
+        <h3 class="post-title">What 147 days of canary actually taught us about slippage.</h3>
+        <a class="post-read" href="#">Read entry <span class="arrow">→</span></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── FAQ ───────── -->
+<section class="block" id="faq">
+  <div class="container">
+    <div class="kicker"><span class="num">05</span><span>Plain answers</span></div>
+    <h2>The questions that actually matter.</h2>
+
+    <div class="faq">
+      <details open>
+        <summary>Can I use OptFi today?</summary>
+        <p>Not yet. OptFi is in <em>canary</em> — a constrained live-trading phase under strict allocation caps. The platform must prove its own economics before broader access is opened. Join the waitlist and you'll get the first invitation when canary clears its proof window.</p>
+      </details>
+      <details>
+        <summary>What does the waitlist actually get me?</summary>
+        <p>Three things: priority access when canary graduates, monthly operator letters with the real numbers (not marketing decks), and an invitation to the private quarterly walkthrough where strategy decisions get explained on the record.</p>
+      </details>
+      <details>
+        <summary>Why Germany-first?</summary>
+        <p>Germany has one of the strictest crypto tax frameworks in the world. Building for the hardest accounting environment first means the economics are real — not inflated by ignoring tax drag. The platform generalises outward; it doesn't generalise inward.</p>
+      </details>
+      <details>
+        <summary>Why not DeFi yet?</summary>
+        <p>DeFi execution is deferred until it can demonstrably beat the best centralised path on after-tax, after-fee compounding while preserving a full audit trail. That bar hasn't been cleared. We track DeFi opportunity data and risk scores — but execution waits.</p>
+      </details>
+      <details>
+        <summary>What stops the platform from cutting corners on its own gates?</summary>
+        <p>The gates are enforced in code, not policy. Every promotion attempt is logged. Any transaction above threshold requires a hardware-wallet signature. The operator cannot bypass the audit log, and the audit log is what defines the system's word.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Waitlist CTA ───────── -->
+<section class="closing" id="waitlist">
+  <div class="container closing-inner">
+    <h2>Compound deliberately. <em>Get in line.</em></h2>
+    <p>The waitlist is the first invitation when canary clears. You'll also get the monthly operator letter — the real numbers, written for people who read them.</p>
+    <form class="waitlist-form" onsubmit="event.preventDefault();this.querySelector('button').textContent='Thanks — you\u2019re on the list';">
+      <input type="email" placeholder="you@domain.eu" required>
+      <button type="submit">Join waitlist <span class="arrow">→</span></button>
+    </form>
+    <div class="closing-foot">No spam · Unsubscribe in one click · ~1 letter/month</div>
+  </div>
+</section>
+
+<!-- ───────── Footer ───────── -->
+<footer>
+  <div class="container">
+    <div class="foot-row">
+      <div class="foot-col">
+        <div class="foot-brand"><span class="brand-mark"></span>OptFi</div>
+        <p style="margin:0;max-width:36ch;line-height:1.5">A tax-aware crypto wealth engine, building in public from Germany. Proof, not promises.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#">How it works</a></li>
+          <li><a href="#">Proof sequence</a></li>
+          <li><a href="#">Live status</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Read</h5>
+        <ul>
+          <li><a href="#">Journal</a></li>
+          <li><a href="#">Operator letters</a></li>
+          <li><a href="#">DeFi field notes</a></li>
+          <li><a href="#">Tax in Germany</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">Principles</a></li>
+          <li><a href="#">Transparency</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Imprint</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 OptFi · Berlin</span>
+      <span>Not investment advice · Past proof does not guarantee future compounding</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

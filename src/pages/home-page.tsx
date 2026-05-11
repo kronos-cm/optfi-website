@@ -1,199 +1,306 @@
-import {
-  Activity,
-  ArrowRight,
-  Cloud,
-  Compass,
-  Lock,
-  ShieldCheck,
-  Sparkles,
-  Wallet,
-} from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { Badge } from '../components/ui/badge'
-import { Button } from '../components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../components/ui/accordion'
-import { PageContainer, PageHero, SectionHeading } from '../components/page-primitives'
-
-const pillars = [
-  {
-    icon: ShieldCheck,
-    title: 'Guardrails First',
-    text: 'Safety constraints and review discipline before any broader rollout decisions.',
-  },
-  {
-    icon: Activity,
-    title: 'Observable Operations',
-    text: 'Build monitoring and auditability into the platform instead of relying on intuition.',
-  },
-  {
-    icon: Wallet,
-    title: 'Economics-Aware Design',
-    text: 'Product and operating decisions should account for costs, constraints, and sustainability.',
-  },
-  {
-    icon: Cloud,
-    title: 'Phased Promotion',
-    text: 'Prove behavior in controlled environments before promoting systems to more durable runtime setups.',
-  },
-] as const
-
-const faqs = [
-  {
-    q: 'Is OptFi a public trading app?',
-    a: 'No. This site is the public product and documentation experience. Private operating surfaces are separate and not part of the public website.',
-  },
-  {
-    q: 'Why build a docs experience instead of linking markdown files?',
-    a: 'Because the public site should explain the system in product terms first. Source docs remain valuable, but they are supporting references, not the primary UX.',
-  },
-  {
-    q: 'What comes first: monetization or strategy optimization?',
-    a: 'The current priority is the public website and documentation experience, then monetization planning, then deeper iteration on private operating methods using evidence.',
-  },
-] as const
+import './home-page.css'
 
 export function HomePage() {
   return (
-    <PageContainer>
-      <PageHero
-        eyebrow="Public Product & Docs"
-        title="A modern front door for a disciplined trading platform"
-        description="OptFi is building a safety-first platform and learning system. This site is where the principles, roadmap, and product direction are explained clearly without exposing private operations or proprietary methods."
-        actions={
-          <>
-            <Button asChild size="lg">
-              <Link to="/docs">
-                Explore the Docs Experience
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button asChild variant="secondary" size="lg">
-              <Link to="/roadmap">See Roadmap & Priorities</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/status">View Public Status</Link>
-            </Button>
-          </>
-        }
-      />
+    <>
+      {/* Ticker */}
+      <div className="ticker">
+        <div className="ticker-track">
+          <span className="lime">● PRE-LAUNCH</span><span className="dim">/</span>
+          <span>WAITLIST OPEN</span><span className="dim">/</span>
+          <span>JOURNAL UPDATED WEEKLY</span><span className="dim">/</span>
+          <span>BUILT IN BERLIN, DE</span><span className="dim">/</span>
+          <span>TAX-AWARE BY DESIGN</span><span className="dim">/</span>
+          <span className="lime">● PRE-LAUNCH</span><span className="dim">/</span>
+          <span>WAITLIST OPEN</span><span className="dim">/</span>
+          <span>JOURNAL UPDATED WEEKLY</span><span className="dim">/</span>
+          <span>BUILT IN BERLIN, DE</span><span className="dim">/</span>
+          <span>TAX-AWARE BY DESIGN</span><span className="dim">/</span>
+          <span className="lime">● PRE-LAUNCH</span><span className="dim">/</span>
+          <span>WAITLIST OPEN</span><span className="dim">/</span>
+        </div>
+      </div>
 
-      <section className="mt-10 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-        <Card className="glass">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[color:var(--brand-700)]" />
-              <CardTitle>What This Site Is For</CardTitle>
+      {/* Nav */}
+      <nav className="nav">
+        <div className="container nav-row">
+          <a href="#" className="brand"><span className="brand-mark"></span>OPTFI</a>
+          <div className="nav-links">
+            <a href="#thesis">Thesis</a>
+            <a href="#journal">Journal</a>
+            <a href="#principles">Principles</a>
+            <a href="#faq">FAQ</a>
+          </div>
+          <div className="nav-cta">
+            <span className="pre-pill">Pre-launch · Waitlist open</span>
+            <a className="btn btn-primary" href="#waitlist">Join waitlist <span className="arrow">→</span></a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <header className="hero">
+        <div className="container hero-grid">
+          <div>
+            <div className="hero-eyebrow">Tax-aware crypto wealth engine &nbsp;·&nbsp; Built in Germany</div>
+            <h1 className="headline">Keep more<br/>of what crypto<br/>actually <span className="lime">compounds.</span></h1>
+            <p className="hero-sub">OptFi is being built for one stubborn idea: the only return that matters in crypto is the one that survives fees, slippage, and the German tax bill. We're writing the playbook in public — and opening the platform when the maths backs the marketing.</p>
+            <div className="hero-actions">
+              <a className="btn btn-primary" href="#waitlist">Join the waitlist <span className="arrow">→</span></a>
+              <a className="btn btn-ghost" href="#journal">Read the journal</a>
             </div>
-            <CardDescription>
-              Product narrative, designed documentation, roadmap communication, and sanitized status visibility.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {pillars.map((pillar) => (
-                <div key={pillar.title} className="rounded-xl border border-white/70 bg-white/70 p-4">
-                  <div className="mb-2 flex items-center gap-2">
-                    <div className="grid h-8 w-8 place-items-center rounded-lg bg-sky-100 text-sky-800">
-                      <pillar.icon className="h-4 w-4" />
-                    </div>
-                    <h3 className="text-sm font-semibold">{pillar.title}</h3>
-                  </div>
-                  <p className="text-sm leading-6 text-[color:var(--muted-foreground)]">{pillar.text}</p>
-                </div>
-              ))}
+            <div className="hero-mini">
+              <span>Pre-launch · No public access yet</span>
+              <span>Journal updated weekly</span>
+              <span>Built &amp; written from Berlin</span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card className="glass">
-          <CardHeader>
-            <CardTitle>Delivery Sequence (Current)</CardTitle>
-            <CardDescription>
-              The order matters. We are deliberately not mixing website work, monetization planning, and strategy tuning all at once.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <SequenceStep icon={Compass} title="1. Public site UX" text="Build a sleek docs-native product site with curated pages, not repo-link-first UX." />
-            <SequenceStep icon={Wallet} title="2. Monetization planning" text="Model future revenue paths and constraints before productizing anything." />
-            <SequenceStep icon={Activity} title="3. Method iteration" text="Improve private operating methods using measured outcomes and review discipline." />
-            <SequenceStep icon={Lock} title="4. Private app access plan" text="Design a private operator surface with strong identity and access controls." />
-          </CardContent>
-        </Card>
-      </section>
+          <a href="#journal" className="featured">
+            <span className="featured-flag">Latest from the journal</span>
+            <div className="featured-thumb"></div>
+            <div className="featured-meta"><span className="cat">DeFi · Field notes</span><span>14 min read</span><span>Aug 12</span></div>
+            <h3 className="featured-title">Why we deferred DeFi execution — and what would change our mind.</h3>
+            <p className="featured-excerpt">"Composability" is interesting. Interesting is not the bar. Here is the scorecard we use to decide what gets near real money, and where DeFi sits on it today.</p>
+            <span className="featured-read">Read entry <span className="arrow">→</span></span>
+          </a>
+        </div>
+      </header>
 
-      <section className="mt-12 space-y-4">
-        <SectionHeading
-          kicker="First-Class Docs Experience"
-          title="Designed pages for architecture and strategy, with more domains coming next"
-          description="The docs hub is now part of the public site experience. These pages are the primary reader journey and intentionally avoid sensitive internals."
-        />
-        <div className="grid gap-4 md:grid-cols-3">
-          <LinkCard to="/docs" title="Docs Hub" description="Browse by topic and maturity level." badge="Live" />
-          <LinkCard to="/docs/architecture" title="Architecture" description="System boundaries, disclosure rules, and operating principles." badge="Live" />
-          <LinkCard to="/docs/strategy" title="Approach" description="Validation-first methodology and how progress should be judged." badge="Live" />
+      {/* Thesis */}
+      <section className="block" id="thesis">
+        <div className="container">
+          <div className="section-head">
+            <div><div className="kicker"><span className="num">/ 01</span> The thesis</div></div>
+            <div><h2>Crypto's marketing problem is a <span className="lime">maths problem.</span></h2></div>
+          </div>
+
+          <div className="thesis-grid">
+            <p className="pull">A "headline yield" without fees, slippage and tax is not a return. It is a <span className="lime">screenshot.</span></p>
+            <div className="thesis-body">
+              <p><strong>Almost every yield pitch quietly assumes you don't pay fees, you don't pay tax, and you don't have to sleep.</strong> OptFi rejects all three.</p>
+              <p>Germany has one of the most demanding crypto tax frameworks in the world. Building for it first means the economics have to be real — not laundered through ignorance, optimism, or selective backtests.</p>
+              <p>So the number we care about is the only one that ever lands in your account: <strong>what you keep, after the tax man has taken his.</strong> Everything else — strategy, platform, timing — is downstream of that.</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="mt-12">
-        <Card className="glass">
-          <CardHeader>
-            <CardTitle>FAQ</CardTitle>
-            <CardDescription>
-              Public-facing answers that keep the product narrative accurate and grounded.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible defaultValue="item-0">
-              {faqs.map((faq, index) => (
-                <AccordionItem key={faq.q} value={`item-${index}`}>
-                  <AccordionTrigger>{faq.q}</AccordionTrigger>
-                  <AccordionContent>{faq.a}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CardContent>
-        </Card>
+      {/* Journal */}
+      <section className="journal-block" id="journal">
+        <div className="container">
+          <div className="journal-head">
+            <div>
+              <div className="kicker"><span className="num">/ 02</span> The journal</div>
+              <h2>Notes from a tax-aware crypto build, <span className="lime">written in public.</span></h2>
+            </div>
+            <a className="btn btn-ghost" href="#">All entries (42) <span className="arrow">→</span></a>
+          </div>
+
+          <div className="journal-cats">
+            <span className="cat-chip active">All <span className="count">42</span></span>
+            <span className="cat-chip">Tax &amp; Germany <span className="count">11</span></span>
+            <span className="cat-chip">DeFi field notes <span className="count">8</span></span>
+            <span className="cat-chip">Strategy thinking <span className="count">9</span></span>
+            <span className="cat-chip">Risk &amp; gates <span className="count">7</span></span>
+            <span className="cat-chip">Operator letters <span className="count">7</span></span>
+          </div>
+
+          <div className="journal-grid">
+            <article className="post post-feature">
+              <div className="post-thumb ph-1"><span className="badge">Field notes</span></div>
+              <div className="post-meta"><span className="cat">DeFi · Field notes</span><span>14 min read</span><span>Aug 12</span></div>
+              <h3 className="post-title">Why we deferred DeFi execution — and what would change our mind.</h3>
+              <p className="post-excerpt">Composability is interesting; interesting is not the bar. The bar is beating the best alternative on what survives fees and tax. Here's the scorecard we use, and where DeFi sits on it today.</p>
+              <span className="post-read">Read entry <span className="arrow">→</span></span>
+            </article>
+
+            <article className="post post-side-a">
+              <div className="post-thumb ph-2"><span className="badge">Tax</span></div>
+              <div className="post-meta"><span className="cat">Tax · Germany</span><span>8 min</span><span>Aug 06</span></div>
+              <h3 className="post-title">The 12-month rule, FIFO, and the arithmetic most strategies quietly ignore.</h3>
+              <p className="post-excerpt">A patient walk through how German crypto tax compounds — and why most "APR" claims aren't actually claims.</p>
+              <span className="post-read">Read entry <span className="arrow">→</span></span>
+            </article>
+
+            <article className="post post-third">
+              <div className="post-thumb ph-3"></div>
+              <div className="post-meta"><span className="cat">Strategy</span><span>11 min</span></div>
+              <h3 className="post-title">A backtest is a confession, not a forecast.</h3>
+              <p className="post-excerpt">What out-of-sample really means — and how to read a chart like the people on the other side of it.</p>
+              <span className="post-read">Read entry <span className="arrow">→</span></span>
+            </article>
+
+            <article className="post post-third">
+              <div className="post-thumb ph-4"></div>
+              <div className="post-meta"><span className="cat">Operator letter</span><span>6 min</span></div>
+              <h3 className="post-title">August letter: what we measured, what we changed, and what we won't.</h3>
+              <p className="post-excerpt">The monthly accounting of where the platform actually stands — written for people who read the small print.</p>
+              <span className="post-read">Read entry <span className="arrow">→</span></span>
+            </article>
+
+            <article className="post post-third">
+              <div className="post-thumb ph-5"></div>
+              <div className="post-meta"><span className="cat">Risk &amp; gates</span><span>9 min</span></div>
+              <h3 className="post-title">Why nothing promotes to live without measured proof.</h3>
+              <p className="post-excerpt">The principle is dull and the consequence is enormous: a platform that cannot bypass its own controls.</p>
+              <span className="post-read">Read entry <span className="arrow">→</span></span>
+            </article>
+          </div>
+
+          {/* Newsletter signup */}
+          <aside className="journal-letter">
+            <div>
+              <div className="jl-kicker">The operator letter · monthly</div>
+              <h3>The journal in your inbox, once a month. No noise.</h3>
+              <p>One careful piece of writing per month, plus the operator letter when there's something worth saying. You can stop it in a click.</p>
+            </div>
+            <div>
+              <form className="letter-form" action="https://formspree.io/f/xaqvavyb" method="POST">
+                <input type="email" name="email" placeholder="you@domain.eu" required />
+                <input type="hidden" name="subject" value="Newsletter subscription" />
+                <button type="submit">Subscribe <span className="arrow">→</span></button>
+              </form>
+              <div className="letter-fine">~1 letter / month · Unsubscribe in one click · No tracking pixels</div>
+            </div>
+          </aside>
+        </div>
       </section>
-    </PageContainer>
-  )
-}
 
-function SequenceStep({
-  icon: Icon,
-  title,
-  text,
-}: {
-  icon: typeof Activity
-  title: string
-  text: string
-}) {
-  return (
-    <div className="rounded-xl border border-white/70 bg-white/70 p-3">
-      <div className="mb-1 flex items-center gap-2">
-        <Icon className="h-4 w-4 text-sky-700" />
-        <p className="text-sm font-semibold text-[color:var(--foreground)]">{title}</p>
-      </div>
-      <p className="text-sm leading-6 text-[color:var(--muted-foreground)]">{text}</p>
-    </div>
-  )
-}
+      {/* Principles */}
+      <section className="block" id="principles">
+        <div className="container">
+          <div className="section-head">
+            <div><div className="kicker"><span className="num">/ 03</span> How we build</div></div>
+            <div>
+              <h2>Deliberate by default. <span className="lime">Patient by design.</span></h2>
+              <p className="lede mt-24">The platform is not yet open, and won't be until the maths backs the marketing. These are the principles holding the line until then.</p>
+            </div>
+          </div>
 
-function LinkCard({ to, title, description, badge }: { to: string; title: string; description: string; badge: string }) {
-  return (
-    <Card className="glass transition-transform hover:-translate-y-1">
-      <CardHeader>
-        <Badge variant="default" className="mb-2 w-fit">{badge}</Badge>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button asChild variant="ghost">
-          <Link to={to}>
-            Open <ArrowRight className="h-4 w-4" />
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
+          <div className="principles">
+            <div className="principle">
+              <div className="num">/ 01</div>
+              <h3>Take-home, not headline.</h3>
+              <p>The only return that decides anything around here is the one that survives fees, slippage and the German tax bill. Everything upstream is downstream of that number.</p>
+            </div>
+            <div className="principle">
+              <div className="num">/ 02</div>
+              <h3>Evidence opens the door.</h3>
+              <p>Live access is gated on measured outcomes, not on dates or optimism. If the proof isn't there, the door stays shut — including to us.</p>
+            </div>
+            <div className="principle">
+              <div className="num">/ 03</div>
+              <h3>Boring on purpose.</h3>
+              <p>Patience compounds. Volatility does not. We're building for the version of you who is still here in five years — and still ahead.</p>
+            </div>
+            <div className="principle">
+              <div className="num">/ 04</div>
+              <h3>Public process.</h3>
+              <p>What we believe, what we measured, what we changed — all written down in the journal. The work is the marketing.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="block" id="faq">
+        <div className="container">
+          <div className="faq-grid">
+            <div className="faq-left">
+              <div className="kicker"><span className="num">/ 04</span> Plain answers</div>
+              <h2>The questions that <span className="lime">actually matter.</span></h2>
+              <p>If we haven't answered yours, write to <a href="mailto:hello@optfi.eu">hello@optfi.eu</a> — a human reads each one.</p>
+            </div>
+            <div className="faq-list">
+              <details open>
+                <summary>Can I use OptFi today?</summary>
+                <p>Not yet. The platform is in pre-launch — no public access, no early-bird logins, no "secret" deposit address. The waitlist is the only door, and it opens when the maths backs the marketing.</p>
+              </details>
+              <details>
+                <summary>What does the waitlist actually get me?</summary>
+                <p>Three things: priority access when the platform opens, the monthly operator letter delivered to your inbox, and an honest answer if you reply asking what we're working on.</p>
+              </details>
+              <details>
+                <summary>Why Germany-first?</summary>
+                <p>Germany has one of the most demanding crypto tax regimes in the world. Building for the hardest accounting environment first means the economics generalise outward — they don't generalise inward. A platform built for somewhere easier will quietly fall over when it meets a German tax return.</p>
+              </details>
+              <details>
+                <summary>Is this a fund, a robo-advisor, or a tool?</summary>
+                <p>None of the above as those exist today. OptFi is a tax-aware crypto wealth engine — built for individuals who want their crypto to compound in a way that survives the tax bill, not just the screenshot. Specifics will land alongside access, not before.</p>
+              </details>
+              <details>
+                <summary>When does the waitlist open up?</summary>
+                <p>When measured outcomes back the opening — not on a calendar. We'd rather be late and honest than on time and embarrassed. The monthly letter is where you'll see the door swinging open.</p>
+              </details>
+              <details>
+                <summary>What about DeFi?</summary>
+                <p>DeFi is in the research lane, not the execution lane. It enters execution the day it can demonstrably beat the alternative on what you actually keep — and not a day before. The journal has the full thinking.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Waitlist closing */}
+      <section className="closing" id="waitlist">
+        <div className="container">
+          <div className="closing-kicker">Join the line</div>
+          <h2>Compound <span className="lime">deliberately.</span></h2>
+          <p className="closing-sub">The waitlist is the first door when the platform opens. You'll also get the monthly operator letter — the real writing, sent to people who read it.</p>
+          <form className="waitlist" action="https://formspree.io/f/xaqvavyb" method="POST">
+            <input type="email" name="email" placeholder="you@domain.eu" required />
+            <input type="hidden" name="subject" value="Waitlist signup" />
+            <button type="submit">Join waitlist <span className="arrow">→</span></button>
+          </form>
+          <div className="closing-bullets">
+            <span>Priority access at launch</span>
+            <span>Monthly operator letter</span>
+            <span>Unsubscribe in one click</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer>
+        <div className="container">
+          <div className="foot-row">
+            <div className="foot-col">
+              <div className="foot-brand"><span className="brand-mark"></span>OPTFI</div>
+              <p>A tax-aware crypto wealth engine, being built in public from Germany. Patience over performance.</p>
+            </div>
+            <div className="foot-col">
+              <h5>The platform</h5>
+              <ul>
+                <li><a href="#thesis">Thesis</a></li>
+                <li><a href="#principles">How we build</a></li>
+                <li><a href="#waitlist">Waitlist</a></li>
+              </ul>
+            </div>
+            <div className="foot-col">
+              <h5>The journal</h5>
+              <ul>
+                <li><a href="#journal">All entries</a></li>
+                <li><a href="#journal">Operator letters</a></li>
+                <li><a href="#journal">Tax in Germany</a></li>
+                <li><a href="#journal">DeFi field notes</a></li>
+              </ul>
+            </div>
+            <div className="foot-col">
+              <h5>Company</h5>
+              <ul>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Imprint</a></li>
+                <li><a href="#">Privacy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="foot-bottom">
+            <span>© 2026 OptFi · Berlin, DE</span>
+            <span>Not investment advice · Past results are not future returns</span>
+          </div>
+        </div>
+      </footer>
+    </>
   )
 }

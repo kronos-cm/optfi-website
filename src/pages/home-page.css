@@ -1,0 +1,1221 @@
+:root {
+  --bg: #0b0c0a;
+  --bg-2: #131410;
+  --bg-3: #1a1c17;
+  --fg: #ece8d8;
+  --fg-2: #b8b4a3;
+  --muted: #6f6c5e;
+  --rule: #26261f;
+  --rule-strong: #33342c;
+  --lime: #d4ff3a;
+  --lime-d: #b8e02b;
+  --warn: #ff7a45;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.mono {
+  font-family: 'Geist Mono', ui-monospace, monospace;
+  font-feature-settings: "ss01";
+}
+
+.container {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.lime {
+  color: var(--lime);
+}
+
+/* ── ticker ── */
+.ticker {
+  background: var(--bg);
+  border-bottom: 1px solid var(--rule);
+  padding: 9px 0;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--fg-2);
+  letter-spacing: 0.04em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker-track {
+  display: inline-flex;
+  gap: 48px;
+  animation: scroll 70s linear infinite;
+  will-change: transform;
+}
+
+.ticker span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ticker .lime {
+  color: var(--lime);
+}
+
+.ticker .dim {
+  color: var(--muted);
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── Nav ── */
+.nav {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  background: rgba(11, 12, 10, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  z-index: 50;
+}
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.brand-mark {
+  width: 22px;
+  height: 22px;
+  background: var(--lime);
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 70% 100%, 0 100%);
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-2);
+}
+
+.nav-links a:hover {
+  color: var(--lime);
+}
+
+.nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pre-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg);
+  padding: 5px 10px;
+  border: 1px solid var(--rule);
+  background: var(--bg-2);
+}
+
+.pre-pill::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 4px rgba(212, 255, 58, 0.15);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(212, 255, 58, 0.15); }
+  50% { box-shadow: 0 0 0 7px rgba(212, 255, 58, 0.03); }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Geist Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.btn-primary {
+  background: var(--lime);
+  color: var(--bg);
+  border-color: var(--lime);
+}
+
+.btn-primary:hover {
+  background: #fff;
+  border-color: #fff;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--rule-strong);
+  color: var(--fg);
+}
+
+.btn-ghost:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+}
+
+.btn .arrow {
+  transition: transform .15s;
+}
+
+.btn:hover .arrow {
+  transform: translateX(3px);
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 88px 0 96px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -200px;
+  right: -200px;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(212, 255, 58, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 72px;
+  align-items: end;
+  position: relative;
+}
+
+.hero-eyebrow {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+  margin-bottom: 48px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hero-eyebrow::before {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: var(--lime);
+}
+
+h1.headline {
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: clamp(56px, 9vw, 148px);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  margin: 0 0 32px;
+  text-wrap: balance;
+}
+
+h1.headline .lime {
+  color: var(--lime);
+}
+
+.hero-sub {
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--fg-2);
+  max-width: 560px;
+  margin: 0 0 36px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hero-mini {
+  margin-top: 56px;
+  display: flex;
+  gap: 32px;
+  color: var(--muted);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex-wrap: wrap;
+}
+
+.hero-mini span::before {
+  content: "·";
+  margin-right: 8px;
+  color: var(--lime);
+}
+
+.hero-mini span:first-child::before {
+  content: "";
+  margin-right: 0;
+}
+
+/* hero featured journal card */
+.featured {
+  border: 1px solid var(--rule-strong);
+  background: var(--bg-2);
+  padding: 24px;
+  position: relative;
+  transition: all .2s ease;
+  display: block;
+}
+
+.featured:hover {
+  border-color: var(--lime);
+}
+
+.featured::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: var(--lime);
+}
+
+.featured-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lime);
+  margin-bottom: 14px;
+}
+
+.featured-flag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--lime);
+}
+
+.featured-thumb {
+  aspect-ratio: 16/10;
+  background: radial-gradient(circle at 30% 35%, #3e5848 0%, #1a2218 60%, var(--bg-2) 100%);
+  position: relative;
+  margin: 0 0 20px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+}
+
+.featured-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px);
+}
+
+.featured-meta {
+  display: flex;
+  gap: 14px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.featured-meta .cat {
+  color: var(--lime);
+}
+
+.featured-title {
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+}
+
+.featured:hover .featured-title {
+  color: var(--lime);
+}
+
+.featured-excerpt {
+  font-size: 14px;
+  color: var(--fg-2);
+  line-height: 1.55;
+  margin: 0 0 18px;
+}
+
+.featured-read {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.featured:hover .featured-read {
+  color: var(--lime);
+}
+
+/* ── Section primitives ── */
+section {
+  position: relative;
+}
+
+.block {
+  padding: 120px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+  align-items: end;
+  margin-bottom: 64px;
+}
+
+.kicker {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lime);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.kicker .num {
+  color: var(--muted);
+}
+
+.block h2 {
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: clamp(42px, 5.4vw, 76px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin: 24px 0 0;
+  max-width: 18ch;
+}
+
+.block h2 .lime {
+  color: var(--lime);
+}
+
+.block .lede {
+  font-size: 18px;
+  color: var(--fg-2);
+  max-width: 54ch;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.block .lede.mt-24 {
+  margin-top: 24px;
+}
+
+/* ── Thesis ── */
+.thesis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.pull {
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  font-size: 34px;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin: 0 0 32px;
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+.pull .lime {
+  color: var(--lime);
+}
+
+.thesis-body p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--fg-2);
+  margin: 0 0 20px;
+  max-width: 54ch;
+}
+
+.thesis-body p strong {
+  color: var(--fg);
+  font-weight: 500;
+}
+
+/* ── Journal (centerpiece) ── */
+.journal-block {
+  padding: 128px 0;
+  border-bottom: 1px solid var(--rule);
+  background: linear-gradient(180deg, var(--bg) 0%, #0c0e0c 100%);
+}
+
+.journal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 32px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.journal-head h2 {
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: clamp(40px, 5.4vw, 72px);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  margin: 24px 0 0;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+.journal-head h2 .lime {
+  color: var(--lime);
+}
+
+.journal-cats {
+  display: flex;
+  gap: 8px;
+  margin: 24px 0 56px;
+  flex-wrap: wrap;
+}
+
+.cat-chip {
+  padding: 7px 14px;
+  border: 1px solid var(--rule-strong);
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-2);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.cat-chip:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+}
+
+.cat-chip.active {
+  background: var(--lime);
+  color: var(--bg);
+  border-color: var(--lime);
+}
+
+.cat-chip .count {
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.cat-chip.active .count {
+  color: var(--bg);
+  opacity: .5;
+}
+
+.journal-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 32px;
+}
+
+.post {
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all .2s ease;
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 24px;
+}
+
+.post:hover {
+  border-top-color: var(--lime);
+}
+
+.post-feature {
+  grid-column: span 7;
+}
+
+.post-side-a {
+  grid-column: span 5;
+}
+
+.post-third {
+  grid-column: span 4;
+}
+
+.post-thumb {
+  aspect-ratio: 16/9;
+  position: relative;
+  margin-bottom: 22px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+}
+
+.post-feature .post-thumb {
+  aspect-ratio: 16/10;
+}
+
+.ph-1 {
+  background: radial-gradient(circle at 30% 30%, #3a5246 0%, #16201a 60%, var(--bg-2) 100%);
+}
+
+.ph-2 {
+  background: linear-gradient(135deg, #3a2a18 0%, #1e1610 100%);
+}
+
+.ph-3 {
+  background: radial-gradient(circle at 70% 40%, #4a3a26 0%, #1a1410 60%, var(--bg-2) 100%);
+}
+
+.ph-4 {
+  background: linear-gradient(135deg, #2a3a4a 0%, #101820 100%);
+}
+
+.ph-5 {
+  background: radial-gradient(circle at 50% 70%, #5a4a3a 0%, #221a14 60%, var(--bg-2) 100%);
+}
+
+.post-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px);
+  pointer-events: none;
+}
+
+.post-thumb .badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: var(--bg);
+  color: var(--lime);
+  padding: 4px 8px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--rule);
+}
+
+.post-meta {
+  display: flex;
+  gap: 14px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.post-meta .cat {
+  color: var(--lime);
+}
+
+.post-title {
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  font-size: 26px;
+}
+
+.post-feature .post-title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.post-third .post-title {
+  font-size: 20px;
+}
+
+.post-excerpt {
+  font-size: 14px;
+  color: var(--fg-2);
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+
+.post-side-a .post-excerpt, .post-third .post-excerpt {
+  font-size: 13.5px;
+}
+
+.post:hover .post-title {
+  color: var(--lime);
+}
+
+.post-read {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.post-read .arrow {
+  transition: transform .15s;
+}
+
+.post:hover .post-read {
+  color: var(--lime);
+}
+
+.post:hover .post-read .arrow {
+  transform: translateX(4px);
+}
+
+/* journal newsletter inline */
+.journal-letter {
+  margin-top: 80px;
+  padding: 48px;
+  background: var(--bg-2);
+  border: 1px solid var(--rule-strong);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.journal-letter::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 48px;
+  width: 60px;
+  height: 2px;
+  background: var(--lime);
+}
+
+.jl-kicker {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lime);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jl-kicker::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--lime);
+}
+
+.journal-letter h3 {
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin: 0 0 14px;
+  max-width: 18ch;
+}
+
+.journal-letter p {
+  font-size: 15px;
+  color: var(--fg-2);
+  max-width: 42ch;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.letter-form {
+  display: flex;
+  border: 1px solid var(--rule-strong);
+  background: var(--bg);
+}
+
+.letter-form input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  padding: 16px 18px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  outline: none;
+  letter-spacing: 0.02em;
+  min-width: 0;
+}
+
+.letter-form input::placeholder {
+  color: var(--muted);
+}
+
+.letter-form button {
+  background: var(--lime);
+  color: var(--bg);
+  border: 0;
+  padding: 0 24px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.letter-form button:hover {
+  background: #fff;
+}
+
+.letter-fine {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 14px;
+}
+
+/* ── Principles (vague, IP-safe) ── */
+.principles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  margin-top: 64px;
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 48px;
+}
+
+.principle {
+  padding-right: 16px;
+}
+
+.principle .num {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  color: var(--lime);
+  letter-spacing: 0.06em;
+}
+
+.principle h3 {
+  font-family: 'Geist', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  margin: 14px 0 12px;
+  line-height: 1.15;
+}
+
+.principle p {
+  font-size: 14.5px;
+  color: var(--fg-2);
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Waitlist big ── */
+.closing {
+  padding: 160px 0 96px;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.closing::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  width: 1200px;
+  height: 1200px;
+  background: radial-gradient(circle, rgba(212, 255, 58, 0.05) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.closing-kicker {
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lime);
+  margin-bottom: 24px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.closing-kicker::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--lime);
+}
+
+.closing h2 {
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: clamp(64px, 10vw, 180px);
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+  margin: 0 0 32px;
+  position: relative;
+  max-width: 14ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.closing h2 .lime {
+  color: var(--lime);
+}
+
+.closing-sub {
+  font-size: 19px;
+  color: var(--fg-2);
+  max-width: 52ch;
+  margin: 0 auto 48px;
+  line-height: 1.5;
+  position: relative;
+}
+
+.waitlist {
+  display: flex;
+  max-width: 560px;
+  margin: 0 auto;
+  border: 1px solid var(--rule-strong);
+  background: var(--bg-2);
+  position: relative;
+  z-index: 2;
+}
+
+.waitlist input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  padding: 18px 22px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 14px;
+  outline: none;
+  letter-spacing: 0.02em;
+  min-width: 0;
+}
+
+.waitlist input::placeholder {
+  color: var(--muted);
+}
+
+.waitlist button {
+  background: var(--lime);
+  color: var(--bg);
+  border: 0;
+  padding: 0 32px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.waitlist button:hover {
+  background: #fff;
+}
+
+.closing-bullets {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  position: relative;
+}
+
+.closing-bullets span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.closing-bullets span::before {
+  content: "✓";
+  color: var(--lime);
+  font-size: 14px;
+}
+
+/* ── FAQ ── */
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 64px;
+}
+
+.faq-left h2 {
+  font-family: 'Geist', sans-serif;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  margin: 24px 0 32px;
+  text-wrap: balance;
+}
+
+.faq-left h2 .lime {
+  color: var(--lime);
+}
+
+.faq-left p {
+  color: var(--fg-2);
+  max-width: 36ch;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.faq-left p a {
+  color: var(--lime);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.faq-list details {
+  border-top: 1px solid var(--rule-strong);
+  padding: 24px 0;
+}
+
+.faq-list details:last-child {
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.faq-list summary {
+  font-family: 'Geist', sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.25;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  letter-spacing: -0.015em;
+}
+
+.faq-list summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-list summary::after {
+  content: "+";
+  font-family: 'Geist Mono', monospace;
+  color: var(--lime);
+  font-size: 22px;
+  transition: transform .2s;
+}
+
+.faq-list details[open] summary::after {
+  content: "−";
+}
+
+.faq-list p {
+  margin: 14px 0 0;
+  color: var(--fg-2);
+  font-size: 15.5px;
+  line-height: 1.65;
+  max-width: 70ch;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 80px 0 32px;
+}
+
+.foot-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+}
+
+.foot-col h5 {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 18px;
+}
+
+.foot-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--fg-2);
+}
+
+.foot-col a:hover {
+  color: var(--lime);
+}
+
+.foot-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 14px;
+  color: var(--fg);
+  letter-spacing: -0.02em;
+}
+
+.foot-col p {
+  margin: 0;
+  max-width: 36ch;
+  color: var(--fg-2);
+  line-height: 1.55;
+  font-size: 14.5px;
+}
+
+.foot-bottom {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+@media (max-width: 980px) {
+  .hero-grid, .thesis-grid, .section-head, .faq-grid, .foot-row, .journal-letter {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .principles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .journal-grid > * {
+    grid-column: span 12;
+  }
+  .nav-links {
+    display: none;
+  }
+  .block, .journal-block {
+    padding: 80px 0;
+  }
+  .closing {
+    padding: 96px 0 64px;
+  }
+}

@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OptFi — Keep more of what crypto actually compounds.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0c0a;
+    --bg-2:#131410;
+    --bg-3:#1a1c17;
+    --fg:#ece8d8;
+    --fg-2:#b8b4a3;
+    --muted:#6f6c5e;
+    --rule:#26261f;
+    --rule-strong:#33342c;
+    --lime:#d4ff3a;
+    --lime-d:#b8e02b;
+    --warn:#ff7a45;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
+  body{font-family:'Geist',ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  .mono{font-family:'Geist Mono',ui-monospace,monospace;font-feature-settings:"ss01"}
+  .container{max-width:1320px;margin:0 auto;padding:0 32px}
+  .lime{color:var(--lime)}
+
+  /* ── ticker ── */
+  .ticker{background:var(--bg);border-bottom:1px solid var(--rule);padding:9px 0;font-family:'Geist Mono',monospace;font-size:11px;color:var(--fg-2);letter-spacing:0.04em;overflow:hidden;white-space:nowrap}
+  .ticker-track{display:inline-flex;gap:48px;animation:scroll 70s linear infinite;will-change:transform}
+  .ticker span{display:inline-flex;align-items:center;gap:8px}
+  .ticker .lime{color:var(--lime)}
+  .ticker .dim{color:var(--muted)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ── Nav ── */
+  .nav{padding:18px 0;border-bottom:1px solid var(--rule);position:sticky;top:0;background:rgba(11,12,10,0.92);backdrop-filter:blur(12px);z-index:50}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;gap:32px}
+  .brand{display:flex;align-items:center;gap:12px;font-family:'Geist',sans-serif;font-weight:700;font-size:20px;letter-spacing:-0.02em}
+  .brand-mark{width:22px;height:22px;background:var(--lime);clip-path:polygon(0 0,100% 0,100% 70%,70% 100%,0 100%)}
+  .nav-links{display:flex;gap:32px;font-family:'Geist Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;color:var(--fg-2)}
+  .nav-links a:hover{color:var(--lime)}
+  .nav-cta{display:flex;align-items:center;gap:14px}
+  .pre-pill{display:inline-flex;align-items:center;gap:8px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--fg);padding:5px 10px;border:1px solid var(--rule);background:var(--bg-2)}
+  .pre-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(212,255,58,0.15);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(212,255,58,0.15)}50%{box-shadow:0 0 0 7px rgba(212,255,58,0.03)}}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;font-size:13px;font-weight:500;font-family:'Geist Mono',monospace;text-transform:uppercase;letter-spacing:0.06em;border:1px solid transparent;cursor:pointer;transition:all .15s ease}
+  .btn-primary{background:var(--lime);color:var(--bg);border-color:var(--lime)}
+  .btn-primary:hover{background:#fff;border-color:#fff}
+  .btn-ghost{background:transparent;border-color:var(--rule-strong);color:var(--fg)}
+  .btn-ghost:hover{border-color:var(--lime);color:var(--lime)}
+  .btn .arrow{transition:transform .15s}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  /* ── Hero ── */
+  .hero{padding:88px 0 96px;border-bottom:1px solid var(--rule);position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;top:-200px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(212,255,58,0.06) 0%,transparent 60%);pointer-events:none}
+  .hero-grid{display:grid;grid-template-columns:7fr 5fr;gap:72px;align-items:end;position:relative}
+  .hero-eyebrow{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--fg-2);margin-bottom:48px;display:flex;align-items:center;gap:14px}
+  .hero-eyebrow::before{content:"";width:34px;height:1px;background:var(--lime)}
+  h1.headline{font-family:'Geist',sans-serif;font-weight:700;font-size:clamp(56px,9vw,148px);line-height:0.88;letter-spacing:-0.045em;margin:0 0 32px;text-wrap:balance}
+  h1.headline .lime{color:var(--lime)}
+  .hero-sub{font-size:20px;line-height:1.5;color:var(--fg-2);max-width:560px;margin:0 0 36px}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .hero-mini{margin-top:56px;display:flex;gap:32px;color:var(--muted);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;flex-wrap:wrap}
+  .hero-mini span::before{content:"·";margin-right:8px;color:var(--lime)}
+  .hero-mini span:first-child::before{content:"";margin-right:0}
+
+  /* hero featured journal card */
+  .featured{border:1px solid var(--rule-strong);background:var(--bg-2);padding:24px;position:relative;transition:all .2s ease;display:block}
+  .featured:hover{border-color:var(--lime)}
+  .featured::before{content:"";position:absolute;top:-1px;left:24px;right:24px;height:2px;background:var(--lime)}
+  .featured-flag{display:inline-flex;align-items:center;gap:8px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--lime);margin-bottom:14px}
+  .featured-flag::before{content:"";width:6px;height:6px;background:var(--lime)}
+  .featured-thumb{aspect-ratio:16/10;background:radial-gradient(circle at 30% 35%,#3e5848 0%,#1a2218 60%,var(--bg-2) 100%);position:relative;margin:0 0 20px;overflow:hidden;border:1px solid var(--rule)}
+  .featured-thumb::after{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,0.025) 0 1px,transparent 1px 4px)}
+  .featured-meta{display:flex;gap:14px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .featured-meta .cat{color:var(--lime)}
+  .featured-title{font-family:'Geist',sans-serif;font-weight:600;font-size:26px;line-height:1.12;letter-spacing:-0.02em;margin:0 0 12px}
+  .featured:hover .featured-title{color:var(--lime)}
+  .featured-excerpt{font-size:14px;color:var(--fg-2);line-height:1.55;margin:0 0 18px}
+  .featured-read{font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--fg);display:inline-flex;align-items:center;gap:8px}
+  .featured:hover .featured-read{color:var(--lime)}
+
+  /* ── Section primitives ── */
+  section{position:relative}
+  .block{padding:120px 0;border-bottom:1px solid var(--rule)}
+  .section-head{display:grid;grid-template-columns:1fr 2fr;gap:48px;align-items:end;margin-bottom:64px}
+  .kicker{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);display:flex;align-items:center;gap:14px}
+  .kicker .num{color:var(--muted)}
+  .block h2{font-family:'Geist',sans-serif;font-weight:700;font-size:clamp(42px,5.4vw,76px);line-height:0.95;letter-spacing:-0.035em;margin:24px 0 0;max-width:18ch}
+  .block h2 .lime{color:var(--lime)}
+  .block .lede{font-size:18px;color:var(--fg-2);max-width:54ch;line-height:1.55;margin:0}
+
+  /* ── Thesis ── */
+  .thesis-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+  .pull{font-family:'Geist',sans-serif;font-weight:600;font-size:34px;line-height:1.1;letter-spacing:-0.025em;margin:0 0 32px;color:var(--fg);text-wrap:balance}
+  .pull .lime{color:var(--lime)}
+  .thesis-body p{font-size:17px;line-height:1.65;color:var(--fg-2);margin:0 0 20px;max-width:54ch}
+  .thesis-body p strong{color:var(--fg);font-weight:500}
+
+  /* ── Journal (centerpiece) ── */
+  .journal-block{padding:128px 0;border-bottom:1px solid var(--rule);background:linear-gradient(180deg,var(--bg) 0%,#0c0e0c 100%)}
+  .journal-head{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:24px;flex-wrap:wrap}
+  .journal-head h2{font-family:'Geist',sans-serif;font-weight:700;font-size:clamp(40px,5.4vw,72px);line-height:0.95;letter-spacing:-0.035em;margin:24px 0 0;max-width:18ch;text-wrap:balance}
+  .journal-head h2 .lime{color:var(--lime)}
+  .journal-cats{display:flex;gap:8px;margin:24px 0 56px;flex-wrap:wrap}
+  .cat-chip{padding:7px 14px;border:1px solid var(--rule-strong);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--fg-2);cursor:pointer;transition:all .15s ease}
+  .cat-chip:hover{border-color:var(--lime);color:var(--lime)}
+  .cat-chip.active{background:var(--lime);color:var(--bg);border-color:var(--lime)}
+  .cat-chip .count{margin-left:8px;color:var(--muted);font-size:10px}
+  .cat-chip.active .count{color:var(--bg);opacity:.5}
+
+  .journal-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:32px}
+  .post{display:flex;flex-direction:column;cursor:pointer;transition:all .2s ease;border-top:1px solid var(--rule-strong);padding-top:24px}
+  .post:hover{border-top-color:var(--lime)}
+  .post-feature{grid-column:span 7}
+  .post-side-a{grid-column:span 5}
+  .post-third{grid-column:span 4}
+  .post-thumb{aspect-ratio:16/9;position:relative;margin-bottom:22px;overflow:hidden;border:1px solid var(--rule)}
+  .post-feature .post-thumb{aspect-ratio:16/10}
+  .ph-1{background:radial-gradient(circle at 30% 30%,#3a5246 0%,#16201a 60%,var(--bg-2) 100%)}
+  .ph-2{background:linear-gradient(135deg,#3a2a18 0%,#1e1610 100%)}
+  .ph-3{background:radial-gradient(circle at 70% 40%,#4a3a26 0%,#1a1410 60%,var(--bg-2) 100%)}
+  .ph-4{background:linear-gradient(135deg,#2a3a4a 0%,#101820 100%)}
+  .ph-5{background:radial-gradient(circle at 50% 70%,#5a4a3a 0%,#221a14 60%,var(--bg-2) 100%)}
+  .post-thumb::after{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,0.025) 0 1px,transparent 1px 4px);pointer-events:none}
+  .post-thumb .badge{position:absolute;top:14px;left:14px;background:var(--bg);color:var(--lime);padding:4px 8px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--rule)}
+  .post-meta{display:flex;gap:14px;font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:14px;flex-wrap:wrap}
+  .post-meta .cat{color:var(--lime)}
+  .post-title{font-family:'Geist',sans-serif;font-weight:600;line-height:1.12;letter-spacing:-0.02em;margin:0 0 12px;font-size:26px}
+  .post-feature .post-title{font-size:36px;font-weight:700;letter-spacing:-0.025em}
+  .post-third .post-title{font-size:20px}
+  .post-excerpt{font-size:14px;color:var(--fg-2);line-height:1.6;margin:0 0 16px}
+  .post-side-a .post-excerpt,.post-third .post-excerpt{font-size:13.5px}
+  .post:hover .post-title{color:var(--lime)}
+  .post-read{font-family:'Geist Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:var(--fg);display:inline-flex;align-items:center;gap:8px;margin-top:auto}
+  .post-read .arrow{transition:transform .15s}
+  .post:hover .post-read{color:var(--lime)}
+  .post:hover .post-read .arrow{transform:translateX(4px)}
+
+  /* journal newsletter inline */
+  .journal-letter{margin-top:80px;padding:48px;background:var(--bg-2);border:1px solid var(--rule-strong);display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;overflow:hidden}
+  .journal-letter::before{content:"";position:absolute;top:-1px;left:48px;width:60px;height:2px;background:var(--lime)}
+  .jl-kicker{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--lime);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .jl-kicker::before{content:"";width:6px;height:6px;background:var(--lime)}
+  .journal-letter h3{font-family:'Geist',sans-serif;font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-0.025em;margin:0 0 14px;max-width:18ch}
+  .journal-letter p{font-size:15px;color:var(--fg-2);max-width:42ch;line-height:1.55;margin:0}
+  .letter-form{display:flex;border:1px solid var(--rule-strong);background:var(--bg)}
+  .letter-form input{flex:1;background:transparent;border:0;color:var(--fg);padding:16px 18px;font-family:'Geist Mono',monospace;font-size:13px;outline:none;letter-spacing:0.02em;min-width:0}
+  .letter-form input::placeholder{color:var(--muted)}
+  .letter-form button{background:var(--lime);color:var(--bg);border:0;padding:0 24px;font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+  .letter-form button:hover{background:#fff}
+  .letter-fine{font-family:'Geist Mono',monospace;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-top:14px}
+
+  /* ── Principles (vague, IP-safe) ── */
+  .principles{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:64px;border-top:1px solid var(--rule-strong);padding-top:48px}
+  .principle{padding-right:16px}
+  .principle .num{font-family:'Geist Mono',monospace;font-size:12px;color:var(--lime);letter-spacing:0.06em}
+  .principle h3{font-family:'Geist',sans-serif;font-weight:600;font-size:22px;letter-spacing:-0.02em;margin:14px 0 12px;line-height:1.15}
+  .principle p{font-size:14.5px;color:var(--fg-2);margin:0;line-height:1.6}
+
+  /* ── Waitlist big ── */
+  .closing{padding:160px 0 96px;border-bottom:1px solid var(--rule);position:relative;overflow:hidden;text-align:center}
+  .closing::before{content:"";position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:1200px;height:1200px;background:radial-gradient(circle,rgba(212,255,58,0.05) 0%,transparent 55%);pointer-events:none}
+  .closing-kicker{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin-bottom:24px;position:relative;display:inline-flex;align-items:center;gap:10px}
+  .closing-kicker::before{content:"";width:6px;height:6px;background:var(--lime)}
+  .closing h2{font-family:'Geist',sans-serif;font-weight:700;font-size:clamp(64px,10vw,180px);line-height:0.9;letter-spacing:-0.05em;margin:0 0 32px;position:relative;max-width:14ch;margin-left:auto;margin-right:auto}
+  .closing h2 .lime{color:var(--lime)}
+  .closing-sub{font-size:19px;color:var(--fg-2);max-width:52ch;margin:0 auto 48px;line-height:1.5;position:relative}
+  .waitlist{display:flex;max-width:560px;margin:0 auto;border:1px solid var(--rule-strong);background:var(--bg-2);position:relative;z-index:2}
+  .waitlist input{flex:1;background:transparent;border:0;color:var(--fg);padding:18px 22px;font-family:'Geist Mono',monospace;font-size:14px;outline:none;letter-spacing:0.02em;min-width:0}
+  .waitlist input::placeholder{color:var(--muted)}
+  .waitlist button{background:var(--lime);color:var(--bg);border:0;padding:0 32px;font-family:'Geist Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;cursor:pointer;display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+  .waitlist button:hover{background:#fff}
+  .closing-bullets{display:flex;gap:32px;justify-content:center;margin-top:32px;flex-wrap:wrap;font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;position:relative}
+  .closing-bullets span{display:inline-flex;align-items:center;gap:8px}
+  .closing-bullets span::before{content:"✓";color:var(--lime);font-size:14px}
+
+  /* ── FAQ ── */
+  .faq-grid{display:grid;grid-template-columns:1fr 2fr;gap:64px}
+  .faq-left h2{font-family:'Geist',sans-serif;font-weight:700;font-size:48px;line-height:0.98;letter-spacing:-0.035em;margin:24px 0 32px;text-wrap:balance}
+  .faq-left h2 .lime{color:var(--lime)}
+  .faq-list details{border-top:1px solid var(--rule-strong);padding:24px 0}
+  .faq-list details:last-child{border-bottom:1px solid var(--rule-strong)}
+  .faq-list summary{font-family:'Geist',sans-serif;font-weight:500;font-size:22px;line-height:1.25;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;letter-spacing:-0.015em}
+  .faq-list summary::-webkit-details-marker{display:none}
+  .faq-list summary::after{content:"+";font-family:'Geist Mono',monospace;color:var(--lime);font-size:22px;transition:transform .2s}
+  .faq-list details[open] summary::after{content:"−"}
+  .faq-list p{margin:14px 0 0;color:var(--fg-2);font-size:15.5px;line-height:1.65;max-width:70ch}
+
+  /* ── Footer ── */
+  footer{padding:80px 0 32px}
+  .foot-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+  .foot-col h5{font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:0 0 18px}
+  .foot-col ul{list-style:none;padding:0;margin:0;display:grid;gap:12px;font-size:14px;color:var(--fg-2)}
+  .foot-col a:hover{color:var(--lime)}
+  .foot-brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:22px;margin-bottom:14px;color:var(--fg);letter-spacing:-0.02em}
+  .foot-bottom{margin-top:64px;padding-top:24px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;font-family:'Geist Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;flex-wrap:wrap;gap:16px}
+
+  @media (max-width:980px){
+    .hero-grid,.thesis-grid,.section-head,.faq-grid,.foot-row,.journal-letter{grid-template-columns:1fr;gap:32px}
+    .principles{grid-template-columns:repeat(2,1fr)}
+    .journal-grid>*{grid-column:span 12}
+    .nav-links{display:none}
+    .block,.journal-block{padding:80px 0}
+    .closing{padding:96px 0 64px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ───── ticker ───── -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="lime">● PRE-LAUNCH</span><span class="dim">/</span>
+    <span>WAITLIST OPEN</span><span class="dim">/</span>
+    <span>JOURNAL UPDATED WEEKLY</span><span class="dim">/</span>
+    <span>BUILT IN BERLIN, DE</span><span class="dim">/</span>
+    <span>TAX-AWARE BY DESIGN</span><span class="dim">/</span>
+    <span class="lime">● PRE-LAUNCH</span><span class="dim">/</span>
+    <span>WAITLIST OPEN</span><span class="dim">/</span>
+    <span>JOURNAL UPDATED WEEKLY</span><span class="dim">/</span>
+    <span>BUILT IN BERLIN, DE</span><span class="dim">/</span>
+    <span>TAX-AWARE BY DESIGN</span><span class="dim">/</span>
+    <span class="lime">● PRE-LAUNCH</span><span class="dim">/</span>
+    <span>WAITLIST OPEN</span><span class="dim">/</span>
+  </div>
+</div>
+
+<!-- ───── Nav ───── -->
+<nav class="nav">
+  <div class="container nav-row">
+    <a href="#" class="brand"><span class="brand-mark"></span>OPTFI</a>
+    <div class="nav-links">
+      <a href="#thesis">Thesis</a>
+      <a href="#journal">Journal</a>
+      <a href="#principles">Principles</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta">
+      <span class="pre-pill">Pre-launch · Waitlist open</span>
+      <a class="btn btn-primary" href="#waitlist">Join waitlist <span class="arrow">→</span></a>
+    </div>
+  </div>
+</nav>
+
+<!-- ───── Hero ───── -->
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="hero-eyebrow">Tax-aware crypto wealth engine &nbsp;·&nbsp; Built in Germany</div>
+      <h1 class="headline">Keep more<br>of what crypto<br>actually <span class="lime">compounds.</span></h1>
+      <p class="hero-sub">OptFi is being built for one stubborn idea: the only return that matters in crypto is the one that survives fees, slippage, and the German tax bill. We're writing the playbook in public — and opening the platform when the maths backs the marketing.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#waitlist">Join the waitlist <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="#journal">Read the journal</a>
+      </div>
+      <div class="hero-mini">
+        <span>Pre-launch · No public access yet</span>
+        <span>Journal updated weekly</span>
+        <span>Built &amp; written from Berlin</span>
+      </div>
+    </div>
+
+    <a href="#journal" class="featured">
+      <span class="featured-flag">Latest from the journal</span>
+      <div class="featured-thumb"></div>
+      <div class="featured-meta"><span class="cat">DeFi · Field notes</span><span>14 min read</span><span>Aug 12</span></div>
+      <h3 class="featured-title">Why we deferred DeFi execution — and what would change our mind.</h3>
+      <p class="featured-excerpt">"Composability" is interesting. Interesting is not the bar. Here is the scorecard we use to decide what gets near real money, and where DeFi sits on it today.</p>
+      <span class="featured-read">Read entry <span class="arrow">→</span></span>
+    </a>
+  </div>
+</header>
+
+<!-- ───── Thesis ───── -->
+<section class="block" id="thesis">
+  <div class="container">
+    <div class="section-head">
+      <div><div class="kicker"><span class="num">/ 01</span> The thesis</div></div>
+      <div><h2>Crypto's marketing problem is a <span class="lime">maths problem.</span></h2></div>
+    </div>
+
+    <div class="thesis-grid">
+      <p class="pull">A "headline yield" without fees, slippage and tax is not a return. It is a <span class="lime">screenshot.</span></p>
+      <div class="thesis-body">
+        <p><strong>Almost every yield pitch quietly assumes you don't pay fees, you don't pay tax, and you don't have to sleep.</strong> OptFi rejects all three.</p>
+        <p>Germany has one of the most demanding crypto tax frameworks in the world. Building for it first means the economics have to be real — not laundered through ignorance, optimism, or selective backtests.</p>
+        <p>So the number we care about is the only one that ever lands in your account: <strong>what you keep, after the tax man has taken his.</strong> Everything else — strategy, platform, timing — is downstream of that.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── Journal (centerpiece) ───── -->
+<section class="journal-block" id="journal">
+  <div class="container">
+    <div class="journal-head">
+      <div>
+        <div class="kicker"><span class="num">/ 02</span> The journal</div>
+        <h2>Notes from a tax-aware crypto build, <span class="lime">written in public.</span></h2>
+      </div>
+      <a class="btn btn-ghost" href="#">All entries (42) <span class="arrow">→</span></a>
+    </div>
+
+    <div class="journal-cats">
+      <span class="cat-chip active">All <span class="count">42</span></span>
+      <span class="cat-chip">Tax &amp; Germany <span class="count">11</span></span>
+      <span class="cat-chip">DeFi field notes <span class="count">8</span></span>
+      <span class="cat-chip">Strategy thinking <span class="count">9</span></span>
+      <span class="cat-chip">Risk &amp; gates <span class="count">7</span></span>
+      <span class="cat-chip">Operator letters <span class="count">7</span></span>
+    </div>
+
+    <div class="journal-grid">
+      <article class="post post-feature">
+        <div class="post-thumb ph-1"><span class="badge">Field notes</span></div>
+        <div class="post-meta"><span class="cat">DeFi · Field notes</span><span>14 min read</span><span>Aug 12</span></div>
+        <h3 class="post-title">Why we deferred DeFi execution — and what would change our mind.</h3>
+        <p class="post-excerpt">Composability is interesting; interesting is not the bar. The bar is beating the best alternative on what survives fees and tax. Here's the scorecard we use, and where DeFi sits on it today.</p>
+        <span class="post-read">Read entry <span class="arrow">→</span></span>
+      </article>
+
+      <article class="post post-side-a">
+        <div class="post-thumb ph-2"><span class="badge">Tax</span></div>
+        <div class="post-meta"><span class="cat">Tax · Germany</span><span>8 min</span><span>Aug 06</span></div>
+        <h3 class="post-title">The 12-month rule, FIFO, and the arithmetic most strategies quietly ignore.</h3>
+        <p class="post-excerpt">A patient walk through how German crypto tax compounds — and why most "APR" claims aren't actually claims.</p>
+        <span class="post-read">Read entry <span class="arrow">→</span></span>
+      </article>
+
+      <article class="post post-third">
+        <div class="post-thumb ph-3"></div>
+        <div class="post-meta"><span class="cat">Strategy</span><span>11 min</span></div>
+        <h3 class="post-title">A backtest is a confession, not a forecast.</h3>
+        <p class="post-excerpt">What out-of-sample really means — and how to read a chart like the people on the other side of it.</p>
+        <span class="post-read">Read entry <span class="arrow">→</span></span>
+      </article>
+
+      <article class="post post-third">
+        <div class="post-thumb ph-4"></div>
+        <div class="post-meta"><span class="cat">Operator letter</span><span>6 min</span></div>
+        <h3 class="post-title">August letter: what we measured, what we changed, and what we won't.</h3>
+        <p class="post-excerpt">The monthly accounting of where the platform actually stands — written for people who read the small print.</p>
+        <span class="post-read">Read entry <span class="arrow">→</span></span>
+      </article>
+
+      <article class="post post-third">
+        <div class="post-thumb ph-5"></div>
+        <div class="post-meta"><span class="cat">Risk &amp; gates</span><span>9 min</span></div>
+        <h3 class="post-title">Why nothing promotes to live without measured proof.</h3>
+        <p class="post-excerpt">The principle is dull and the consequence is enormous: a platform that cannot bypass its own controls.</p>
+        <span class="post-read">Read entry <span class="arrow">→</span></span>
+      </article>
+    </div>
+
+    <!-- inline newsletter signup -->
+    <aside class="journal-letter">
+      <div>
+        <div class="jl-kicker">The operator letter · monthly</div>
+        <h3>The journal in your inbox, once a month. No noise.</h3>
+        <p>One careful piece of writing per month, plus the operator letter when there's something worth saying. You can stop it in a click.</p>
+      </div>
+      <div>
+        <form class="letter-form" onsubmit="event.preventDefault();this.querySelector('button').innerHTML='✓&nbsp;SUBSCRIBED';this.querySelector('button').style.background='#fff';">
+          <input type="email" placeholder="you@domain.eu" required>
+          <button type="submit">Subscribe <span class="arrow">→</span></button>
+        </form>
+        <div class="letter-fine">~1 letter / month · Unsubscribe in one click · No tracking pixels</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ───── Principles (IP-safe) ───── -->
+<section class="block" id="principles">
+  <div class="container">
+    <div class="section-head">
+      <div><div class="kicker"><span class="num">/ 03</span> How we build</div></div>
+      <div>
+        <h2>Deliberate by default. <span class="lime">Patient by design.</span></h2>
+        <p class="lede" style="margin-top:24px">The platform is not yet open, and won't be until the maths backs the marketing. These are the principles holding the line until then.</p>
+      </div>
+    </div>
+
+    <div class="principles">
+      <div class="principle">
+        <div class="num">/ 01</div>
+        <h3>Take-home, not headline.</h3>
+        <p>The only return that decides anything around here is the one that survives fees, slippage and the German tax bill. Everything upstream is downstream of that number.</p>
+      </div>
+      <div class="principle">
+        <div class="num">/ 02</div>
+        <h3>Evidence opens the door.</h3>
+        <p>Live access is gated on measured outcomes, not on dates or optimism. If the proof isn't there, the door stays shut — including to us.</p>
+      </div>
+      <div class="principle">
+        <div class="num">/ 03</div>
+        <h3>Boring on purpose.</h3>
+        <p>Patience compounds. Volatility does not. We're building for the version of you who is still here in five years — and still ahead.</p>
+      </div>
+      <div class="principle">
+        <div class="num">/ 04</div>
+        <h3>Public process.</h3>
+        <p>What we believe, what we measured, what we changed — all written down in the journal. The work is the marketing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── FAQ ───── -->
+<section class="block" id="faq">
+  <div class="container">
+    <div class="faq-grid">
+      <div class="faq-left">
+        <div class="kicker"><span class="num">/ 04</span> Plain answers</div>
+        <h2>The questions that <span class="lime">actually matter.</span></h2>
+        <p style="color:var(--fg-2);max-width:36ch;margin:0;font-size:15px;line-height:1.55">If we haven't answered yours, write to <a href="mailto:hello@optfi.eu" style="color:var(--lime);text-decoration:underline;text-underline-offset:3px">hello@optfi.eu</a> — a human reads each one.</p>
+      </div>
+      <div class="faq-list">
+        <details open>
+          <summary>Can I use OptFi today?</summary>
+          <p>Not yet. The platform is in pre-launch — no public access, no early-bird logins, no "secret" deposit address. The waitlist is the only door, and it opens when the maths backs the marketing.</p>
+        </details>
+        <details>
+          <summary>What does the waitlist actually get me?</summary>
+          <p>Three things: priority access when the platform opens, the monthly operator letter delivered to your inbox, and an honest answer if you reply asking what we're working on.</p>
+        </details>
+        <details>
+          <summary>Why Germany-first?</summary>
+          <p>Germany has one of the most demanding crypto tax regimes in the world. Building for the hardest accounting environment first means the economics generalise outward — they don't generalise inward. A platform built for somewhere easier will quietly fall over when it meets a German tax return.</p>
+        </details>
+        <details>
+          <summary>Is this a fund, a robo-advisor, or a tool?</summary>
+          <p>None of the above as those exist today. OptFi is a tax-aware crypto wealth engine — built for individuals who want their crypto to compound in a way that survives the tax bill, not just the screenshot. Specifics will land alongside access, not before.</p>
+        </details>
+        <details>
+          <summary>When does the waitlist open up?</summary>
+          <p>When measured outcomes back the opening — not on a calendar. We'd rather be late and honest than on time and embarrassed. The monthly letter is where you'll see the door swinging open.</p>
+        </details>
+        <details>
+          <summary>What about DeFi?</summary>
+          <p>DeFi is in the research lane, not the execution lane. It enters execution the day it can demonstrably beat the alternative on what you actually keep — and not a day before. The journal has the full thinking.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── Waitlist closing ───── -->
+<section class="closing" id="waitlist">
+  <div class="container">
+    <div class="closing-kicker">Join the line</div>
+    <h2>Compound <span class="lime">deliberately.</span></h2>
+    <p class="closing-sub">The waitlist is the first door when the platform opens. You'll also get the monthly operator letter — the real writing, sent to people who read it.</p>
+    <form class="waitlist" onsubmit="event.preventDefault();this.querySelector('button').innerHTML='✓&nbsp;ON THE LIST';this.querySelector('button').style.background='#fff';">
+      <input type="email" placeholder="you@domain.eu" required>
+      <button type="submit">Join waitlist <span class="arrow">→</span></button>
+    </form>
+    <div class="closing-bullets">
+      <span>Priority access at launch</span>
+      <span>Monthly operator letter</span>
+      <span>Unsubscribe in one click</span>
+    </div>
+  </div>
+</section>
+
+<!-- ───── Footer ───── -->
+<footer>
+  <div class="container">
+    <div class="foot-row">
+      <div class="foot-col">
+        <div class="foot-brand"><span class="brand-mark"></span>OPTFI</div>
+        <p style="margin:0;max-width:36ch;color:var(--fg-2);line-height:1.55;font-size:14.5px">A tax-aware crypto wealth engine, being built in public from Germany. Patience over performance.</p>
+      </div>
+      <div class="foot-col">
+        <h5>The platform</h5>
+        <ul>
+          <li><a href="#thesis">Thesis</a></li>
+          <li><a href="#principles">How we build</a></li>
+          <li><a href="#waitlist">Waitlist</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>The journal</h5>
+        <ul>
+          <li><a href="#journal">All entries</a></li>
+          <li><a href="#journal">Operator letters</a></li>
+          <li><a href="#journal">Tax in Germany</a></li>
+          <li><a href="#journal">DeFi field notes</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Imprint</a></li>
+          <li><a href="#">Privacy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 OptFi · Berlin, DE</span>
+      <span>Not investment advice · Past results are not future returns</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

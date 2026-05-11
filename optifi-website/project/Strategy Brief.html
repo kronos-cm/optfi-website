@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OptFi · Redesign Strategy Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c0a;
+    --bg-2:#131410;
+    --paper:#ede9da;
+    --fg:#ede9da;
+    --fg-2:#b8b4a3;
+    --muted:#6f6c5e;
+    --rule:#24251e;
+    --rule-strong:#2f3128;
+    --lime:#d4ff3a;
+    --warn:#ff7a45;
+    --good:#5ec27a;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased}
+  body{font-family:'Geist',ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:1.6}
+  a{color:var(--lime)}
+  .container{max-width:1080px;margin:0 auto;padding:0 32px}
+  .serif{font-family:'Instrument Serif',serif;font-weight:400;letter-spacing:-0.01em}
+  .mono{font-family:'Geist Mono',monospace;letter-spacing:0.02em}
+  hr{border:0;border-top:1px solid var(--rule);margin:64px 0}
+
+  /* Doc header */
+  .doc-head{padding:72px 0 56px;border-bottom:1px solid var(--rule)}
+  .doc-eyebrow{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin-bottom:18px;display:flex;align-items:center;gap:14px}
+  .doc-eyebrow::before{content:"";width:34px;height:1px;background:var(--lime)}
+  .doc-title{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(48px,7vw,84px);line-height:0.98;letter-spacing:-0.02em;margin:0 0 24px;max-width:18ch}
+  .doc-title em{font-style:italic;color:var(--lime)}
+  .doc-meta{display:flex;gap:32px;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-top:36px;flex-wrap:wrap}
+  .doc-meta strong{color:var(--fg);font-weight:500}
+  .doc-deck{font-size:19px;color:var(--fg-2);max-width:60ch;line-height:1.55;margin:0}
+
+  /* Section */
+  section{padding:80px 0;border-bottom:1px solid var(--rule)}
+  .sec-num{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin-bottom:18px}
+  .sec-title{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,4.4vw,52px);line-height:1.02;letter-spacing:-0.015em;margin:0 0 24px;max-width:22ch}
+  .sec-title em{color:var(--lime);font-style:italic}
+  .sec-deck{color:var(--fg-2);font-size:17px;max-width:64ch;line-height:1.6;margin:0 0 40px}
+
+  h3{font-family:'Instrument Serif',serif;font-weight:400;font-size:28px;letter-spacing:-0.01em;line-height:1.2;margin:48px 0 14px}
+  p{margin:0 0 16px;max-width:68ch}
+
+  /* TL;DR */
+  .tldr{background:var(--bg-2);border:1px solid var(--rule-strong);padding:32px;position:relative;margin-top:32px}
+  .tldr::before{content:"";position:absolute;top:-1px;left:32px;width:60px;height:2px;background:var(--lime)}
+  .tldr h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime);margin:0 0 18px}
+  .tldr ol{margin:0;padding:0;list-style:none;counter-reset:t}
+  .tldr li{counter-increment:t;padding:14px 0;border-bottom:1px dashed var(--rule-strong);display:grid;grid-template-columns:36px 1fr;gap:16px;align-items:baseline}
+  .tldr li:last-child{border-bottom:0;padding-bottom:0}
+  .tldr li::before{content:"0" counter(t);font-family:'Geist Mono',monospace;color:var(--lime);font-size:12px;letter-spacing:0.04em}
+  .tldr li strong{font-weight:500;color:var(--fg)}
+  .tldr li span{color:var(--fg-2);font-size:15px;line-height:1.55}
+
+  /* Issue cards */
+  .issues{display:grid;gap:24px;margin-top:32px}
+  .issue{display:grid;grid-template-columns:80px 1fr;gap:24px;padding:28px 0;border-top:1px solid var(--rule-strong)}
+  .issue-num{font-family:'Geist Mono',monospace;font-size:14px;color:var(--warn);letter-spacing:0.04em}
+  .issue h3{margin:0 0 12px;font-size:26px}
+  .issue p{margin:0 0 12px;color:var(--fg-2);font-size:15.5px;line-height:1.6}
+
+  /* Before / after copy */
+  .ba{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule-strong);margin:24px 0 0}
+  .ba-col{padding:24px;position:relative}
+  .ba-col.before{background:rgba(255,122,69,0.04);border-right:1px solid var(--rule-strong)}
+  .ba-col.after{background:rgba(212,255,58,0.04)}
+  .ba-col h5{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 14px;color:var(--muted)}
+  .ba-col.before h5{color:var(--warn)}
+  .ba-col.after h5{color:var(--lime)}
+  .ba-col blockquote{margin:0;font-family:'Instrument Serif',serif;font-size:20px;line-height:1.3;letter-spacing:-0.005em;color:var(--fg)}
+  .ba-col .note{font-size:13px;color:var(--fg-2);margin-top:14px;line-height:1.5}
+
+  /* Architecture diagram */
+  .arch{margin-top:32px;border:1px solid var(--rule-strong);background:var(--bg-2);padding:32px}
+  .arch h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0 0 18px}
+  .arch-list{margin:0;padding:0;list-style:none;counter-reset:a}
+  .arch-row{counter-increment:a;display:grid;grid-template-columns:60px 220px 1fr 100px;gap:24px;align-items:start;padding:18px 0;border-bottom:1px dashed var(--rule-strong)}
+  .arch-row:last-child{border-bottom:0}
+  .arch-row::before{content:counter(a,decimal-leading-zero);font-family:'Geist Mono',monospace;color:var(--lime);font-size:12px}
+  .arch-row .name{font-family:'Instrument Serif',serif;font-size:22px;color:var(--fg);letter-spacing:-0.01em}
+  .arch-row .desc{color:var(--fg-2);font-size:14px;line-height:1.55}
+  .arch-row .role{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);text-align:right}
+  .arch-row .role.cta{color:var(--lime)}
+
+  /* Mockup links */
+  .mockups{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+  .mockup{border:1px solid var(--rule-strong);background:var(--bg-2);padding:0;overflow:hidden;display:flex;flex-direction:column;transition:all .2s}
+  .mockup:hover{border-color:var(--lime)}
+  .mockup .preview{aspect-ratio:16/10;background:linear-gradient(135deg,#1a1c17 0%,#0a0c0a 100%);position:relative;border-bottom:1px solid var(--rule-strong);overflow:hidden}
+  .mockup .preview iframe{width:200%;height:200%;border:0;transform:scale(0.5);transform-origin:0 0;pointer-events:none}
+  .mockup-body{padding:24px}
+  .mockup-tag{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--lime);margin-bottom:10px}
+  .mockup h4{font-family:'Instrument Serif',serif;font-size:26px;letter-spacing:-0.01em;margin:0 0 8px;line-height:1.2}
+  .mockup p{font-size:14px;color:var(--fg-2);margin:0 0 16px}
+  .mockup .open{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--fg);display:inline-flex;align-items:center;gap:8px}
+  .mockup:hover .open{color:var(--lime)}
+
+  /* Checklist */
+  .checklist{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--rule-strong)}
+  .check-col{padding:24px;border-right:1px solid var(--rule-strong)}
+  .check-col:last-child{border-right:0}
+  .check-col h4{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0 0 18px}
+  .check-col ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+  .check-col li{display:grid;grid-template-columns:24px 1fr;gap:12px;font-size:14.5px;line-height:1.5;color:var(--fg-2)}
+  .check-col li::before{content:"✓";color:var(--lime);font-size:14px;font-family:'Geist Mono',monospace}
+  .check-col.kill li::before{content:"×";color:var(--warn)}
+
+  footer.doc-foot{padding:48px 0 64px;color:var(--muted);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;text-align:center}
+
+  @media (max-width:780px){
+    .ba,.mockups,.checklist{grid-template-columns:1fr}
+    .ba-col.before{border-right:0;border-bottom:1px solid var(--rule-strong)}
+    .check-col{border-right:0;border-bottom:1px solid var(--rule-strong)}
+    .arch-row{grid-template-columns:1fr;gap:8px}
+    .arch-row .role{text-align:left}
+    .issue{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<header class="doc-head">
+  <div class="container">
+    <div class="doc-eyebrow">Strategy brief · For OptFi · v1.0</div>
+    <h1 class="doc-title">From <em>decent</em> to <em>intentional.</em></h1>
+    <p class="doc-deck">A focused audit of optfi.eu, a repositioning, and a homepage architecture aimed at one job: turn the right kind of visitor — tax-aware crypto-curious, in Germany — into a subscribed reader and a waitlisted prospect, within five seconds and one scroll.</p>
+    <div class="doc-meta">
+      <span><strong>Primary audience</strong> &nbsp;Tax-aware crypto-curious, DE/DACH</span>
+      <span><strong>Primary action</strong> &nbsp;Join waitlist</span>
+      <span><strong>Status</strong> &nbsp;Pre-launch</span>
+    </div>
+  </div>
+</header>
+
+<!-- ───── TL;DR ───── -->
+<section>
+  <div class="container">
+    <div class="sec-num">/ 00 &nbsp;&middot;&nbsp; TL;DR</div>
+    <h2 class="sec-title">The seven moves that take the site<br>from <em>decent</em> to <em>brilliant.</em></h2>
+
+    <div class="tldr">
+      <h4>The shortlist</h4>
+      <ol>
+        <li><strong>Replace the headline.</strong><span>"Disciplined compounding, proven before trusted" is process. Lead with the outcome: <em>"Keep more of what crypto actually compounds."</em></span></li>
+        <li><strong>Strip the operator dialect.</strong><span>"Canary execution", "proof window", "walk-forward validation", "signing policy" — language for engineers, not the actual visitor. Replace with plain claims a curious retail reader can repeat to a friend.</span></li>
+        <li><strong>Stop projecting authority you haven't earned yet.</strong><span>The current site signals "live system in production". Pre-launch is the truth — and it's a stronger story when told honestly.</span></li>
+        <li><strong>Promote the journal to the front.</strong><span>The blog is the acquisition channel. Right now it's invisible. It should be the second thing on the page, not the fifth.</span></li>
+        <li><strong>One CTA. Then one CTA again.</strong><span>The hero today offers <em>three</em> equal-weight buttons. Decide what success means. Then make every section point at it.</span></li>
+        <li><strong>Build the trust the IP allows.</strong><span>No invented logos, no false canary numbers, no fake testimonials. Trust is earned from the writing, the cadence, and the discipline of saying "we're not open yet."</span></li>
+        <li><strong>Commit to a visual point of view.</strong><span>The current pastel-glass-card aesthetic reads generic SaaS. A premium niche financial product deserves a confident one.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ───── Audit ───── -->
+<section>
+  <div class="container">
+    <div class="sec-num">/ 01 &nbsp;&middot;&nbsp; What the site is doing wrong</div>
+    <h2 class="sec-title">A polite version<br>of an <em>impolite</em> truth.</h2>
+    <p class="sec-deck">The current homepage is competent. It is also doing roughly the opposite of what a pre-launch acquisition site needs to do. Here's where, and why.</p>
+
+    <div class="issues">
+
+      <div class="issue">
+        <div class="issue-num">ISSUE 01</div>
+        <div>
+          <h3>The five-second test fails on language, not design.</h3>
+          <p>The first words a stranger reads are "Tax-Aware Crypto Wealth Engine" followed by "Disciplined compounding, proven before trusted." This is a thesis statement for the team running the project, not a proposition for the person reading it. By the time we say "OptFi builds after-tax crypto returns through a staged proof sequence" we've used four pieces of jargon — and the reader's most charitable thought is "...okay, but what is it?"</p>
+          <div class="ba">
+            <div class="ba-col before">
+              <h5>Now (homepage hero)</h5>
+              <blockquote>"Tax-Aware Crypto Wealth Engine — Disciplined compounding, proven before trusted."</blockquote>
+              <p class="note">Three abstract nouns. Zero outcomes. The visitor has to decode this — and they won't.</p>
+            </div>
+            <div class="ba-col after">
+              <h5>Proposed</h5>
+              <blockquote>"Keep more of what crypto actually <em>compounds.</em>"</blockquote>
+              <p class="note">A promise the reader can finish in their own head. Tax, fees, slippage are the explanation — but the hook is the only thing the eye needs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-num">ISSUE 02</div>
+        <div>
+          <h3>Three competing CTAs in the hero — none of them is the goal.</h3>
+          <p>"How the proof sequence works" / "View current status" / "Roadmap". The platform is pre-launch — none of these are conversions. Worse, they implicitly tell the visitor "the platform is the point", which is not true today. The point today is: <em>get them on the waitlist and into the journal</em>. Everything else is a leak.</p>
+        </div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-num">ISSUE 03</div>
+        <div>
+          <h3>The site signals authority it hasn't yet earned — and risks leaking IP doing it.</h3>
+          <p>Active canary, hardware-wallet signing policy, walk-forward validation, FIFO accounting, proof windows. These are details about <em>how</em> the platform works — the very IP that should stay private. They also create a credibility gap: nothing on the page proves any of it, so the operator-mode confidence reads as overclaim. Pre-launch is the more honest, more compelling story.</p>
+          <div class="ba">
+            <div class="ba-col before">
+              <h5>Now (Pillars section)</h5>
+              <blockquote>"Safety Gates First. No system can promote itself to live trading without clearing a measured proof window…"</blockquote>
+              <p class="note">Reveals architectural specifics. Most visitors don't understand it; the ones who do can reverse-engineer the strategy stack.</p>
+            </div>
+            <div class="ba-col after">
+              <h5>Proposed (Principles section)</h5>
+              <blockquote>"Evidence opens the door. Live access is gated on measured outcomes — not on dates or optimism."</blockquote>
+              <p class="note">Same conviction. Zero IP. Easier to read. Stronger to write.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-num">ISSUE 04</div>
+        <div>
+          <h3>The blog isn't on the homepage.</h3>
+          <p>If the journal is the acquisition channel — and it should be, given pre-launch status — it has to be the second-largest surface on the page, after the hero. Right now there is no journal section at all on the homepage. The strategy gap is enormous: every post that ranks on Google lands a stranger on a page that doesn't reinforce why they should subscribe.</p>
+        </div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-num">ISSUE 05</div>
+        <div>
+          <h3>The visual language reads "SaaS dashboard template" — not "premium financial product."</h3>
+          <p>Translucent glass cards, soft pastel gradients, friendly rounded icons, dotted grid background, sky-blue accents. Each of those is a common move for crypto/web3 SaaS landing pages. None of them convey what a tax-aware, patient, evidence-led product should convey: <em>conviction</em>. The aesthetic should feel closer to a private bank or a hedge-fund letter than a SaaS billboard. Confident type, restrained palette, editorial rhythm. Premium <em>is</em> a feeling — and right now the site signals "another L1 platform pitch" instead of "operator with discipline."</p>
+        </div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-num">ISSUE 06</div>
+        <div>
+          <h3>"Germany-first" is a unique angle and the site buries it.</h3>
+          <p>Germany has one of the most demanding crypto tax regimes in the world. That is a genuine strategic moat: it is harder, more specific, and more useful to your real audience (DACH retail) than another "decentralised yield" pitch. The current site mentions it inside an FAQ. It should be in the eyebrow, the headline supporting line, and the trust strip. <em>Lead</em> with the constraint that makes you defensible.</p>
+        </div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-num">ISSUE 07</div>
+        <div>
+          <h3>The FAQ does more positioning work than the rest of the page.</h3>
+          <p>It is the best-written content on the site today. The honesty ("Not yet… DeFi execution is deferred…") is a competitive asset. The mistake is hiding it at the bottom under a Q&amp;A label, where it reads as "objection handling" rather than as "this is how we think." Pull the strongest answers out and let them carry sections in their own right.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ───── Repositioning ───── -->
+<section>
+  <div class="container">
+    <div class="sec-num">/ 02 &nbsp;&middot;&nbsp; Repositioning</div>
+    <h2 class="sec-title">One sentence positioning, then<br>everything <em>follows from it.</em></h2>
+    <p class="sec-deck">A landing page is a positioning statement with a layout. Lock the positioning, the layout writes itself.</p>
+
+    <h3>Positioning statement (working)</h3>
+    <div class="ba">
+      <div class="ba-col after" style="grid-column:span 2;border-right:0">
+        <h5>The line that should sit behind every page</h5>
+        <blockquote style="font-size:24px;line-height:1.3">OptFi is a tax-aware crypto wealth engine, built Germany-first, for people who want their crypto to <em>compound</em> in a way that survives the tax bill — not just the screenshot.</blockquote>
+        <p class="note" style="margin-top:18px"><strong style="color:var(--lime)">Why it works.</strong> "Tax-aware" — specific. "Wealth engine" — outcome-shaped. "Germany-first" — defensible moat. "Compound" — the verb that does the most work in finance. "Survives the tax bill, not just the screenshot" — names the antagonist (gross-yield marketing) without picking a fight.</p>
+      </div>
+    </div>
+
+    <h3>Audience &amp; jobs-to-be-done</h3>
+    <p style="color:var(--fg-2)">The primary visitor is a tax-aware, crypto-curious, German-speaking retail investor. Skeptical, busy, intelligent. They are not looking for "another yield product." They are looking for someone they can trust to think honestly about a market that has consistently disrespected their intelligence.</p>
+    <p style="color:var(--fg-2)">Their three jobs on this site, in order: <strong style="color:var(--fg)">(1)</strong> understand whether you're serious in five seconds, <strong style="color:var(--fg)">(2)</strong> read something that proves it, <strong style="color:var(--fg)">(3)</strong> commit to staying in touch. The whole layout exists to walk that staircase.</p>
+
+    <h3>One conversion. Two surfaces.</h3>
+    <p style="color:var(--fg-2)">The primary action is <strong style="color:var(--fg)">join the waitlist</strong>. The secondary action — which fuels the primary — is <strong style="color:var(--fg)">subscribe to the journal</strong>. Both ask for an email. The waitlist is the promise; the journal is the proof. Every section needs to lean on one or the other. Anything that doesn't is decoration.</p>
+  </div>
+</section>
+
+<!-- ───── New architecture ───── -->
+<section>
+  <div class="container">
+    <div class="sec-num">/ 03 &nbsp;&middot;&nbsp; Homepage architecture</div>
+    <h2 class="sec-title">Six sections. Each one<br>does <em>exactly</em> one job.</h2>
+    <p class="sec-deck">The reordering is the strategy. Move the journal up; move the architecture details out; let the conviction carry the rest.</p>
+
+    <div class="arch">
+      <h4>The new section order</h4>
+      <ul class="arch-list">
+        <li class="arch-row">
+          <span class="name">Hero</span>
+          <span class="desc">Outcome headline + 2-sentence promise + waitlist CTA + read-journal CTA. Right column: <em>latest journal entry as a card</em> — signalling instantly that this is also a place to read.</span>
+          <span class="role cta">Convert / Hook</span>
+        </li>
+        <li class="arch-row">
+          <span class="name">The Thesis</span>
+          <span class="desc">A single confident pull-quote and three short paragraphs. No jargon, no IP. Plain claim: <em>crypto's marketing problem is a maths problem; here's the maths we care about.</em></span>
+          <span class="role">Position</span>
+        </li>
+        <li class="arch-row">
+          <span class="name">The Journal</span>
+          <span class="desc">The centerpiece. Featured entry + grid of 4–5 recent posts + category chips + inline newsletter signup. This is the surface that does the acquisition work.</span>
+          <span class="role cta">Earn trust</span>
+        </li>
+        <li class="arch-row">
+          <span class="name">How we build</span>
+          <span class="desc">Four principles, written in plain English. Take-home not headline. Evidence opens the door. Boring on purpose. Public process. <em>No</em> architecture leak.</span>
+          <span class="role">Reassure</span>
+        </li>
+        <li class="arch-row">
+          <span class="name">FAQ</span>
+          <span class="desc">Six honest answers. Lead with "Can I use OptFi today?" — answer "No, not yet" with conviction. Honesty is the asset.</span>
+          <span class="role">Disarm</span>
+        </li>
+        <li class="arch-row">
+          <span class="name">Waitlist</span>
+          <span class="desc">A single big hero-sized closing block. One field, one button. Three short bullets of what the visitor gets. End on conviction, not on a form.</span>
+          <span class="role cta">Convert</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ───── Mockup ───── -->
+<section>
+  <div class="container">
+    <div class="sec-num">/ 04 &nbsp;&middot;&nbsp; The mockup</div>
+    <h2 class="sec-title">From brief to <em>browser.</em></h2>
+    <p class="sec-deck">A working homepage that applies the audit, positioning, and architecture above. Dark + lime with editorial Instrument Serif headlines — confident, premium, unambiguous. Open it fullscreen to read it as the visitor would.</p>
+
+    <a class="mockup" href="Homepage.html" target="_blank" style="grid-column:span 2;display:block;margin-top:32px">
+      <div class="preview" style="aspect-ratio:21/9">
+        <iframe src="Homepage.html" loading="lazy" title="Homepage preview"></iframe>
+      </div>
+      <div class="mockup-body" style="display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center">
+        <div>
+          <div class="mockup-tag">Homepage · final direction</div>
+          <h4>Dark + lime + Instrument Serif — blog front and center.</h4>
+          <p>Outcome-led hero with featured journal entry beside it. Pull-quote thesis. Journal as the centerpiece with category chips, featured + side post, three thirds, and inline newsletter form. Principles in plain English. Closing waitlist block as the destination.</p>
+        </div>
+        <span class="open">Open fullscreen <span class="arrow">→</span></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ───── Conversion checklist ───── -->
+<section>
+  <div class="container">
+    <div class="sec-num">/ 05 &nbsp;&middot;&nbsp; The conversion checklist</div>
+    <h2 class="sec-title">What gets <em>kept</em>,<br>what gets <em>cut.</em></h2>
+    <p class="sec-deck">A one-page reference for whoever ships the changes. Tape it above the monitor.</p>
+
+    <div class="checklist">
+      <div class="check-col">
+        <h4>Keep / Add</h4>
+        <ul>
+          <li>Outcome-led headline as the first words on the page</li>
+          <li>Featured journal card visible in the hero</li>
+          <li>"Germany-first" called out in the eyebrow and the thesis</li>
+          <li>Pull-quote framing the thesis without jargon</li>
+          <li>Journal as section 2 — categorised, with newsletter signup inline</li>
+          <li>"Pre-launch · Waitlist open" pill in the nav</li>
+          <li>One closing waitlist block — generous size, one input, one button</li>
+          <li>FAQ that leads with "Can I use OptFi today?" → no</li>
+          <li>Plain-English principles (no architecture talk)</li>
+          <li>Single conviction sentence in the footer ("Patience over performance.")</li>
+        </ul>
+      </div>
+      <div class="check-col kill">
+        <h4>Cut / Replace</h4>
+        <ul>
+          <li>"Disciplined compounding, proven before trusted" as the headline</li>
+          <li>Three equal-weight hero buttons</li>
+          <li>"Canary execution / Paper trading / Live compounding" stage cards — IP leak</li>
+          <li>"Hardware-wallet signing", "walk-forward", "FIFO" anywhere public</li>
+          <li>"Current Platform State" tile with fake/specific status counts</li>
+          <li>Sky-blue + cream glass-card pastel palette</li>
+          <li>Soft rounded SaaS iconography (lucide grids of pillar cards)</li>
+          <li>Anything resembling a fake dashboard with invented numbers</li>
+          <li>Multiple low-energy doc links treated as a "next step"</li>
+          <li>Anything that doesn't lean on waitlist or journal subscribe</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── Next steps ───── -->
+<section>
+  <div class="container">
+    <div class="sec-num">/ 06 &nbsp;&middot;&nbsp; What comes next</div>
+    <h2 class="sec-title">Three weeks<br>to a <em>brilliant</em> site.</h2>
+
+    <h3>Week 1 — copy &amp; positioning</h3>
+    <p style="color:var(--fg-2)">Lock the positioning sentence. Rewrite the hero, thesis, principles, and FAQ in the institutional voice and outcome-led tone. Draft the first three "anchor" journal entries that the homepage will feature — these double as SEO landing pages.</p>
+
+    <h3>Week 2 — build &amp; visual</h3>
+    <p style="color:var(--fg-2)">Implement the new homepage in the existing React/Tailwind stack. Replace the design tokens — dark background, signal lime accent, Instrument Serif display, Geist body, Geist Mono utility. Rebuild the few primitive components (Card, Button, Section) to match. The rest of the site (docs, status, roadmap) can carry the new tokens without restructuring.</p>
+
+    <h3>Week 3 — instrument &amp; iterate</h3>
+    <p style="color:var(--fg-2)">Wire the waitlist and newsletter signups to a real list provider. Add a single source of conversion truth (hero waitlist, closing waitlist, inline newsletter form). Run a one-week light user test with five DACH retail crypto holders — record what they say out loud at the five-second mark. Iterate on that, not on internal taste.</p>
+
+    <h3>Beyond — the second order benefit</h3>
+    <p style="color:var(--fg-2)">The aesthetic and copy decisions made here travel everywhere: the operator letter, future investor decks, every social post. A homepage isn't a page — it's the highest-volume way the brand teaches the rest of the company how to sound. Decide it on purpose, and most other writing gets easier from this point on.</p>
+  </div>
+</section>
+
+<footer class="doc-foot">
+  <div class="container">Prepared for OptFi · Berlin · v1.0</div>
+</footer>
+
+</body>
+</html>

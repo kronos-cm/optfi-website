@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BriefPro — Chat v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #CBD5E1; }
+
+/* ── Scrollbar ── */
+.scroll::-webkit-scrollbar { width: 3px; }
+.scroll::-webkit-scrollbar-track { background: transparent; }
+.scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 99px; }
+
+/* ── Message entrance ── */
+@keyframes msgIn    { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:none} }
+@keyframes msgInUsr { from{opacity:0;transform:translateY(5px) scale(.985)} to{opacity:1;transform:none} }
+.msg-ai  { animation: msgIn    0.22s cubic-bezier(0.22,1,0.36,1) both; }
+.msg-usr { animation: msgInUsr 0.18s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* ── Typing dots ── */
+@keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.3} 30%{transform:translateY(-4px);opacity:1} }
+
+/* ── Avatar pulse when AI is thinking ── */
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(0,82,147,0.35); }
+  70%  { box-shadow: 0 0 0 6px rgba(0,82,147,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,82,147,0); }
+}
+.ai-pulse { animation: pulse-ring 1.4s ease-out infinite; }
+
+/* ── Hover-reveal timestamps ── */
+.msg-row .ts { opacity:0; transition:opacity .15s; pointer-events:none; }
+.msg-row:hover .ts { opacity:1; }
+
+/* ── Apply CTA hover ── */
+.apply-btn { transition: background .12s, transform .1s cubic-bezier(0.34,1.56,0.64,1); }
+.apply-btn:hover { background: #003e6b !important; transform: translateX(2px); }
+.apply-btn:active { transform: scale(.97); }
+
+/* ── Send button spring ── */
+.send-btn { transition: transform .12s cubic-bezier(0.34,1.56,0.64,1), background .12s; }
+.send-btn:hover:not(:disabled) { transform: scale(1.09); }
+.send-btn:active:not(:disabled) { transform: scale(.94); }
+
+/* ── Nav hover ── */
+.nav-itm { transition: background .12s, color .12s; }
+.nav-itm:hover { background: rgba(0,82,147,.06); }
+
+/* ── Tab hover ── */
+.tab-b { transition: color .12s, border-color .12s; }
+.tab-b:hover { color: #005293 !important; }
+
+/* ── Chip hover ── */
+.chip { transition: background .13s, border-color .13s, color .13s; }
+
+/* ── Input focus ring handled inline via state ── */
+</style>
+</head>
+<body>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+/* ══════════════════════════════════════════
+   DESIGN TOKENS  — grounded in real codebase
+   ══════════════════════════════════════════ */
+const T = {
+  light: {
+    /* brand */
+    blue:         "#005293",
+    blueDark:     "#003e6b",
+    blueLight:    "#e5f0fa",
+    blueMid:      "rgba(0,82,147,.12)",
+    /* surfaces — three distinct Z-levels */
+    bg:           "#FFFFFF",          /* editor / page */
+    bgPanel:      "#F1F5F9",          /* chat panel — clearly different */
+    bgRaised:     "#EBF0F8",          /* cards inside chat */
+    bgHover:      "rgba(0,82,147,.05)",
+    /* text */
+    text1:        "#0F172A",
+    text2:        "#475569",
+    text3:        "#94A3B8",
+    /* borders */
+    border:       "rgba(0,0,0,.06)",
+    borderMed:    "rgba(0,0,0,.1)",
+    /* semantic */
+    green:        "#16A34A",
+    greenBg:      "#F0FDF4",
+    greenBorder:  "rgba(22,163,74,.25)",
+    red:          "#DC2626",
+    redBg:        "#FEF2F2",
+    amber:        "#B45309",
+    amberBg:      "#FFFBEB",
+    amberBorder:  "rgba(180,83,9,.2)",
+    /* messages */
+    msgUser:      "#DDE5F0",
+    msgUserText:  "#0F172A",
+    /* shadows */
+    shadow:       "0 2px 12px rgba(0,0,0,.07)",
+    shadowMd:     "0 6px 32px rgba(0,0,0,.1)",
+    chatShadow:   "-4px 0 32px rgba(0,82,147,.09)",
+    inputShadow:  "0 2px 12px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.07)",
+    inputFocus:   "0 4px 20px rgba(0,82,147,.14), 0 0 0 2px rgba(0,82,147,.3)",
+    /* misc */
+    headerBg:     "rgba(255,255,255,.92)",
+    monoBg:       "#F8FAFC",
+  },
+  dark: {
+    blue:         "#2F80C5",
+    blueDark:     "#1A5FA0",
+    blueLight:    "rgba(47,128,197,.15)",
+    blueMid:      "rgba(47,128,197,.22)",
+    bg:           "#020617",          /* slate-950 — matches codebase */
+    bgPanel:      "#0B1120",          /* chat panel: deeper navy */
+    bgRaised:     "#131E35",
+    bgHover:      "rgba(47,128,197,.07)",
+    text1:        "#E2E8F0",
+    text2:        "#7B93B0",
+    text3:        "#374A62",
+    border:       "rgba(255,255,255,.07)",
+    borderMed:    "rgba(255,255,255,.11)",
+    green:        "#34D399",
+    greenBg:      "rgba(52,211,153,.09)",
+    greenBorder:  "rgba(52,211,153,.22)",
+    red:          "#F87171",
+    redBg:        "rgba(248,113,113,.09)",
+    amber:        "#FBBF24",
+    amberBg:      "rgba(251,191,36,.09)",
+    amberBorder:  "rgba(251,191,36,.2)",
+    msgUser:      "#131E35",
+    msgUserText:  "#E2E8F0",
+    shadow:       "0 2px 12px rgba(0,0,0,.3)",
+    shadowMd:     "0 6px 32px rgba(0,0,0,.4)",
+    chatShadow:   "-4px 0 32px rgba(0,0,0,.35)",
+    inputShadow:  "0 2px 12px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.07)",
+    inputFocus:   "0 4px 20px rgba(47,128,197,.2), 0 0 0 2px rgba(47,128,197,.45)",
+    headerBg:     "rgba(2,6,23,.88)",
+    monoBg:       "#0F1825",
+  },
+};
+
+/* ══════════════════ ICONS ══════════════════ */
+const IC = {
+  send:      "M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z",
+  mic:       ["M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z","M19 10v2a7 7 0 0 1-14 0v-2","M12 19v3","M8 22h8"],
+  plus:      "M12 5v14M5 12h14",
+  chevL:     "M15 18l-6-6 6-6",
+  chevD:     "M6 9l6 6 6-6",
+  chevU:     "M18 15l-6-6-6 6",
+  refresh:   "M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15",
+  sparkles:  ["M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09z","M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456z"],
+  check:     "M20 6L9 17l-5-5",
+  x:         "M18 6L6 18M6 6l12 12",
+  plane:     "M12 19l9 2-9-18-9 18 9-2zm0 0v-8",
+  letter:    ["M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z","M22 6l-10 7L2 6"],
+  edit2:     ["M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7","M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"],
+  clipboard: ["M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2","M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2","M9 12h6M9 16h4"],
+  chevR:     "M9 18l6-6-6-6",
+  arrowR:    "M5 12h14M12 5l7 7-7 7",
+  doc:       ["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z","M14 2v6h6","M16 13H8M16 17H8M10 9H8"],
+};
+
+const Icon = ({ d, size=16, stroke=1.6, color="currentColor", fill="none" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
+    {Array.isArray(d) ? d.map((p,i)=><path key={i} d={p}/>) : <path d={d}/>}
+  </svg>
+);
+
+/* ══════════════════ DEMO DATA ══════════════════ */
+const QUICK_ACTIONS = [
+  { label:"Zusammenfassung", icon:IC.letter },
+  { label:"Anamnese ergänzen", icon:IC.edit2 },
+  { label:"Diagnosen prüfen",  icon:IC.clipboard },
+];
+const DEMO_MSGS = [
+  { id:"1", role:"user",      text:"Bitte ergänze die Anamnese mit den Vorerkrankungen.", time:"14:32" },
+  { id:"2", role:"assistant", text:"Ich habe eine Ergänzung für die Anamnese identifiziert und vorbereitet:", time:"14:32", hasChange:true },
+  { id:"3", role:"user",      text:"Genehmigen", time:"14:33" },
+  { id:"4", role:"assistant", text:"1 Änderung wurde erfolgreich in die Anamnese übernommen.", time:"14:33", isConfirm:true },
+];
+
+/* ══════════════════ TYPING DOTS ══════════════════ */
+function TypingDots({ t }) {
+  return (
+    <div style={{ display:"flex", gap:5, alignItems:"center", height:20 }}>
+      {[0,1,2].map(i=>(
+        <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:t.text3, animation:`tdot 1.1s ease-in-out ${i*0.18}s infinite` }}/>
+      ))}
+    </div>
+  );
+}
+
+/* ══════════════════ AI AVATAR ══════════════════ */
+function AiAvatar({ t, size=22, pulsing=false }) {
+  return (
+    <div className={pulsing ? "ai-pulse" : ""}
+      style={{ width:size, height:size, borderRadius:"50%", flexShrink:0, background:t.blueLight, border:`1.5px solid ${t.blueMid}`, display:"flex", alignItems:"center", justifyContent:"center", transition:"box-shadow .2s" }}>
+      <Icon d={IC.sparkles} size={size*0.5} color={t.blue} stroke={1.7}/>
+    </div>
+  );
+}
+
+/* ══════════════════ CHANGE / DIFF CARD ══════════════════ */
+function ChangeCard({ t, onApply }) {
+  const [status, setStatus] = useState("pending");
+  const apply = () => { setStatus("approved"); onApply && onApply(); };
+  const reject = () => setStatus("rejected");
+
+  return (
+    <div style={{ borderRadius:10, background:t.bg, border:`1px solid ${t.borderMed}`, overflow:"hidden", fontSize:12.5, boxShadow:t.shadow, marginTop:6 }}>
+      {/* Header */}
+      <div style={{ padding:"7px 11px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:`1px solid ${t.border}`, background:t.bgRaised }}>
+        <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+          <span style={{ fontSize:9, fontWeight:700, letterSpacing:".08em", color:t.blue, textTransform:"uppercase", background:t.blueLight, padding:"2px 6px", borderRadius:4 }}>Ersetzen</span>
+          <span style={{ fontWeight:600, color:t.text1, fontSize:12 }}>Anamnese</span>
+        </div>
+        <span style={{ fontSize:10.5, color:t.text3 }}>95 % Vertrauen</span>
+      </div>
+      {/* Diff */}
+      <div style={{ padding:"8px 10px", display:"flex", flexDirection:"column", gap:3, background:t.monoBg || t.bgRaised }}>
+        <div style={{ display:"flex", gap:7, alignItems:"flex-start" }}>
+          <span style={{ fontSize:11, fontWeight:800, color:t.red, lineHeight:"20px", userSelect:"none" }}>−</span>
+          <div style={{ flex:1, padding:"4px 8px", borderRadius:5, background:t.redBg, borderLeft:`2px solid ${t.red}55`, color:"#7F1D1D", fontFamily:"'JetBrains Mono','Courier New',monospace", fontSize:11.5, lineHeight:1.6 }}>Vorerkrankungen: keine bekannt</div>
+        </div>
+        <div style={{ display:"flex", gap:7, alignItems:"flex-start" }}>
+          <span style={{ fontSize:11, fontWeight:800, color:t.green, lineHeight:"20px", userSelect:"none" }}>+</span>
+          <div style={{ flex:1, padding:"4px 8px", borderRadius:5, background:t.greenBg, borderLeft:`2px solid ${t.green}55`, color:"#14532D", fontFamily:"'JetBrains Mono','Courier New',monospace", fontSize:11.5, lineHeight:1.6 }}>Vorerkrankungen: arterielle Hypertonie seit 2018, Diabetes mellitus Typ 2</div>
+        </div>
+      </div>
+      {/* Actions */}
+      {status === "pending" ? (
+        <div style={{ padding:"8px 10px 10px", display:"flex", gap:6, justifyContent:"space-between", alignItems:"center" }}>
+          <button onClick={reject} style={{ padding:"5px 11px", fontWeight:500, borderRadius:6, border:`1px solid ${t.borderMed}`, background:"transparent", color:t.text2, cursor:"pointer", fontSize:11.5 }}>Ablehnen</button>
+          <button className="apply-btn" onClick={apply}
+            style={{ padding:"6px 14px", fontWeight:600, borderRadius:7, border:"none", background:t.blue, color:"#fff", cursor:"pointer", fontSize:12, display:"flex", alignItems:"center", gap:5 }}>
+            <Icon d={IC.check} size={13} color="#fff" stroke={2.5}/>
+            In Brief übernehmen
+          </button>
+        </div>
+      ) : (
+        <div style={{ padding:"7px 12px 9px", display:"flex", justifyContent:"flex-end", alignItems:"center", gap:5 }}>
+          <Icon d={status==="approved"?IC.check:IC.x} size={12} color={status==="approved"?t.green:t.red} stroke={2.5}/>
+          <span style={{ fontSize:11.5, fontWeight:600, color:status==="approved"?t.green:t.red }}>
+            {status==="approved"?"Angewendet":"Abgelehnt"}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════ MESSAGE ══════════════════ */
+function Message({ msg, t, isFirst, typing }) {
+  const isUser = msg.role === "user";
+  const [applied, setApplied] = useState(false);
+
+  return (
+    <div className={`msg-row ${isUser?"msg-usr":"msg-ai"}`}
+      style={{ display:"flex", flexDirection:"column", alignItems:isUser?"flex-end":"flex-start" }}>
+
+      {/* AI label row — only on first of group */}
+      {!isUser && isFirst && (
+        <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:5 }}>
+          <AiAvatar t={t} size={18} pulsing={typing}/>
+          <span className="ts" style={{ fontSize:10.5, color:t.text3, letterSpacing:".01em" }}>{msg.time}</span>
+        </div>
+      )}
+
+      {/* Bubble */}
+      {!msg.isConfirm && (
+        <div style={{ maxWidth:"88%", padding:isUser?"9px 13px":"2px 0", borderRadius:isUser?"13px 13px 4px 13px":"0", background:isUser?t.msgUser:"transparent", color:isUser?t.msgUserText:t.text1, fontSize:13.5, lineHeight:1.65, letterSpacing:"-.01em", wordBreak:"break-word" }}>
+          {msg.text}
+        </div>
+      )}
+
+      {/* Confirm pill */}
+      {msg.isConfirm && (
+        <div style={{ maxWidth:"88%", display:"flex", alignItems:"center", gap:7, padding:"7px 12px", borderRadius:"12px 12px 12px 4px", background:t.greenBg, border:`1px solid ${t.greenBorder}`, color:t.green, fontSize:13, fontWeight:500 }}>
+          <Icon d={IC.check} size={13} color={t.green} stroke={2.5}/>
+          {msg.text}
+        </div>
+      )}
+
+      {/* Change card — indented under AI bubble */}
+      {msg.hasChange && (
+        <div style={{ width:"100%", maxWidth:304 }}>
+          <ChangeCard t={t} onApply={()=>setApplied(true)}/>
+          {applied && (
+            <div style={{ fontSize:11, color:t.text3, marginTop:5, paddingLeft:2 }}>
+              Änderung wurde im Brief markiert.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* User timestamp hover */}
+      {isUser && (
+        <span className="ts" style={{ fontSize:10.5, color:t.text3, marginTop:3, letterSpacing:".01em" }}>{msg.time}</span>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════ CONTEXT BADGE ══════════════════ */
+function ContextBadge({ t }) {
+  return (
+    <div style={{ margin:"10px 14px 0", padding:"7px 11px", borderRadius:9, background:t.bg, border:`1px solid ${t.borderMed}`, display:"flex", alignItems:"center", gap:8, boxShadow:t.shadow, flexShrink:0 }}>
+      <div style={{ width:26, height:26, borderRadius:6, background:t.blueLight, border:`1px solid ${t.blueMid}`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+        <Icon d={IC.doc} size={13} color={t.blue}/>
+      </div>
+      <div style={{ flex:1, minWidth:0 }}>
+        <div style={{ fontSize:10.5, color:t.text3, fontWeight:500, letterSpacing:".03em", textTransform:"uppercase" }}>Kontext</div>
+        <div style={{ fontSize:12, fontWeight:600, color:t.text1, letterSpacing:"-.01em", overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>Anna Schmidt · Vorläufiger Entlassungsbrief</div>
+      </div>
+      <div style={{ width:7, height:7, borderRadius:"50%", background:t.green, boxShadow:`0 0 0 2px ${t.bgPanel}`, flexShrink:0 }}/>
+    </div>
+  );
+}
+
+/* ══════════════════ EMPTY STATE ══════════════════ */
+function EmptyState({ onSuggest, t }) {
+  return (
+    <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"0 20px 20px", gap:18 }}>
+      <div style={{ position:"relative" }}>
+        <div style={{ width:46, height:46, borderRadius:"50%", background:t.blueLight, border:`1.5px solid ${t.blueMid}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <Icon d={IC.sparkles} size={22} color={t.blue} stroke={1.6}/>
+        </div>
+        <div style={{ position:"absolute", bottom:1, right:1, width:10, height:10, borderRadius:"50%", background:t.green, border:`2px solid ${t.bgPanel}` }}/>
+      </div>
+      <div style={{ textAlign:"center" }}>
+        <div style={{ fontSize:14, fontWeight:700, color:t.text1, marginBottom:4, letterSpacing:"-.02em" }}>Assistent bereit</div>
+        <div style={{ fontSize:12.5, color:t.text2, lineHeight:1.65, maxWidth:200 }}>
+          Womit kann ich bei <span style={{ color:t.blue, fontWeight:600 }}>Anna Schmidt</span> helfen?
+        </div>
+      </div>
+      <div style={{ display:"flex", flexDirection:"column", gap:5, width:"100%", maxWidth:268 }}>
+        {QUICK_ACTIONS.map(s=>(
+          <button key={s.label} className="chip" onClick={()=>onSuggest(s.label)}
+            style={{ display:"flex", alignItems:"center", gap:9, padding:"9px 11px", background:t.bg, border:`1px solid ${t.borderMed}`, borderRadius:9, cursor:"pointer", textAlign:"left", boxShadow:t.shadow, transition:"all .14s" }}
+            onMouseEnter={e=>{ e.currentTarget.style.borderColor=t.blueMid; e.currentTarget.style.background=t.blueLight; }}
+            onMouseLeave={e=>{ e.currentTarget.style.borderColor=t.borderMed; e.currentTarget.style.background=t.bg; }}>
+            <div style={{ width:26, height:26, borderRadius:6, background:t.bgRaised, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+              <Icon d={s.icon} size={13} color={t.text2}/>
+            </div>
+            <span style={{ fontSize:12.5, fontWeight:500, color:t.text1, flex:1 }}>{s.label}</span>
+            <Icon d={IC.chevR} size={12} color={t.text3}/>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════ CHAT INPUT ══════════════════ */
+function ChatInput({ value, onChange, onSend, disabled, hasMessages, t, compact }) {
+  const ref = useRef();
+  const [focused, setFocused] = useState(false);
+  const [mic, setMic] = useState(false);
+
+  useEffect(()=>{
+    if(!ref.current) return;
+    ref.current.style.height = "auto";
+    ref.current.style.height = Math.min(ref.current.scrollHeight, 112) + "px";
+  }, [value]);
+
+  const hasText = value.trim().length > 0;
+
+  return (
+    <div style={{ padding: compact ? "6px 10px 14px" : "6px 12px 14px", background:"transparent", flexShrink:0 }}>
+      <div style={{ borderRadius:13, background:t.bg, boxShadow:focused ? t.inputFocus : t.inputShadow, transition:"box-shadow .18s", overflow:"hidden" }}>
+        {/* Quick action chips — inside input when no messages yet */}
+        {!hasMessages && !compact && (
+          <div style={{ padding:"8px 10px 0", display:"flex", gap:5, flexWrap:"wrap" }}>
+            {QUICK_ACTIONS.map(s=>(
+              <button key={s.label} className="chip" onClick={()=>onChange(s.label)}
+                style={{ padding:"3px 9px", fontSize:11.5, fontWeight:500, background:t.bgPanel, border:`1px solid ${t.border}`, borderRadius:999, color:t.text2, cursor:"pointer" }}
+                onMouseEnter={e=>{ e.currentTarget.style.borderColor=t.blueMid; e.currentTarget.style.color=t.blue; }}
+                onMouseLeave={e=>{ e.currentTarget.style.borderColor=t.border; e.currentTarget.style.color=t.text2; }}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
+        <textarea ref={ref} value={value} onChange={e=>onChange(e.target.value)}
+          onKeyDown={e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); onSend(); } }}
+          onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)}
+          placeholder="Anfrage eingeben…"
+          disabled={disabled} rows={1}
+          style={{ width:"100%", resize:"none", border:"none", outline:"none", background:"transparent", color:t.text1, fontSize:13.5, lineHeight:1.6, padding:compact?"10px 12px 6px":"11px 13px 6px", fontFamily:"inherit", minHeight:40, maxHeight:112, overflowY:"auto", letterSpacing:"-.01em" }}
+        />
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 8px 8px 10px" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:2 }}>
+            <button onClick={()=>setMic(v=>!v)} title="Mikrofon"
+              style={{ padding:"5px 6px", background:mic?t.blueLight:"transparent", border:"none", borderRadius:6, cursor:"pointer", display:"flex" }}>
+              <Icon d={IC.mic} size={14} color={mic?t.blue:t.text3}/>
+            </button>
+            {!compact && (
+              <button title="Anhang" style={{ padding:"5px 6px", background:"transparent", border:"none", borderRadius:6, cursor:"pointer", display:"flex" }}>
+                <Icon d={IC.plus} size={14} color={t.text3}/>
+              </button>
+            )}
+            <span style={{ fontSize:10, fontWeight:700, padding:"2px 7px", background:t.bgPanel, borderRadius:999, color:t.text3, letterSpacing:".03em", marginLeft:4 }}>BriefPro-1</span>
+          </div>
+          <button className="send-btn" onClick={onSend} disabled={!hasText||disabled}
+            style={{ width:30, height:30, borderRadius:"50%", border:"none", background:hasText?t.blue:t.bgPanel, display:"flex", alignItems:"center", justifyContent:"center", cursor:hasText?"pointer":"default", boxShadow:hasText?`0 3px 10px ${t.blue}55`:"none", flexShrink:0 }}>
+            <Icon d={IC.send} size={13} color={hasText?"#fff":t.text3} stroke={2.2}/>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════ CHAT HEADER ══════════════════ */
+function ChatHeader({ onCollapse, t }) {
+  return (
+    <div style={{ height:44, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 12px 0 10px", borderBottom:`1px solid ${t.border}`, flexShrink:0, background:t.headerBg, backdropFilter:"blur(8px)", WebkitBackdropFilter:"blur(8px)" }}>
+      <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+        <button onClick={onCollapse} style={{ background:"none", border:"none", cursor:"pointer", padding:4, borderRadius:5, display:"flex" }}>
+          <Icon d={IC.chevR} size={12} color={t.text3}/>
+        </button>
+        <AiAvatar t={t} size={20}/>
+        <span style={{ fontSize:13, fontWeight:700, color:t.text1, letterSpacing:"-.02em" }}>Assistent</span>
+      </div>
+      <button style={{ background:"none", border:"none", cursor:"pointer", padding:4, borderRadius:5, display:"flex", opacity:.45 }}>
+        <Icon d={IC.refresh} size={12} color={t.text2}/>
+      </button>
+    </div>
+  );
+}
+
+/* ══════════════════ MESSAGE FEED ══════════════════ */
+function Feed({ msgs, typing, msgRef, t }) {
+  const grouped = msgs.map((m,i)=>({...m, isFirst: i===0 || msgs[i-1].role!==m.role }));
+  return (
+    <div ref={msgRef} className="scroll" style={{ flex:1, overflowY:"auto", minHeight:0, background:t.bgPanel, display:"flex", flexDirection:"column" }}>
+      <div style={{ padding:"14px 14px 8px", display:"flex", flexDirection:"column", gap:10 }}>
+        {grouped.map((m,i)=>(
+          <div key={m.id} style={{ marginTop: m.isFirst && i>0 ? 4 : 0 }}>
+            <Message msg={m} t={t} isFirst={m.isFirst} typing={false}/>
+          </div>
+        ))}
+        {typing && (
+          <div style={{ display:"flex", alignItems:"center", gap:7 }} className="msg-ai">
+            <AiAvatar t={t} size={18} pulsing={true}/>
+            <TypingDots t={t}/>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════ STANDALONE CHAT PANEL ══════════════════ */
+function ChatPanel({ withMessages=false, width=380, height=640, t }) {
+  const [msgs, setMsgs] = useState(withMessages ? DEMO_MSGS : []);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const msgRef = useRef();
+
+  useEffect(()=>{ if(msgRef.current) msgRef.current.scrollTop=msgRef.current.scrollHeight; }, [msgs,typing]);
+
+  const send = () => {
+    if(!input.trim()) return;
+    const txt=input.trim(); setInput("");
+    setMsgs(m=>[...m,{id:Date.now()+"",role:"user",text:txt,time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}]);
+    setTyping(true);
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m,{id:Date.now()+"",role:"assistant",text:"Ihre Anfrage wurde verarbeitet. Bitte prüfen Sie die vorgeschlagene Änderung.",time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}]); }, 1800);
+  };
+
+  return (
+    <div style={{ width, height, display:"flex", flexDirection:"column", background:t.bgPanel, overflow:"hidden", border:`1px solid ${t.borderMed}`, boxShadow:t.shadowMd }}>
+      <ChatHeader onCollapse={()=>{}} t={t}/>
+      <ContextBadge t={t}/>
+      {msgs.length===0
+        ? <EmptyState onSuggest={txt=>setInput(txt)} t={t}/>
+        : <Feed msgs={msgs} typing={typing} msgRef={msgRef} t={t}/>
+      }
+      <ChatInput value={input} onChange={setInput} onSend={send} disabled={typing} hasMessages={msgs.length>0} t={t}/>
+    </div>
+  );
+}
+
+/* ══════════════════ MOBILE SHEET ══════════════════ */
+function MobileSheet({ expanded=false, t }) {
+  const [open, setOpen] = useState(expanded);
+  const [msgs, setMsgs] = useState(expanded ? DEMO_MSGS.slice(0,2) : []);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const msgRef = useRef();
+
+  useEffect(()=>{ if(msgRef.current) msgRef.current.scrollTop=msgRef.current.scrollHeight; }, [msgs,typing]);
+
+  const send = () => {
+    if(!input.trim()) return;
+    const txt=input.trim(); setInput("");
+    setMsgs(m=>[...m,{id:Date.now()+"",role:"user",text:txt,time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}]);
+    setTyping(true);
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m,{id:Date.now()+"",role:"assistant",text:"Ich habe Ihre Anfrage bearbeitet.",time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}]); }, 1600);
+  };
+
+  return (
+    <div style={{ width:390, height:844, background:t.bg, overflow:"hidden", position:"relative" }}>
+      {/* Letter behind */}
+      <div style={{ position:"absolute", inset:0, padding:"24px 20px", opacity:open?.14:1, transition:"opacity .3s", overflow:"hidden" }}>
+        <h2 style={{ fontSize:18, fontWeight:700, color:t.blue, marginBottom:12 }}>Einleitung</h2>
+        {["Vorläufiger Entlassungsbrief","Bernau bei Berlin, 14.07.2025","Sehr geehrte Frau Kollegin,","wir berichten über Frau Anna Schmidt, geboren am 15.03.1985…"].map((tx,i)=>(
+          <p key={i} style={{ fontSize:13, color:i===0?t.text1:t.text2, fontWeight:i===0?600:400, marginBottom:8, lineHeight:1.65 }}>{tx}</p>
+        ))}
+        <h2 style={{ fontSize:15, fontWeight:700, color:t.blue, marginTop:14, marginBottom:8 }}>Risikofaktoren</h2>
+        {["– Familiäre Vorbelastung: Vater herzkrank","– Beruflicher Stress"].map((tx,i)=>(
+          <p key={i} style={{ fontSize:13, color:t.text2, marginBottom:6, lineHeight:1.6 }}>{tx}</p>
+        ))}
+      </div>
+
+      {/* Sheet */}
+      <div style={{ position:"absolute", bottom:0, left:0, right:0, background:t.bgPanel, borderRadius:"20px 20px 0 0", boxShadow:"0 -4px 40px rgba(0,0,0,.16)", display:"flex", flexDirection:"column", height:open?"84%":"auto", transition:"height .3s cubic-bezier(.4,0,.2,1)", overflow:"hidden" }}>
+        <div style={{ display:"flex", justifyContent:"center", padding:"10px 0 2px", flexShrink:0 }}>
+          <div style={{ width:32, height:4, borderRadius:2, background:t.borderMed }}/>
+        </div>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"4px 14px 8px", flexShrink:0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+            <AiAvatar t={t} size={20}/>
+            <div>
+              <div style={{ fontSize:12.5, fontWeight:700, color:t.text1, letterSpacing:"-.01em" }}>Assistent</div>
+              <div style={{ fontSize:10.5, color:t.text3 }}>Anna Schmidt</div>
+            </div>
+          </div>
+          <button onClick={()=>setOpen(v=>!v)} style={{ background:t.bgRaised, border:"none", borderRadius:999, padding:"5px 12px", display:"flex", alignItems:"center", gap:4, cursor:"pointer", color:t.text2, fontSize:11.5, fontWeight:500 }}>
+            <Icon d={open?IC.chevD:IC.chevU} size={11} color={t.text2}/>
+            {open?"Schließen":"Öffnen"}
+          </button>
+        </div>
+        {open && (
+          <div style={{ flex:1, display:"flex", flexDirection:"column", minHeight:0, borderTop:`1px solid ${t.border}` }}>
+            <ContextBadge t={t}/>
+            {msgs.length===0
+              ? <EmptyState onSuggest={txt=>setInput(txt)} t={t}/>
+              : <Feed msgs={msgs} typing={typing} msgRef={msgRef} t={t}/>
+            }
+          </div>
+        )}
+        <ChatInput value={input} onChange={setInput} onSend={send} disabled={typing} hasMessages={msgs.length>0} t={t} compact={true}/>
+      </div>
+      {/* Home bar */}
+      <div style={{ position:"absolute", bottom:6, left:"50%", transform:"translateX(-50%)", width:100, height:4, borderRadius:2, background:"rgba(0,0,0,.1)" }}/>
+    </div>
+  );
+}
+
+/* ══════════════════ INTEGRATED DESKTOP ══════════════════ */
+function BrandLogo({ t, height=28 }) {
+  const src = t===T.dark ? "briefpro-logo-dark.jpg" : "briefpro-logo-light.jpg";
+  return <img src={src} alt="BriefPro" style={{ height, width:"auto", objectFit:"contain", display:"block", userSelect:"none" }} draggable={false}/>;
+}
+
+function IntegratedView({ chatCollapsed=false, t }) {
+  const [collapsed, setCollapsed] = useState(chatCollapsed);
+  const [msgs, setMsgs] = useState(DEMO_MSGS);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [activeTab, setActiveTab] = useState("risikofaktoren");
+  const msgRef = useRef();
+
+  useEffect(()=>{ if(msgRef.current) msgRef.current.scrollTop=msgRef.current.scrollHeight; }, [msgs,typing]);
+
+  const send = () => {
+    if(!input.trim()) return;
+    const txt=input.trim(); setInput("");
+    setMsgs(m=>[...m,{id:Date.now()+"",role:"user",text:txt,time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}]);
+    setTyping(true);
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m,{id:Date.now()+"",role:"assistant",text:"Änderung verarbeitet.",time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"})}]); }, 1600);
+  };
+
+  const CHAT_W = collapsed ? 42 : 320;
+  const TABS = ["Einleitung","Risikofaktoren","Diagnosen","Anamnese","Kört. Untersuchung"];
+
+  return (
+    <div style={{ width:1200, height:720, display:"flex", flexDirection:"column", background:t.bg, border:`1px solid ${t.borderMed}`, overflow:"hidden" }}>
+
+      {/* ── TOP NAV ── */}
+      <div style={{ height:48, background:t.headerBg, backdropFilter:"blur(12px)", WebkitBackdropFilter:"blur(12px)", borderBottom:`1px solid ${t.border}`, display:"flex", alignItems:"center", padding:"0 20px", gap:0, flexShrink:0, zIndex:10 }}>
+        {/* Logo */}
+        <div style={{ paddingRight:20, borderRight:`1px solid ${t.border}` }}>
+          <BrandLogo t={t} height={26}/>
+        </div>
+        {/* Patient context — centered */}
+        <div style={{ flex:1, display:"flex", justifyContent:"center", alignItems:"center", gap:10 }}>
+          <span style={{ fontSize:14, fontWeight:700, color:t.text1, letterSpacing:"-.02em" }}>Anna Schmidt</span>
+          <span style={{ fontSize:10, color:t.text3 }}>·</span>
+          <span style={{ fontSize:10.5, padding:"2px 8px", borderRadius:999, background:t.amberBg, color:t.amber, fontWeight:600, border:`1px solid ${t.amberBorder}` }}>IN BEARBEITUNG</span>
+          <span style={{ fontSize:10.5, padding:"2px 8px", borderRadius:999, background:t.bgRaised||t.bgPanel, color:t.text3, border:`1px solid ${t.border}` }}>ADULT</span>
+        </div>
+        {/* Actions — primary in nav */}
+        <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+          <button style={{ padding:"6px 13px", fontSize:12, background:t.bgPanel, border:`1px solid ${t.border}`, borderRadius:7, color:t.text2, cursor:"pointer" }}>Patient suchen…</button>
+          <button style={{ padding:"6px 13px", fontSize:12, fontWeight:600, background:"transparent", border:`1px solid ${t.borderMed}`, borderRadius:7, color:t.text2, cursor:"pointer" }}>+ Neuer Patient</button>
+          <button style={{ padding:"6px 14px", fontSize:12, fontWeight:700, background:t.blue, color:"#fff", border:"none", borderRadius:7, cursor:"pointer", display:"flex", alignItems:"center", gap:5, letterSpacing:"-.01em" }}>
+            <Icon d={IC.plane} size={12} color="#fff" stroke={2.2}/>
+            Zur Freigabe
+          </button>
+        </div>
+      </div>
+
+      {/* ── BODY ── */}
+      <div style={{ flex:1, display:"flex", minHeight:0 }}>
+
+        {/* Left nav */}
+        <div style={{ width:160, background:t.bg, borderRight:`1px solid ${t.border}`, display:"flex", flexDirection:"column", padding:"10px 0", flexShrink:0 }}>
+          {["Patienten","Dokumentenverwaltung","Patientenakte","Referenzmaterial","Einstellungen"].map((l,i)=>(
+            <div key={l} className="nav-itm" style={{ padding:"7px 14px", fontSize:12, fontWeight:i===1?600:400, color:i===1?t.blue:t.text2, cursor:"pointer", borderRight:`2px solid ${i===1?t.blue:"transparent"}`, letterSpacing:i===1?"-.01em":"normal" }}>{l}</div>
+          ))}
+          {/* Completeness at bottom of nav */}
+          <div style={{ marginTop:"auto", margin:"auto 10px 10px", padding:"10px 12px", borderRadius:10, background:t.bgPanel, border:`1px solid ${t.border}` }}>
+            <div style={{ display:"flex", alignItems:"center", gap:7, marginBottom:6 }}>
+              <div style={{ width:28, height:28, borderRadius:"50%", border:`2px solid ${t.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9, fontWeight:700, color:t.green }}>100%</div>
+              <div>
+                <div style={{ fontSize:11, fontWeight:600, color:t.text1 }}>Vollständig</div>
+                <div style={{ fontSize:10, color:t.text3 }}>Bereit für Review</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Editor */}
+        <div style={{ flex:1, display:"flex", flexDirection:"column", minWidth:0 }}>
+          {/* Section tabs */}
+          <div style={{ display:"flex", alignItems:"center", padding:"0 8px", borderBottom:`1px solid ${t.border}`, background:t.bg, flexShrink:0 }}>
+            <button style={{ padding:"8px 11px", fontSize:11.5, fontWeight:700, background:t.blue, color:"#fff", border:"none", borderRadius:5, margin:"5px 6px 5px 0", cursor:"pointer" }}>Full Letter</button>
+            {TABS.map(tab=>{
+              const key=tab.toLowerCase();
+              const act=activeTab===key;
+              return (
+                <button key={tab} className="tab-b" onClick={()=>setActiveTab(key)}
+                  style={{ padding:"8px 10px", fontSize:11.5, fontWeight:act?600:400, background:"transparent", border:"none", borderBottom:`2px solid ${act?t.blue:"transparent"}`, color:act?t.blue:t.text2, cursor:"pointer", whiteSpace:"nowrap" }}>
+                  {tab}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Letter content */}
+          <div className="scroll" style={{ flex:1, overflowY:"auto", padding:"36px 48px", background:t.bg }}>
+            <h2 style={{ fontSize:20, fontWeight:700, color:t.blue, marginBottom:14, letterSpacing:"-.03em" }}>Einleitung</h2>
+            <p style={{ fontSize:14, fontWeight:600, color:t.text1, marginBottom:9, letterSpacing:"-.01em" }}>Vorläufiger Entlassungsbrief</p>
+            <p style={{ fontSize:14, color:t.text2, marginBottom:9, lineHeight:1.75 }}>Bernau bei Berlin, 14.07.2025</p>
+            <p style={{ fontSize:14, color:t.text2, marginBottom:9, lineHeight:1.75 }}>Sehr geehrte Frau Kollegin, sehr geehrter Herr Kollege,</p>
+            <p style={{ fontSize:14, color:t.text2, marginBottom:28, lineHeight:1.8 }}>wir berichten über Frau Anna Schmidt, geboren am 15.03.1985, wohnhaft in Bernau bei Berlin, welche sich vom 10.07.2025 bis 14.07.2025 zur Behandlung einer arteriellen Hypertonie in unserer stationären Behandlung befand.</p>
+            <hr style={{ border:"none", borderTop:`1px solid ${t.border}`, marginBottom:28 }}/>
+            <h2 style={{ fontSize:20, fontWeight:700, color:t.blue, marginBottom:14, letterSpacing:"-.03em" }}>Risikofaktoren</h2>
+            {["– Familiäre Vorbelastung: Vater herzkrank","– Beruflicher Stress als Grundschullehrerin","– Kein Anhalt für weitere kardiovaskuläre Risikofaktoren"].map((tx,i)=>(
+              <p key={i} style={{ fontSize:14, color:t.text2, marginBottom:9, lineHeight:1.7 }}>{tx}</p>
+            ))}
+            <hr style={{ border:"none", borderTop:`1px solid ${t.border}`, margin:"28px 0" }}/>
+            <h2 style={{ fontSize:20, fontWeight:700, color:t.blue, marginBottom:14, letterSpacing:"-.03em" }}>Diagnosen</h2>
+            {["– Arterielle Hypertonie (I10)","– Verdacht auf Schlafapnoe-Syndrom (G47.3)"].map((tx,i)=>(
+              <p key={i} style={{ fontSize:14, color:t.text2, marginBottom:9, lineHeight:1.7 }}>{tx}</p>
+            ))}
+          </div>
+        </div>
+
+        {/* ── CHAT COLUMN — elevated Z-plane ── */}
+        <div style={{ width:CHAT_W, flexShrink:0, display:"flex", flexDirection:"column", background:t.bgPanel, boxShadow:t.chatShadow, borderLeft:`1px solid ${t.border}`, transition:"width .26s cubic-bezier(.4,0,.2,1)", overflow:"hidden", minHeight:0, position:"relative", zIndex:2 }}>
+          {collapsed ? (
+            <div style={{ width:42, display:"flex", flexDirection:"column", alignItems:"center", paddingTop:12, gap:14 }}>
+              <button onClick={()=>setCollapsed(false)} style={{ background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:10 }}>
+                <Icon d={IC.chevL} size={12} color={t.text3}/>
+                <AiAvatar t={t} size={20}/>
+              </button>
+            </div>
+          ) : (
+            <>
+              <ChatHeader onCollapse={()=>setCollapsed(true)} t={t}/>
+              <ContextBadge t={t}/>
+              {msgs.length===0
+                ? <EmptyState onSuggest={txt=>setInput(txt)} t={t}/>
+                : <Feed msgs={msgs} typing={typing} msgRef={msgRef} t={t}/>
+              }
+              <ChatInput value={input} onChange={setInput} onSend={send} disabled={typing} hasMessages={msgs.length>0} t={t}/>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════ TWEAKS ══════════════════ */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"theme":"light"}/*EDITMODE-END*/;
+
+function TweaksPanel({ visible, tweaks, setTweaks }) {
+  if(!visible) return null;
+  return (
+    <div style={{ position:"fixed", bottom:24, right:24, background:"#fff", border:"1px solid rgba(0,0,0,.09)", borderRadius:12, padding:16, width:200, zIndex:1000, boxShadow:"0 8px 32px rgba(0,0,0,.1)", fontFamily:"Inter,sans-serif" }}>
+      <div style={{ fontSize:12.5, fontWeight:700, color:"#0F172A", marginBottom:12 }}>Tweaks</div>
+      <label style={{ display:"flex", justifyContent:"space-between", alignItems:"center", fontSize:12, color:"#475569", cursor:"pointer" }}>
+        Dark mode
+        <input type="checkbox" checked={tweaks.theme==="dark"} onChange={e=>setTweaks(v=>({...v,theme:e.target.checked?"dark":"light"}))}/>
+      </label>
+    </div>
+  );
+}
+
+/* ══════════════════ ROOT ══════════════════ */
+function App() {
+  const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+  const [tweaksVisible, setTweaksVisible] = useState(false);
+
+  useEffect(()=>{
+    window.addEventListener("message",e=>{
+      if(e.data?.type==="__activate_edit_mode")   setTweaksVisible(true);
+      if(e.data?.type==="__deactivate_edit_mode") setTweaksVisible(false);
+    });
+    window.parent.postMessage({type:"__edit_mode_available"},"*");
+  },[]);
+
+  const tL=T.light, tD=T.dark;
+
+  return (
+    <>
+      <DesignCanvas>
+        <DCSection id="light" title="Light — Chat Panel">
+          <DCArtboard id="l-empty" label="Empty State" width={380} height={640}>
+            <ChatPanel withMessages={false} width={380} height={640} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="l-msgs" label="With Messages + Change Card" width={380} height={640}>
+            <ChatPanel withMessages={true} width={380} height={640} t={tL}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="desktop-l" title="Light — Integrated Desktop">
+          <DCArtboard id="l-int" label="Chat Open" width={1200} height={720}>
+            <IntegratedView chatCollapsed={false} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="l-int-c" label="Chat Collapsed" width={1200} height={720}>
+            <IntegratedView chatCollapsed={true} t={tL}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="dark" title="Dark — Chat Panel">
+          <DCArtboard id="d-empty" label="Empty State" width={380} height={640}>
+            <ChatPanel withMessages={false} width={380} height={640} t={tD}/>
+          </DCArtboard>
+          <DCArtboard id="d-msgs" label="With Messages + Change Card" width={380} height={640}>
+            <ChatPanel withMessages={true} width={380} height={640} t={tD}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="desktop-d" title="Dark — Integrated Desktop">
+          <DCArtboard id="d-int" label="Chat Open" width={1200} height={720}>
+            <IntegratedView chatCollapsed={false} t={tD}/>
+          </DCArtboard>
+          <DCArtboard id="d-int-c" label="Chat Collapsed" width={1200} height={720}>
+            <IntegratedView chatCollapsed={true} t={tD}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="mob" title="Mobile">
+          <DCArtboard id="m-l-c" label="Light · Collapsed" width={390} height={844}>
+            <MobileSheet expanded={false} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="m-l-e" label="Light · Expanded" width={390} height={844}>
+            <MobileSheet expanded={true} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="m-d-c" label="Dark · Collapsed" width={390} height={844}>
+            <MobileSheet expanded={false} t={tD}/>
+          </DCArtboard>
+          <DCArtboard id="m-d-e" label="Dark · Expanded" width={390} height={844}>
+            <MobileSheet expanded={true} t={tD}/>
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+      <TweaksPanel visible={tweaksVisible} tweaks={tweaks} setTweaks={setTweaks}/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+<div id="root"></div>
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="80" fill="#CBD5E1"/>
+    <rect x="8" y="8" width="50" height="64" rx="3" fill="#fff" stroke="rgba(0,0,0,.08)" stroke-width=".8"/>
+    <rect x="8" y="8" width="50" height="10" rx="3" fill="rgba(0,0,0,.03)"/>
+    <rect x="12" y="22" width="32" height="5" rx="3" fill="#DDE5F0"/>
+    <rect x="12" y="31" width="22" height="4" rx="2" fill="rgba(0,0,0,.05)"/>
+    <rect x="22" y="39" width="28" height="5" rx="3" fill="#DDE5F0"/>
+    <rect x="12" y="48" width="36" height="10" rx="4" fill="#F1F5F9" stroke="rgba(0,0,0,.08)" stroke-width=".8"/>
+    <rect x="14" y="51" width="20" height="2.5" rx="1.5" fill="rgba(0,0,0,.07)"/>
+    <circle cx="44" cy="53" r="4" fill="#005293"/>
+    <rect x="64" y="8" width="48" height="64" rx="3" fill="#0B1120" stroke="rgba(255,255,255,.07)" stroke-width=".8"/>
+    <rect x="64" y="8" width="48" height="10" rx="3" fill="rgba(255,255,255,.04)"/>
+    <rect x="68" y="22" width="32" height="5" rx="3" fill="#131E35"/>
+    <rect x="68" y="31" width="22" height="4" rx="2" fill="rgba(255,255,255,.05)"/>
+    <rect x="78" y="39" width="28" height="5" rx="3" fill="#131E35"/>
+    <rect x="68" y="52" width="36" height="10" rx="4" fill="#131E35" stroke="rgba(255,255,255,.06)" stroke-width=".8"/>
+    <circle cx="100" cy="57" r="4" fill="#2F80C5"/>
+  </svg>
+</template>
+</body>
+</html>

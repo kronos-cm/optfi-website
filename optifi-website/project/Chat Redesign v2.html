@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BriefPro — Chat v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #dde4ef; }
+
+  .scroll::-webkit-scrollbar { width: 3px; }
+  .scroll::-webkit-scrollbar-track { background: transparent; }
+  .scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 99px; }
+  .scroll::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.15); }
+
+  /* Message entrance */
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes msgInUser {
+    from { opacity: 0; transform: translateY(5px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .msg-in     { animation: msgIn 0.22s cubic-bezier(0.22,1,0.36,1) both; }
+  .msg-in-usr { animation: msgInUser 0.18s cubic-bezier(0.22,1,0.36,1) both; }
+
+  /* Typing dots */
+  @keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.35} 30%{transform:translateY(-4px);opacity:1} }
+
+  /* Hover-reveal timestamps */
+  .msg-row .ts { opacity: 0; transition: opacity 0.15s; pointer-events: none; }
+  .msg-row:hover .ts { opacity: 1; }
+
+  /* Hover-reveal message actions */
+  .msg-actions { opacity: 0; transition: opacity 0.12s; }
+  .msg-row:hover .msg-actions { opacity: 1; }
+
+  /* Send button spring */
+  .send-btn { transition: transform 0.12s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s, background 0.15s; }
+  .send-btn:hover:not(:disabled) { transform: scale(1.08); }
+  .send-btn:active:not(:disabled) { transform: scale(0.95); }
+
+  /* Suggestion chip */
+  .chip { transition: background 0.15s, color 0.15s, border-color 0.15s; }
+  .chip:hover { background: var(--chip-hover) !important; border-color: var(--chip-border-hover) !important; color: var(--chip-color-hover) !important; }
+
+  /* Nav item hover */
+  .nav-item { transition: background 0.12s, color 0.12s; }
+  .nav-item:hover { background: rgba(0,82,147,0.05); }
+
+  /* Change card action buttons */
+  .action-btn { transition: background 0.12s, transform 0.1s; }
+  .action-btn:hover { filter: brightness(0.95); }
+  .action-btn:active { transform: scale(0.97); }
+
+  /* Tab hover */
+  .tab-btn { transition: color 0.12s, border-color 0.12s; }
+  .tab-btn:hover { color: var(--tab-hover-color, #005293) !important; }
+</style>
+</head>
+<body>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+/* ─── TOKENS ─── */
+const T = {
+  light: {
+    accent:       "#005293",
+    accentLight:  "rgba(0,82,147,0.07)",
+    accentMid:    "rgba(0,82,147,0.14)",
+    bg:           "#ffffff",
+    bgPage:       "#F5F7FA",
+    bgPanel:      "#F8FAFC",
+    bgRaised:     "#F1F5F9",
+    bgHover:      "rgba(0,82,147,0.05)",
+    border:       "rgba(0,0,0,0.06)",
+    borderMed:    "rgba(0,0,0,0.09)",
+    text1:        "#0F172A",
+    text2:        "#526070",
+    text3:        "#9EB3C6",
+    green:        "#16A34A",
+    greenBg:      "#F0FDF4",
+    greenBorder:  "rgba(22,163,74,0.2)",
+    red:          "#DC2626",
+    redBg:        "#FEF2F2",
+    amber:        "#B45309",
+    amberBg:      "#FFFBEB",
+    amberBorder:  "rgba(180,83,9,0.2)",
+    /* messages */
+    msgUser:      "#EAECF0",
+    msgUserText:  "#0F172A",
+    msgAiBg:      "transparent",
+    msgAiText:    "#0F172A",
+    /* input */
+    inputBg:      "#FFFFFF",
+    inputShadow:  "0 2px 16px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.06)",
+    inputFocusShadow: "0 4px 24px rgba(0,82,147,0.12), 0 0 0 1.5px rgba(0,82,147,0.35)",
+    /* panels */
+    chatPanel:    "#FAFBFD",
+    shadow:       "0 4px 24px rgba(0,0,0,0.07)",
+    shadowMd:     "0 8px 40px rgba(0,0,0,0.1)",
+  },
+  dark: {
+    accent:       "#3B82F6",
+    accentLight:  "rgba(59,130,246,0.1)",
+    accentMid:    "rgba(59,130,246,0.2)",
+    bg:           "#0F1117",
+    bgPage:       "#0F1117",
+    bgPanel:      "#161B27",
+    bgRaised:     "#1E2535",
+    bgHover:      "rgba(59,130,246,0.06)",
+    border:       "rgba(255,255,255,0.06)",
+    borderMed:    "rgba(255,255,255,0.1)",
+    text1:        "#EDF2F7",
+    text2:        "#7A95B0",
+    text3:        "#3D5468",
+    green:        "#34D399",
+    greenBg:      "rgba(52,211,153,0.08)",
+    greenBorder:  "rgba(52,211,153,0.2)",
+    red:          "#F87171",
+    redBg:        "rgba(248,113,113,0.08)",
+    amber:        "#FBBF24",
+    amberBg:      "rgba(251,191,36,0.08)",
+    amberBorder:  "rgba(251,191,36,0.2)",
+    msgUser:      "#1E2535",
+    msgUserText:  "#EDF2F7",
+    msgAiBg:      "transparent",
+    msgAiText:    "#EDF2F7",
+    inputBg:      "#161B27",
+    inputShadow:  "0 2px 16px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.06)",
+    inputFocusShadow: "0 4px 24px rgba(59,130,246,0.15), 0 0 0 1.5px rgba(59,130,246,0.4)",
+    chatPanel:    "#161B27",
+    shadow:       "0 4px 24px rgba(0,0,0,0.25)",
+    shadowMd:     "0 8px 40px rgba(0,0,0,0.35)",
+  },
+};
+
+/* ─── ICONS ─── */
+const IC = {
+  send:     "M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z",
+  mic:      ["M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z","M19 10v2a7 7 0 0 1-14 0v-2","M12 19v3","M8 22h8"],
+  plus:     "M12 5v14M5 12h14",
+  globe:    "M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
+  chevL:    "M15 18l-6-6 6-6",
+  chevR:    "M9 18l6-6-6-6",
+  chevD:    "M6 9l6 6 6-6",
+  chevU:    "M18 15l-6-6-6 6",
+  refresh:  "M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15",
+  sparkles: ["M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09z","M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456z"],
+  copy:     ["M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z","M8 2h8l4 4v2H8z"],
+  edit:     ["M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7","M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"],
+  audit:    ["M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2","M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2","M9 12h6M9 16h4"],
+  letter:   ["M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z","M22 6l-10 7L2 6"],
+  plane:    "M12 19l9 2-9-18-9 18 9-2zm0 0v-8",
+  check:    "M20 6L9 17l-5-5",
+  x:        "M18 6L6 18M6 6l12 12",
+  moon:     "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z",
+  sun:      ["M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42","M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"],
+};
+
+const Icon = ({ d, size=16, stroke=1.6, color="currentColor", fill="none" }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
+    {Array.isArray(d) ? d.map((p,i)=><path key={i} d={p}/>) : <path d={d}/>}
+  </svg>
+);
+
+/* ─── DEMO DATA ─── */
+const SUGGESTIONS = [
+  { label: "Zusammenfassung schreiben", icon: IC.letter },
+  { label: "Anamnese ergänzen",          icon: IC.edit },
+  { label: "Diagnosen prüfen",           icon: IC.audit },
+];
+const DEMO_MSGS = [
+  { id:"1", role:"user",      text:"Bitte ergänze die Anamnese mit den Vorerkrankungen.", time:"14:32" },
+  { id:"2", role:"assistant", text:"Ich habe eine Ergänzung für die Anamnese vorgeschlagen:", time:"14:32", hasChange:true },
+  { id:"3", role:"user",      text:"Genehmigen", time:"14:33" },
+  { id:"4", role:"assistant", text:"✓ 1 Änderung angewendet. Die Anamnese wurde erfolgreich ergänzt.", time:"14:33", isConfirm:true },
+];
+
+/* ─── TYPING DOTS ─── */
+function TypingDots({ t }) {
+  return (
+    <div style={{ display:"flex", gap:5, padding:"4px 2px", alignItems:"center", height:24 }}>
+      {[0,1,2].map(i=>(
+        <div key={i} style={{ width:5, height:5, borderRadius:"50%", background:t.text3, animation:`tdot 1.1s ease-in-out ${i*0.18}s infinite` }} />
+      ))}
+    </div>
+  );
+}
+
+/* ─── AI AVATAR (small glyph) ─── */
+function AiDot({ t, size=20 }) {
+  return (
+    <div style={{ width:size, height:size, borderRadius:"50%", flexShrink:0, background:t.accentLight, border:`1px solid ${t.accentMid}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+      <Icon d={IC.sparkles} size={size*0.52} color={t.accent} stroke={1.7}/>
+    </div>
+  );
+}
+
+/* ─── CHANGE / DIFF CARD ─── */
+function ChangeCard({ t }) {
+  const [status, setStatus] = useState("pending");
+  const isPending = status === "pending";
+  return (
+    <div style={{ borderRadius:10, background:t.bg, border:`1px solid ${t.borderMed}`, overflow:"hidden", fontSize:12.5, boxShadow:t.shadow }}>
+      {/* Header row */}
+      <div style={{ padding:"8px 12px", display:"flex", alignItems:"center", justifyContent:"space-between", borderBottom:`1px solid ${t.border}` }}>
+        <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+          <span style={{ fontSize:9.5, fontWeight:700, letterSpacing:"0.08em", color:t.accent, textTransform:"uppercase" }}>Ersetzen</span>
+          <span style={{ width:1, height:10, background:t.border, display:"inline-block" }}/>
+          <span style={{ fontWeight:600, color:t.text1, fontSize:12 }}>Anamnese</span>
+        </div>
+        <span style={{ fontSize:11, color:t.text3, fontWeight:500 }}>95 % sicher</span>
+      </div>
+      {/* Diff */}
+      <div style={{ padding:"8px 10px", display:"flex", flexDirection:"column", gap:3 }}>
+        <div style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
+          <span style={{ fontSize:11, fontWeight:700, color:"#DC2626", marginTop:2, minWidth:10 }}>−</span>
+          <div style={{ padding:"4px 8px", borderRadius:5, background:t.redBg, color:"#991B1B", fontFamily:"'JetBrains Mono',monospace", fontSize:11.5, lineHeight:1.6, flex:1 }}>Vorerkrankungen: keine bekannt</div>
+        </div>
+        <div style={{ display:"flex", gap:8, alignItems:"flex-start" }}>
+          <span style={{ fontSize:11, fontWeight:700, color:t.green, marginTop:2, minWidth:10 }}>+</span>
+          <div style={{ padding:"4px 8px", borderRadius:5, background:t.greenBg, color:"#166534", fontFamily:"'JetBrains Mono',monospace", fontSize:11.5, lineHeight:1.6, flex:1 }}>Vorerkrankungen: arterielle Hypertonie seit 2018, Diabetes mellitus Typ 2</div>
+        </div>
+      </div>
+      {/* Actions */}
+      {isPending ? (
+        <div style={{ padding:"7px 10px 9px", display:"flex", gap:6, justifyContent:"flex-end" }}>
+          <button className="action-btn" onClick={()=>setStatus("rejected")} style={{ padding:"5px 13px", fontWeight:500, borderRadius:7, border:`1px solid ${t.borderMed}`, background:t.bgRaised, color:t.text2, cursor:"pointer", fontSize:11.5 }}>Ablehnen</button>
+          <button className="action-btn" onClick={()=>setStatus("approved")} style={{ padding:"5px 13px", fontWeight:600, borderRadius:7, border:"none", background:t.accent, color:"#fff", cursor:"pointer", fontSize:11.5 }}>Genehmigen</button>
+        </div>
+      ) : (
+        <div style={{ padding:"7px 12px 9px", display:"flex", justifyContent:"flex-end", alignItems:"center", gap:5 }}>
+          <Icon d={status==="approved"?IC.check:IC.x} size={13} color={status==="approved"?t.green:t.red} stroke={2.2}/>
+          <span style={{ fontSize:11.5, fontWeight:600, color:status==="approved"?t.green:t.red }}>
+            {status==="approved"?"Genehmigt":"Abgelehnt"}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── MESSAGE ─── */
+function Message({ msg, t, isFirst, isLast }) {
+  const isUser = msg.role === "user";
+  return (
+    <div className={`msg-row ${isUser?"msg-in-usr":"msg-in"}`} style={{ display:"flex", flexDirection:"column", alignItems:isUser?"flex-end":"flex-start", gap:0 }}>
+      {/* Avatar row — only show AI avatar on first in group */}
+      {!isUser && isFirst && (
+        <div style={{ display:"flex", alignItems:"center", gap:6, marginBottom:4, paddingLeft:2 }}>
+          <AiDot t={t} size={18}/>
+          <span className="ts" style={{ fontSize:10.5, color:t.text3, fontWeight:400, letterSpacing:"0.01em" }}>{msg.time}</span>
+        </div>
+      )}
+
+      {/* Bubble row with hover actions */}
+      <div style={{ display:"flex", alignItems:"flex-end", gap:8, flexDirection:isUser?"row-reverse":"row", maxWidth:"88%" }}>
+        {/* Bubble */}
+        {!msg.isConfirm && (
+          <div style={{ padding:isUser?"9px 13px":"2px 0", borderRadius:isUser?"14px 14px 4px 14px":"0", background:isUser?t.msgUser:t.msgAiBg, color:isUser?t.msgUserText:t.msgAiText, fontSize:13.5, lineHeight:1.6, fontWeight:400, letterSpacing:"-0.01em", wordBreak:"break-word", textWrap:"pretty" }}>
+            {msg.text}
+          </div>
+        )}
+        {msg.isConfirm && (
+          <div style={{ padding:"8px 12px", borderRadius:"14px 14px 14px 4px", background:t.greenBg, border:`1px solid ${t.greenBorder}`, color:t.green, fontSize:13, lineHeight:1.6, fontWeight:500 }}>
+            {msg.text}
+          </div>
+        )}
+        {/* Hover actions */}
+        {!msg.isConfirm && (
+          <div className="msg-actions" style={{ display:"flex", alignItems:"center", gap:3, paddingBottom:2 }}>
+            <button title="Kopieren" style={{ background:"none", border:"none", cursor:"pointer", padding:3, borderRadius:4, color:t.text3, display:"flex" }}>
+              <Icon d={IC.copy[0]} size={13} color={t.text3}/>
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Timestamp for user messages — hover reveal */}
+      {isUser && isLast && (
+        <span className="ts" style={{ fontSize:10.5, color:t.text3, marginTop:3, marginRight:2, letterSpacing:"0.01em" }}>{msg.time}</span>
+      )}
+
+      {/* Change card */}
+      {msg.hasChange && (
+        <div style={{ width:"100%", maxWidth:310, marginTop:6, paddingLeft:0 }}>
+          <ChangeCard t={t}/>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── EMPTY STATE ─── */
+function EmptyState({ onSuggest, t }) {
+  return (
+    <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"24px 20px 16px", gap:20 }}>
+      {/* Icon */}
+      <div style={{ position:"relative" }}>
+        <div style={{ width:44, height:44, borderRadius:"50%", background:t.accentLight, border:`1.5px solid ${t.accentMid}`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+          <Icon d={IC.sparkles} size={20} color={t.accent} stroke={1.6}/>
+        </div>
+        <div style={{ position:"absolute", bottom:1, right:1, width:10, height:10, borderRadius:"50%", background:t.green, border:`2px solid ${t.chatPanel}` }} />
+      </div>
+      {/* Copy */}
+      <div style={{ textAlign:"center", lineHeight:1 }}>
+        <div style={{ fontSize:13.5, fontWeight:600, color:t.text1, marginBottom:5 }}>Assistent bereit</div>
+        <div style={{ fontSize:12.5, color:t.text2, lineHeight:1.65, maxWidth:200 }}>
+          Womit kann ich bei{" "}
+          <span style={{ color:t.accent, fontWeight:600 }}>Anna Schmidt</span>{" "}
+          helfen?
+        </div>
+      </div>
+      {/* Suggestions */}
+      <div style={{ display:"flex", flexDirection:"column", gap:5, width:"100%", maxWidth:265 }}>
+        {SUGGESTIONS.map(s=>(
+          <button key={s.label} className="chip" onClick={()=>onSuggest(s.label)}
+            style={{ "--chip-hover":t.accentLight, "--chip-border-hover":t.accentMid, "--chip-color-hover":t.accent, display:"flex", alignItems:"center", gap:10, padding:"9px 12px", background:t.bg, border:`1px solid ${t.border}`, borderRadius:9, cursor:"pointer", textAlign:"left", boxShadow:t.shadow }}>
+            <div style={{ width:26, height:26, borderRadius:6, background:t.bgPanel, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+              <Icon d={s.icon} size={13} color={t.text2}/>
+            </div>
+            <span style={{ fontSize:12.5, fontWeight:500, color:t.text1, flex:1, lineHeight:1.35 }}>{s.label}</span>
+            <Icon d={IC.chevR} size={12} color={t.text3}/>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── CHAT INPUT ─── */
+function ChatInput({ value, onChange, onSend, disabled, hasMessages, t, compact }) {
+  const ref = useRef();
+  const [focused, setFocused] = useState(false);
+  const [mic, setMic] = useState(false);
+
+  useEffect(()=>{
+    if(!ref.current) return;
+    ref.current.style.height = "auto";
+    ref.current.style.height = Math.min(ref.current.scrollHeight, 120) + "px";
+  }, [value]);
+
+  const hasText = value.trim().length > 0;
+
+  return (
+    <div style={{ padding: compact ? "6px 10px 14px" : "8px 14px 12px", background:"transparent", flexShrink:0 }}>
+      {/* Floating input card */}
+      <div style={{ borderRadius:14, background:t.inputBg, boxShadow:focused ? t.inputFocusShadow : t.inputShadow, transition:"box-shadow 0.2s", overflow:"hidden" }}>
+        {/* Context chips — only before convo */}
+        {!hasMessages && !compact && (
+          <div style={{ padding:"8px 10px 0", display:"flex", gap:5, flexWrap:"wrap" }}>
+            {SUGGESTIONS.map(s=>(
+              <button key={s.label} className="chip" onClick={()=>onChange(s.label)}
+                style={{ "--chip-hover":t.accentLight, "--chip-border-hover":"transparent", "--chip-color-hover":t.accent, padding:"4px 10px", fontSize:11.5, fontWeight:500, background:t.bgPanel, border:`1px solid ${t.border}`, borderRadius:999, color:t.text2, cursor:"pointer" }}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
+        {/* Textarea */}
+        <textarea ref={ref} value={value} onChange={e=>onChange(e.target.value)}
+          onKeyDown={e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); onSend(); } }}
+          onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)}
+          placeholder="Geben Sie Ihre Anfrage ein…"
+          disabled={disabled} rows={1}
+          style={{ width:"100%", resize:"none", border:"none", outline:"none", background:"transparent", color:t.text1, fontSize:13.5, lineHeight:1.6, padding:compact?"10px 12px 6px":"11px 13px 6px", fontFamily:"inherit", minHeight:40, maxHeight:120, overflowY:"auto", letterSpacing:"-0.01em" }}
+        />
+        {/* Toolbar */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 8px 8px 10px" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:1 }}>
+            {!compact && (
+              <ToolBtn title="Anhang" t={t}><Icon d={IC.plus} size={14} color={t.text3}/></ToolBtn>
+            )}
+            <ToolBtn title="Mikrofon" active={mic} onClick={()=>setMic(v=>!v)} t={t}>
+              <Icon d={IC.mic} size={14} color={mic?t.accent:t.text3}/>
+            </ToolBtn>
+            <div style={{ fontSize:10.5, fontWeight:600, padding:"2px 8px", background:t.bgPanel, borderRadius:999, color:t.text3, letterSpacing:"0.03em", marginLeft:4 }}>BriefPro-1</div>
+          </div>
+          <button className="send-btn" onClick={onSend} disabled={!hasText || disabled}
+            style={{ width:30, height:30, borderRadius:"50%", border:"none", background:hasText?t.accent:t.bgRaised, display:"flex", alignItems:"center", justifyContent:"center", cursor:hasText?"pointer":"default", boxShadow:hasText?`0 3px 12px ${t.accent}55`:"none", flexShrink:0 }}>
+            <Icon d={IC.send} size={13} color={hasText?"#fff":t.text3} stroke={2.2}/>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ToolBtn({ children, title, active, onClick, t }) {
+  return (
+    <button onClick={onClick} title={title} style={{ display:"flex", alignItems:"center", padding:"5px 6px", background:active?t.accentLight:"transparent", border:"none", borderRadius:6, cursor:"pointer", transition:"background 0.12s" }}>
+      {children}
+    </button>
+  );
+}
+
+/* ─── CHAT HEADER ─── */
+function ChatHeader({ onCollapse, t }) {
+  return (
+    <div style={{ height:42, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 12px 0 10px", borderBottom:`1px solid ${t.border}`, flexShrink:0, background:t.chatPanel }}>
+      <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+        <button onClick={onCollapse} style={{ background:"none", border:"none", cursor:"pointer", padding:4, borderRadius:5, color:t.text3, display:"flex", marginLeft:-2 }}>
+          <Icon d={IC.chevR} size={12} color={t.text3}/>
+        </button>
+        <AiDot t={t} size={19}/>
+        <div>
+          <div style={{ fontSize:12, fontWeight:600, color:t.text1, lineHeight:1.2 }}>Assistent</div>
+          <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+            <div style={{ width:5, height:5, borderRadius:"50%", background:t.green }}/>
+            <span style={{ fontSize:10.5, color:t.text3, letterSpacing:"0.01em" }}>Anna Schmidt</span>
+          </div>
+        </div>
+      </div>
+      <button style={{ background:"none", border:"none", cursor:"pointer", padding:4, borderRadius:5, display:"flex", opacity:0.5 }} title="Neu laden">
+        <Icon d={IC.refresh} size={12} color={t.text2}/>
+      </button>
+    </div>
+  );
+}
+
+/* ─── MESSAGE LIST RENDERER ─── */
+function MessageList({ msgs, typing, msgRef, t }) {
+  // Group consecutive messages by role
+  const grouped = msgs.map((m, i) => ({
+    ...m,
+    isFirst: i === 0 || msgs[i-1].role !== m.role,
+    isLast:  i === msgs.length-1 || msgs[i+1].role !== m.role,
+  }));
+
+  return (
+    <div ref={msgRef} className="scroll" style={{ flex:1, overflowY:"auto", minHeight:0, background:t.chatPanel, display:"flex", flexDirection:"column" }}>
+      {msgs.length === 0
+        ? null
+        : <div style={{ padding:"16px 14px 8px", display:"flex", flexDirection:"column", gap:10 }}>
+            {grouped.map((m, i) => (
+              <div key={m.id} style={{ marginTop: m.isFirst && i > 0 ? 6 : 0 }}>
+                <Message msg={m} t={t} isFirst={m.isFirst} isLast={m.isLast}/>
+              </div>
+            ))}
+            {typing && (
+              <div style={{ display:"flex", alignItems:"center", gap:7 }} className="msg-in">
+                <AiDot t={t} size={18}/>
+                <TypingDots t={t}/>
+              </div>
+            )}
+          </div>
+      }
+    </div>
+  );
+}
+
+/* ─── STANDALONE CHAT PANEL ─── */
+function ChatPanel({ withMessages=false, width=380, height=640, t }) {
+  const [msgs, setMsgs] = useState(withMessages ? DEMO_MSGS : []);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const msgRef = useRef();
+
+  useEffect(()=>{ if(msgRef.current) msgRef.current.scrollTop = msgRef.current.scrollHeight; }, [msgs, typing]);
+
+  const send = () => {
+    if(!input.trim()) return;
+    const txt = input.trim(); setInput("");
+    setMsgs(m=>[...m, { id:Date.now()+"", role:"user", text:txt, time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}) }]);
+    setTyping(true);
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m, { id:Date.now()+"", role:"assistant", text:"Ihre Anfrage wurde verarbeitet. Bitte prüfen Sie die vorgeschlagene Änderung.", time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}) }]); }, 1800);
+  };
+
+  return (
+    <div style={{ width, height, display:"flex", flexDirection:"column", background:t.chatPanel, overflow:"hidden", border:`1px solid ${t.borderMed}`, boxShadow:t.shadowMd }}>
+      <ChatHeader onCollapse={()=>{}} t={t}/>
+      {msgs.length === 0
+        ? <EmptyState onSuggest={txt=>setInput(txt)} t={t}/>
+        : <MessageList msgs={msgs} typing={typing} msgRef={msgRef} t={t}/>
+      }
+      <ChatInput value={input} onChange={setInput} onSend={send} disabled={typing} hasMessages={msgs.length>0} t={t}/>
+    </div>
+  );
+}
+
+/* ─── MOBILE BOTTOM SHEET ─── */
+function MobileSheet({ expanded=false, t }) {
+  const [open, setOpen] = useState(expanded);
+  const [msgs, setMsgs] = useState(expanded ? DEMO_MSGS.slice(0,2) : []);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const msgRef = useRef();
+
+  useEffect(()=>{ if(msgRef.current) msgRef.current.scrollTop = msgRef.current.scrollHeight; }, [msgs, typing]);
+
+  const send = () => {
+    if(!input.trim()) return;
+    const txt = input.trim(); setInput("");
+    setMsgs(m=>[...m, { id:Date.now()+"", role:"user", text:txt, time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}) }]);
+    setTyping(true);
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m, { id:Date.now()+"", role:"assistant", text:"Ich habe Ihre Anfrage bearbeitet.", time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}) }]); }, 1600);
+  };
+
+  return (
+    <div style={{ width:390, height:844, background:t.bgPage, overflow:"hidden", position:"relative", display:"flex", flexDirection:"column" }}>
+      {/* Letter content dimmed behind */}
+      <div style={{ flex:1, padding:"24px 20px", opacity:open?0.18:1, transition:"opacity 0.3s", overflow:"hidden", background:t.bg }}>
+        <h2 style={{ fontSize:18, fontWeight:700, color:t.accent, marginBottom:12 }}>Einleitung</h2>
+        {["Vorläufiger Entlassungsbrief","Bernau bei Berlin, 14.07.2025","Sehr geehrte Frau Kollegin, sehr geehrter Herr Kollege,","wir berichten über Frau Anna Schmidt, geboren am 15.03.1985..."].map((tx,i)=>(
+          <p key={i} style={{ fontSize:13, color:i===0?t.text1:t.text2, fontWeight:i===0?600:400, marginBottom:9, lineHeight:1.65 }}>{tx}</p>
+        ))}
+        <h2 style={{ fontSize:16, fontWeight:700, color:t.accent, marginTop:16, marginBottom:8 }}>Risikofaktoren</h2>
+        {["– Familiäre Vorbelastung: Vater herzkrank","– Beruflicher Stress als Grundschullehrerin"].map((tx,i)=>(
+          <p key={i} style={{ fontSize:13, color:t.text2, marginBottom:6, lineHeight:1.6 }}>{tx}</p>
+        ))}
+      </div>
+
+      {/* Bottom sheet */}
+      <div style={{ position:"absolute", bottom:0, left:0, right:0, background:t.bg, borderRadius:"20px 20px 0 0", boxShadow:"0 -2px 32px rgba(0,0,0,0.12)", display:"flex", flexDirection:"column", height:open?"82%":"auto", transition:"height 0.3s cubic-bezier(0.4,0,0.2,1)", overflow:"hidden" }}>
+        {/* Handle */}
+        <div style={{ display:"flex", justifyContent:"center", padding:"10px 0 2px", flexShrink:0 }}>
+          <div style={{ width:32, height:4, borderRadius:2, background:t.border }} />
+        </div>
+        {/* Sheet header */}
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"4px 14px 8px", flexShrink:0 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+            <AiDot t={t} size={20}/>
+            <div>
+              <div style={{ fontSize:12.5, fontWeight:600, color:t.text1 }}>Assistent</div>
+              <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+                <div style={{ width:5, height:5, borderRadius:"50%", background:t.green }}/>
+                <span style={{ fontSize:10.5, color:t.text3 }}>Anna Schmidt</span>
+              </div>
+            </div>
+          </div>
+          <button onClick={()=>setOpen(v=>!v)} style={{ background:t.bgRaised, border:"none", borderRadius:999, padding:"5px 12px", display:"flex", alignItems:"center", gap:4, cursor:"pointer", color:t.text2, fontSize:11.5, fontWeight:500 }}>
+            <Icon d={open?IC.chevD:IC.chevU} size={11} color={t.text2}/>
+            {open ? "Schließen" : "Öffnen"}
+          </button>
+        </div>
+
+        {open && (
+          <div style={{ display:"flex", flexDirection:"column", flex:1, minHeight:0, borderTop:`1px solid ${t.border}`, background:t.chatPanel }}>
+            {msgs.length === 0
+              ? <EmptyState onSuggest={txt=>setInput(txt)} t={t}/>
+              : <MessageList msgs={msgs} typing={typing} msgRef={msgRef} t={t}/>
+            }
+          </div>
+        )}
+        <ChatInput value={input} onChange={setInput} onSend={send} disabled={typing} hasMessages={msgs.length>0} t={t} compact={true}/>
+      </div>
+      {/* iOS home bar */}
+      <div style={{ position:"absolute", bottom:6, left:"50%", transform:"translateX(-50%)", width:100, height:4, borderRadius:2, background:"rgba(0,0,0,0.1)" }}/>
+    </div>
+  );
+}
+
+/* ─── INTEGRATED DESKTOP VIEW ─── */
+function NavItem({ label, active, t }) {
+  return (
+    <div className="nav-item" style={{ padding:"7px 16px", fontSize:12.5, fontWeight:active?600:400, color:active?t.accent:t.text2, cursor:"pointer", borderRight:`2px solid ${active?t.accent:"transparent"}`, letterSpacing:active?"-0.01em":"normal" }}>{label}</div>
+  );
+}
+
+function BrandLogo({ t, height=30 }) {
+  const src = t === T.dark ? "briefpro-logo-dark.jpg" : "briefpro-logo-light.jpg";
+  return <img src={src} alt="BriefPro" style={{ height, width:"auto", objectFit:"contain", display:"block", userSelect:"none" }} draggable={false}/>;
+}
+
+function IntegratedView({ chatCollapsed=false, t }) {
+  const [collapsed, setCollapsed] = useState(chatCollapsed);
+  const [msgs, setMsgs] = useState(DEMO_MSGS);
+  const [input, setInput] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [activeTab, setActiveTab] = useState("risikofaktoren");
+  const msgRef = useRef();
+
+  useEffect(()=>{ if(msgRef.current) msgRef.current.scrollTop = msgRef.current.scrollHeight; }, [msgs, typing]);
+
+  const send = () => {
+    if(!input.trim()) return;
+    const txt = input.trim(); setInput("");
+    setMsgs(m=>[...m, { id:Date.now()+"", role:"user", text:txt, time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}) }]);
+    setTyping(true);
+    setTimeout(()=>{ setTyping(false); setMsgs(m=>[...m, { id:Date.now()+"", role:"assistant", text:"Änderung verarbeitet.", time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}) }]); }, 1600);
+  };
+
+  const CHAT_W = collapsed ? 42 : 320;
+  const TABS = ["Einleitung","Risikofaktoren","Diagnosen","Anamnese","Körperliche Untersuchung"];
+
+  return (
+    <div style={{ width:1200, height:720, display:"flex", flexDirection:"column", background:t.bg, border:`1px solid ${t.borderMed}`, overflow:"hidden" }}>
+      {/* Top nav */}
+      <div style={{ height:48, background:t.bg, borderBottom:`1px solid ${t.border}`, display:"flex", alignItems:"center", padding:"0 20px", gap:0, flexShrink:0 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8, paddingRight:20, borderRight:`1px solid ${t.border}` }}>
+          <BrandLogo t={t} height={28}/>
+        </div>
+        {/* Patient info — centered */}
+        <div style={{ flex:1, display:"flex", justifyContent:"center", alignItems:"center", gap:10 }}>
+          <div style={{ textAlign:"center" }}>
+            <div style={{ fontSize:14, fontWeight:700, color:t.text1, letterSpacing:"-0.02em" }}>Anna Schmidt</div>
+            <div style={{ display:"flex", justifyContent:"center", gap:5, marginTop:1 }}>
+              <span style={{ fontSize:9.5, padding:"1px 7px", borderRadius:999, background:t.bgPanel, color:t.text3, fontWeight:500, border:`1px solid ${t.border}` }}>ADULT</span>
+              <span style={{ fontSize:9.5, padding:"1px 7px", borderRadius:999, background:t.amberBg, color:t.amber, fontWeight:600, border:`1px solid ${t.amberBorder}` }}>IN BEARBEITUNG</span>
+            </div>
+          </div>
+        </div>
+        {/* Actions */}
+        <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+          <button style={{ padding:"6px 13px", fontSize:12, fontWeight:600, background:t.accent, color:"#fff", border:"none", borderRadius:7, cursor:"pointer", letterSpacing:"-0.01em" }}>+ Neuer Patient</button>
+          <button style={{ padding:"6px 12px", fontSize:12, background:t.bgPanel, border:`1px solid ${t.border}`, borderRadius:7, color:t.text2, cursor:"pointer" }}>Patient suchen…</button>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div style={{ flex:1, display:"flex", minHeight:0 }}>
+        {/* Left nav */}
+        <div style={{ width:164, background:t.bg, borderRight:`1px solid ${t.border}`, display:"flex", flexDirection:"column", padding:"10px 0", flexShrink:0 }}>
+          {["Patients","Document Management","Patient History","Reference Material","Settings","Help & Support"].map((l,i)=>(
+            <NavItem key={l} label={l} active={i===1} t={t}/>
+          ))}
+          {/* Theme toggle at bottom */}
+          <div style={{ marginTop:"auto", padding:"12px 14px", borderTop:`1px solid ${t.border}`, display:"flex", alignItems:"center", gap:6 }}>
+            <Icon d={IC.moon} size={12} color={t.text3}/>
+            <span style={{ fontSize:11.5, color:t.text3 }}>Dark mode</span>
+          </div>
+        </div>
+
+        {/* Editor */}
+        <div style={{ flex:1, display:"flex", flexDirection:"column", minWidth:0 }}>
+          {/* Completeness bar */}
+          <div style={{ padding:"7px 16px", background:t.bg, borderBottom:`1px solid ${t.border}`, display:"flex", alignItems:"center", gap:10, flexShrink:0 }}>
+            <div style={{ width:32, height:32, borderRadius:"50%", border:`2px solid ${t.green}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:9.5, fontWeight:700, color:t.green, flexShrink:0 }}>100%</div>
+            <div style={{ flex:1 }}>
+              <div style={{ display:"flex", alignItems:"center", gap:7 }}>
+                <span style={{ fontSize:12.5, fontWeight:600, color:t.text1, letterSpacing:"-0.01em" }}>Vollständigkeit</span>
+                <span style={{ fontSize:10, fontWeight:600, padding:"2px 8px", borderRadius:999, background:t.greenBg, color:t.green, border:`1px solid ${t.greenBorder}` }}>✓ Bereit für Review</span>
+              </div>
+              <div style={{ fontSize:11, color:t.text3, marginTop:1 }}>Arztbrief ist vollständig.</div>
+            </div>
+            <button style={{ padding:"7px 14px", fontSize:12, fontWeight:600, background:t.accent, color:"#fff", border:"none", borderRadius:7, cursor:"pointer", display:"flex", alignItems:"center", gap:5, letterSpacing:"-0.01em" }}>
+              <Icon d={IC.plane} size={12} color="#fff" stroke={2}/>
+              An Assistenzarzt-Freigabe senden
+            </button>
+          </div>
+
+          {/* Section tabs */}
+          <div style={{ display:"flex", alignItems:"center", padding:"0 8px", borderBottom:`1px solid ${t.border}`, background:t.bg, flexShrink:0 }}>
+            <button style={{ padding:"8px 11px", fontSize:11.5, fontWeight:600, background:t.accent, color:"#fff", border:"none", borderRadius:5, margin:"5px 6px 5px 0", cursor:"pointer", whiteSpace:"nowrap" }}>Full Letter</button>
+            {TABS.map(tab=>{
+              const key = tab.toLowerCase();
+              const isActive = activeTab === key;
+              return (
+                <button key={tab} className="tab-btn" onClick={()=>setActiveTab(key)}
+                  style={{ "--tab-hover-color":t.accent, padding:"8px 10px", fontSize:11.5, fontWeight:isActive?600:400, background:"transparent", border:"none", borderBottom:`2px solid ${isActive?t.accent:"transparent"}`, color:isActive?t.accent:t.text2, cursor:"pointer", whiteSpace:"nowrap", transition:"color 0.12s, border-color 0.12s", letterSpacing: isActive?"-0.01em":"normal" }}
+                >{tab}</button>
+              );
+            })}
+          </div>
+
+          {/* Letter content */}
+          <div className="scroll" style={{ flex:1, overflowY:"auto", padding:"36px 44px", background:t.bg }}>
+            <h2 style={{ fontSize:19, fontWeight:700, color:t.accent, marginBottom:14, letterSpacing:"-0.02em" }}>Einleitung</h2>
+            <p style={{ fontSize:14, fontWeight:600, color:t.text1, marginBottom:9, letterSpacing:"-0.01em" }}>Vorläufiger Entlassungsbrief</p>
+            <p style={{ fontSize:14, color:t.text2, marginBottom:9, lineHeight:1.7 }}>Bernau bei Berlin, 14.07.2025</p>
+            <p style={{ fontSize:14, color:t.text2, marginBottom:9, lineHeight:1.7 }}>Sehr geehrte Frau Kollegin, sehr geehrter Herr Kollege,</p>
+            <p style={{ fontSize:14, color:t.text2, marginBottom:24, lineHeight:1.75, textWrap:"pretty" }}>wir berichten über Frau Anna Schmidt, geboren am 15.03.1985, wohnhaft in Bernau bei Berlin, welche sich vom 10.07.2025 bis 14.07.2025 zur Behandlung einer arteriellen Hypertonie in unserer stationären Behandlung befand.</p>
+            <hr style={{ border:"none", borderTop:`1px solid ${t.border}`, marginBottom:24 }}/>
+            <h2 style={{ fontSize:19, fontWeight:700, color:t.accent, marginBottom:12, letterSpacing:"-0.02em" }}>Risikofaktoren</h2>
+            {["– Familiäre Vorbelastung: Vater herzkrank","– Beruflicher Stress als Grundschullehrerin","– Kein Anhalt für weitere kardiovaskuläre Risikofaktoren"].map((tx,i)=>(
+              <p key={i} style={{ fontSize:14, color:t.text2, marginBottom:8, lineHeight:1.65 }}>{tx}</p>
+            ))}
+            <hr style={{ border:"none", borderTop:`1px solid ${t.border}`, margin:"24px 0" }}/>
+            <h2 style={{ fontSize:19, fontWeight:700, color:t.accent, marginBottom:12, letterSpacing:"-0.02em" }}>Diagnosen</h2>
+            {["– Arterielle Hypertonie (I10)","– Verdacht auf Schlafapnoe-Syndrom"].map((tx,i)=>(
+              <p key={i} style={{ fontSize:14, color:t.text2, marginBottom:8, lineHeight:1.65 }}>{tx}</p>
+            ))}
+          </div>
+        </div>
+
+        {/* Chat column */}
+        <div style={{ width:CHAT_W, flexShrink:0, display:"flex", flexDirection:"column", borderLeft:`1px solid ${t.border}`, background:t.chatPanel, transition:"width 0.26s cubic-bezier(0.4,0,0.2,1)", overflow:"hidden", minHeight:0, position:"relative" }}>
+          {collapsed ? (
+            <div style={{ width:42, display:"flex", flexDirection:"column", alignItems:"center", paddingTop:12, gap:12 }}>
+              <button onClick={()=>setCollapsed(false)} style={{ background:"none", border:"none", cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
+                <Icon d={IC.chevL} size={12} color={t.text3}/>
+                <AiDot t={t} size={19}/>
+              </button>
+            </div>
+          ) : (
+            <>
+              <ChatHeader onCollapse={()=>setCollapsed(true)} t={t}/>
+              {msgs.length === 0
+                ? <EmptyState onSuggest={txt=>setInput(txt)} t={t}/>
+                : <MessageList msgs={msgs} typing={typing} msgRef={msgRef} t={t}/>
+              }
+              <ChatInput value={input} onChange={setInput} onSend={send} disabled={typing} hasMessages={msgs.length>0} t={t}/>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── TWEAKS ─── */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"theme":"light"}/*EDITMODE-END*/;
+
+function TweaksPanel({ visible, tweaks, setTweaks }) {
+  if(!visible) return null;
+  return (
+    <div style={{ position:"fixed", bottom:24, right:24, background:"#fff", border:"1px solid rgba(0,0,0,0.08)", borderRadius:12, padding:16, width:210, zIndex:1000, boxShadow:"0 8px 32px rgba(0,0,0,0.1)" }}>
+      <div style={{ fontSize:12.5, fontWeight:700, color:"#0F172A", marginBottom:12, letterSpacing:"-0.01em" }}>Tweaks</div>
+      <label style={{ display:"flex", justifyContent:"space-between", alignItems:"center", fontSize:12, color:"#526070", cursor:"pointer" }}>
+        Dark mode
+        <input type="checkbox" checked={tweaks.theme==="dark"} onChange={e=>setTweaks(v=>({...v,theme:e.target.checked?"dark":"light"}))}/>
+      </label>
+    </div>
+  );
+}
+
+/* ─── ROOT ─── */
+function App() {
+  const [tweaks, setTweaks] = useState(TWEAK_DEFAULTS);
+  const [tweaksVisible, setTweaksVisible] = useState(false);
+
+  useEffect(()=>{
+    window.addEventListener("message", e=>{
+      if(e.data?.type==="__activate_edit_mode")   setTweaksVisible(true);
+      if(e.data?.type==="__deactivate_edit_mode") setTweaksVisible(false);
+    });
+    window.parent.postMessage({type:"__edit_mode_available"},"*");
+  },[]);
+
+  const tL = T.light;
+  const tD = T.dark;
+
+  return (
+    <>
+      <DesignCanvas>
+        <DCSection id="light" title="Light Theme">
+          <DCArtboard id="l-empty" label="Empty State" width={380} height={640}>
+            <ChatPanel withMessages={false} width={380} height={640} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="l-msgs" label="With Messages" width={380} height={640}>
+            <ChatPanel withMessages={true} width={380} height={640} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="l-int" label="Integrated — Chat Open" width={1200} height={720}>
+            <IntegratedView chatCollapsed={false} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="l-int-c" label="Integrated — Chat Collapsed" width={1200} height={720}>
+            <IntegratedView chatCollapsed={true} t={tL}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="dark" title="Dark Theme">
+          <DCArtboard id="d-empty" label="Empty State" width={380} height={640}>
+            <ChatPanel withMessages={false} width={380} height={640} t={tD}/>
+          </DCArtboard>
+          <DCArtboard id="d-msgs" label="With Messages" width={380} height={640}>
+            <ChatPanel withMessages={true} width={380} height={640} t={tD}/>
+          </DCArtboard>
+          <DCArtboard id="d-int" label="Integrated — Chat Open" width={1200} height={720}>
+            <IntegratedView chatCollapsed={false} t={tD}/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="mob" title="Mobile">
+          <DCArtboard id="m-l-c" label="Light · Collapsed" width={390} height={844}>
+            <MobileSheet expanded={false} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="m-l-e" label="Light · Expanded" width={390} height={844}>
+            <MobileSheet expanded={true} t={tL}/>
+          </DCArtboard>
+          <DCArtboard id="m-d-c" label="Dark · Collapsed" width={390} height={844}>
+            <MobileSheet expanded={false} t={tD}/>
+          </DCArtboard>
+          <DCArtboard id="m-d-e" label="Dark · Expanded" width={390} height={844}>
+            <MobileSheet expanded={true} t={tD}/>
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel visible={tweaksVisible} tweaks={tweaks} setTweaks={setTweaks}/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+<div id="root"></div>
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="80" fill="#F5F7FA"/>
+    <rect x="10" y="8" width="46" height="64" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.8"/>
+    <rect x="14" y="11" width="38" height="8" rx="2" fill="#F1F5F9"/>
+    <rect x="14" y="25" width="26" height="5" rx="3" fill="#EAECF0"/>
+    <rect x="14" y="34" width="20" height="4" rx="2" fill="rgba(0,0,0,0.04)"/>
+    <rect x="24" y="42" width="22" height="5" rx="3" fill="#EAECF0"/>
+    <rect x="14" y="51" width="16" height="4" rx="2" fill="rgba(0,0,0,0.04)"/>
+    <rect x="13" y="60" width="40" height="10" rx="4" fill="#fff" stroke="rgba(0,0,0,0.07)" stroke-width="0.8"/>
+    <circle cx="47" cy="65" r="3.5" fill="#005293"/>
+    <rect x="64" y="8" width="46" height="64" rx="4" fill="#161B27" stroke="rgba(255,255,255,0.06)" stroke-width="0.8"/>
+    <rect x="68" y="11" width="38" height="8" rx="2" fill="#1E2535"/>
+    <rect x="68" y="25" width="26" height="5" rx="3" fill="#1E2535"/>
+    <rect x="68" y="34" width="20" height="4" rx="2" fill="rgba(255,255,255,0.04)"/>
+    <rect x="78" y="42" width="22" height="5" rx="3" fill="#1E2535"/>
+    <rect x="67" y="60" width="40" height="10" rx="4" fill="#1E2535" stroke="rgba(255,255,255,0.06)" stroke-width="0.8"/>
+    <circle cx="101" cy="65" r="3.5" fill="#3B82F6"/>
+  </svg>
+</template>
+</body>
+</html>
