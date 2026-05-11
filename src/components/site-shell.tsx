@@ -12,6 +12,7 @@ function navClass({ isActive }: { isActive: boolean }) {
 export function SiteShell({ children }: PropsWithChildren) {
   const location = useLocation()
   const isDocs = location.pathname.startsWith('/docs')
+  const isHome = location.pathname === '/'
 
   return (
     <div className="relative isolate overflow-x-clip">
@@ -19,7 +20,8 @@ export function SiteShell({ children }: PropsWithChildren) {
       <div className="pointer-events-none absolute left-[-8rem] top-16 h-56 w-56 rounded-full bg-sky-300/20 blur-3xl" />
       <div className="pointer-events-none absolute right-[-6rem] top-24 h-64 w-64 rounded-full bg-amber-300/20 blur-3xl" />
 
-      <header className="sticky top-0 z-30 border-b border-white/30 bg-white/40 backdrop-blur">
+      {!isHome && (
+        <header className="sticky top-0 z-30 border-b border-white/30 bg-white/40 backdrop-blur">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
           <NavLink to="/" className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-xl bg-[linear-gradient(145deg,var(--brand-500),var(--brand-700))] text-white shadow-lg shadow-sky-500/25">
@@ -65,7 +67,8 @@ export function SiteShell({ children }: PropsWithChildren) {
             </div>
           </div>
         ) : null}
-      </header>
+        </header>
+      )}
 
       {children}
 
