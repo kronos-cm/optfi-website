@@ -4,39 +4,6 @@ import './journal-strategy-proof-page.css'
 export function JournalStrategyProofPage() {
   return (
     <div className="journal-post-root">
-      {/* Ticker */}
-      <div className="ticker">
-        <div className="ticker-track">
-          <span className="lime">● STRATEGY LAB</span><span className="dim">/</span>
-          <span>28 STRATEGIES TESTED</span><span className="dim">/</span>
-          <span>0 PROMOTED</span><span className="dim">/</span>
-          <span>THIS IS THE POINT</span><span className="dim">/</span>
-          <span>MAY 2026 · BERLIN</span><span className="dim">/</span>
-          <span className="lime">● STRATEGY LAB</span><span className="dim">/</span>
-          <span>28 STRATEGIES TESTED</span><span className="dim">/</span>
-          <span>0 PROMOTED</span><span className="dim">/</span>
-          <span>THIS IS THE POINT</span><span className="dim">/</span>
-          <span>MAY 2026 · BERLIN</span><span className="dim">/</span>
-        </div>
-      </div>
-
-      {/* Nav */}
-      <nav className="nav">
-        <div className="container nav-row">
-          <a href="/" className="brand"><span className="brand-mark"></span>OPTFI</a>
-          <div className="nav-links">
-            <a href="/#thesis">Thesis</a>
-            <a href="/#journal">Journal</a>
-            <a href="/#principles">Principles</a>
-            <a href="/#faq">FAQ</a>
-          </div>
-          <div className="nav-cta">
-            <span className="pre-pill">Pre-launch · Waitlist open</span>
-            <a className="btn btn-primary" href="/#waitlist">Join waitlist <span className="arrow">→</span></a>
-          </div>
-        </div>
-      </nav>
-
       {/* Article */}
       <article className="post-article">
         <div className="container post-container">
