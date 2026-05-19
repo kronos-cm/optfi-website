@@ -56,12 +56,12 @@ export function HomePage() {
             </div>
           </div>
 
-          <a href="#journal" className="featured">
+          <a href="/journal/strategy-proof" className="featured">
             <span className="featured-flag">Latest from the journal</span>
             <div className="featured-thumb"></div>
-            <div className="featured-meta"><span className="cat">DeFi · Field notes</span><span>14 min read</span><span>Aug 12</span></div>
-            <h3 className="featured-title">Why we deferred DeFi execution — and what would change our mind.</h3>
-            <p className="featured-excerpt">"Composability" is interesting. Interesting is not the bar. Here is the scorecard we use to decide what gets near real money, and where DeFi sits on it today.</p>
+            <div className="featured-meta"><span className="cat">Strategy thinking</span><span>14 min read</span><span>May 2026</span></div>
+            <h3 className="featured-title">28 strategies walked into the lab. Zero promoted. Here is what that means.</h3>
+            <p className="featured-excerpt">We ran two years of real Kraken data through every strategy we have. Not one cleared the gate. This is not a failure report — it is proof the gate works.</p>
             <span className="featured-read">Read entry <span className="arrow">→</span></span>
           </a>
         </div>
@@ -107,12 +107,12 @@ export function HomePage() {
           </div>
 
           <div className="journal-grid">
-            <article className="post post-feature">
-              <div className="post-thumb ph-1"><span className="badge">Field notes</span></div>
-              <div className="post-meta"><span className="cat">DeFi · Field notes</span><span>14 min read</span><span>Aug 12</span></div>
-              <h3 className="post-title">Why we deferred DeFi execution — and what would change our mind.</h3>
-              <p className="post-excerpt">Composability is interesting; interesting is not the bar. The bar is beating the best alternative on what survives fees and tax. Here's the scorecard we use, and where DeFi sits on it today.</p>
-              <span className="post-read">Read entry <span className="arrow">→</span></span>
+            <article className="post post-feature" onClick={() => window.location.href='/journal/strategy-proof'} style={{cursor:'pointer'}}>
+              <div className="post-thumb ph-1"><span className="badge">Strategy</span></div>
+              <div className="post-meta"><span className="cat">Strategy thinking</span><span>14 min read</span><span>May 2026</span></div>
+              <h3 className="post-title">28 strategies walked into the lab. Zero promoted. Here is what that means.</h3>
+              <p className="post-excerpt">We ran two years of real Kraken data through every strategy we have. Not one cleared the gate. This is not a failure report — it is proof the gate works.</p>
+              <a href="/journal/strategy-proof" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
             <article className="post post-side-a">
