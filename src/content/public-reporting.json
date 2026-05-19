@@ -1,47 +1,87 @@
 {
   "version": 1,
-  "updatedAt": "2026-02-24T13:26:10.715Z",
+  "updatedAt": "2026-04-26T12:00:00.000Z",
   "methodValidationCard": {
-    "title": "Method Validation",
-    "state": "In Progress",
-    "detail": "Evidence collection and review continue under constrained operation.",
-    "variant": "warning"
+    "title": "Canary Execution",
+    "state": "Active — dry-run phase",
+    "detail": "Execution framework is live and accumulating proof data. Promotion to live trading is gated on measured outcomes.",
+    "variant": "success"
   },
   "transparencyUpdates": [
     {
-      "id": "2026-02-24T13-25-53-70798000-00-validation",
-      "publishedAt": "2026-02-24T13:26:10.715Z",
-      "category": "validation",
-      "severity": "attention",
-      "title": "Validation review update",
-      "summary": "Validation work continues with disciplined monitoring and public-safe progress reporting.",
+      "id": "2026-04-26-canary-execution-live",
+      "publishedAt": "2026-04-26T12:00:00.000Z",
+      "category": "milestone",
+      "severity": "info",
+      "title": "Canary execution framework live — dry-run phase started",
+      "summary": "The automated execution framework is now running in dry-run mode. Promotion to live trading is gated on a measured proof window, not on operator discretion.",
       "bullets": [
-        "Validation work continues with public-facing documentation and monitoring improvements while private methods remain non-public.",
-        "Current validation gate status remains within the expected operating envelope.",
-        "Public summaries continue to describe maturity, process changes, and disclosure boundaries without exposing private internals."
+        "Execution decisions are fully automated: each trade candidate is evaluated against safety constraints, capital lane rules, and a time-windowed proof requirement before anything is allowed.",
+        "A signing policy enforcement gate now sits in the execution path. Hardware wallet confirmation is required above a notional threshold. Every decision — allow or deny — is recorded in an audit log.",
+        "The proof window requires positive measured outcomes across both a short and medium horizon before the system can promote itself from dry-run to live. No manual override path exists.",
+        "Wallet inventory and exchange balances are read-only inputs to the system. Credentials are resolved exclusively from the OS keychain at runtime — no plaintext secrets anywhere in the codebase or config."
       ],
       "nextSteps": [
-        "Continue evidence collection before expanding operational scope.",
-        "Review internal monitoring outputs on a regular cadence.",
-        "Publish curated progress summaries through public status and transparency pages."
+        "Accumulate dry-run execution data over the coming weeks.",
+        "Monitor proof window status in the operator cockpit.",
+        "Promote to live only after the measured proof window clears its gate."
       ]
     },
     {
-      "id": "2026-02-24-validation-review",
-      "publishedAt": "2026-02-24T13:10:00Z",
-      "category": "validation",
+      "id": "2026-04-20-quality-foundation-complete",
+      "publishedAt": "2026-04-20T10:00:00.000Z",
+      "category": "milestone",
       "severity": "info",
-      "title": "Validation review update",
-      "summary": "Validation work continues with disciplined monitoring and public-safe progress reporting.",
+      "title": "Platform quality foundation complete — all gates met",
+      "summary": "A suite of binding quality gates was defined and then met before any further feature work proceeded. This was a deliberate discipline step, not a byproduct of regular development.",
       "bullets": [
-        "Validation work continues with public-facing documentation and monitoring improvements while private operating methods remain non-public.",
-        "Current gate status remains within the expected operating envelope.",
-        "Public summaries continue to prioritize maturity, process changes, and disclosure boundaries over implementation details."
+        "Backend and frontend test coverage both exceed the 80% line threshold. Frontend branch and function coverage also clear their respective gates. These are enforced in CI — a drop below the gate blocks the build.",
+        "The operator cockpit was decomposed from a single large file into focused, single-responsibility modules. The main route is now under 200 lines — pure wiring with no logic embedded.",
+        "All JavaScript files in the tooling layer were converted to TypeScript. Type safety now extends to every script in the repository, not just the application code.",
+        "A doc link checker runs in CI and rejects broken internal documentation links. 25 pre-existing broken links were fixed as part of this work."
       ],
       "nextSteps": [
-        "Continue evidence collection before scaling scope.",
-        "Review internal monitoring outputs on a regular cadence.",
-        "Publish curated progress summaries through status and transparency pages."
+        "Maintain coverage gates on every future change — CI enforces this automatically.",
+        "Keep the cockpit route under the 200-line gate as new operator surfaces are added.",
+        "Let proof data from the running canary guide the next round of platform improvements."
+      ]
+    },
+    {
+      "id": "2026-04-15-defi-research-lane",
+      "publishedAt": "2026-04-15T10:00:00.000Z",
+      "category": "research",
+      "severity": "info",
+      "title": "DeFi research lane opened with explicit risk scoring",
+      "summary": "A structured DeFi opportunity research layer is now part of the platform. It scores and surfaces opportunities alongside explicit risk fields that most DeFi UIs hide or understate.",
+      "bullets": [
+        "Every DeFi opportunity surfaced by the platform now carries three explicit risk dimensions: impermanent loss exposure, smart contract risk score, and governance risk level. These are first-class fields, not footnotes.",
+        "The research lane is read-only and informational. No DeFi execution path exists. This is intentional: the gate for DeFi execution requires DeFi to demonstrably beat the best CEX path on after-tax, after-fee compounding — a bar it has not yet cleared.",
+        "Gross APY figures are displayed alongside a net-of-fees, net-of-risk estimate so the operator sees realistic take-home returns rather than headline numbers.",
+        "The research lane is documented for DeFi-literate readers with a full explanation of why each risk dimension matters and what drives the scores."
+      ],
+      "nextSteps": [
+        "Expand the opportunity catalogue as more protocol data becomes available.",
+        "Continue accumulating CEX proof data to establish the baseline that DeFi must beat.",
+        "Publish further research notes on IL, governance risk, and smart contract failure modes."
+      ]
+    },
+    {
+      "id": "2026-04-10-walk-forward-validation",
+      "publishedAt": "2026-04-10T10:00:00.000Z",
+      "category": "research",
+      "severity": "info",
+      "title": "Walk-forward out-of-sample validation added to strategy research",
+      "summary": "Strategy research results now include mandatory out-of-sample validation across multiple time windows. In-sample performance alone is no longer sufficient to advance a candidate.",
+      "bullets": [
+        "Each strategy research run now produces walk-forward validation windows: the dataset is split into training and holdout periods across multiple cut points, and performance is measured on data the strategy never saw during fitting.",
+        "A robustness summary across all windows classifies each candidate as promote-ready, watch-only, or no robust candidate available. This classification, not in-sample metrics, drives the promotion decision.",
+        "The walk-forward computation is deterministic: two independent runs on the same data produce identical windows and identical robustness classifications. This is tested in CI.",
+        "Blocker-targeted experiment records now capture the specific hypothesis tested, the measured result, and the decision reached — creating an auditable research trail rather than a list of ad-hoc backtests."
+      ],
+      "nextSteps": [
+        "Feed live execution data into the research pipeline as the canary accumulates outcomes.",
+        "Use walk-forward robustness status to guide which strategy candidates enter dry-run.",
+        "Expand the experiment record schema to cover more candidate families as research broadens."
       ]
     }
   ]

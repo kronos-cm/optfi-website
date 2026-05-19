@@ -32,7 +32,7 @@ export function HomePage() {
             <a href="#faq">FAQ</a>
           </div>
           <div className="nav-cta">
-            <span className="pre-pill">Pre-launch · Waitlist open</span>
+            <span className="pill-live"><span className="dot"></span>Canary live</span>
             <a className="btn btn-primary" href="#waitlist">Join waitlist <span className="arrow">→</span></a>
           </div>
         </div>
