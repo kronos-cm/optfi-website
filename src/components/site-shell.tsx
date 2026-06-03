@@ -39,7 +39,7 @@ export function SiteShell({ children }: PropsWithChildren) {
             <div className="site-nav-cta">
               <span className="site-nav-pill-live">
                 <span className="site-nav-dot" />
-                Canary live
+                Local proof
               </span>
               <a className="site-nav-btn site-nav-btn-primary" href="/#waitlist">
                 Join waitlist <span className="arrow">→</span>
@@ -91,7 +91,7 @@ export function SiteShell({ children }: PropsWithChildren) {
               <span style={{ fontFamily: "'Geist', sans-serif", fontWeight: 700, fontSize: '20px', letterSpacing: '-0.02em', color: '#ece8d8' }}>OPTFI</span>
             </div>
             <p style={{ fontSize: '14px', color: '#b8b4a3', margin: 0, maxWidth: '42ch', lineHeight: 1.6 }}>
-              Germany-first, tax-aware crypto wealth compounding. Proven in paper simulation, then canary, before real capital scales.
+              Germany-first, tax-aware crypto strategy research. Paper proof and canary gates must clear before real capital scales.
             </p>
           </div>
           <div style={{ display: 'flex', gap: '48px', flexWrap: 'wrap' }}>

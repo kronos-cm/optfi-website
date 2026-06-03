@@ -83,7 +83,7 @@
   gap: 14px;
 }
 
-/* ── Canary live pill ── */
+/* ── Local proof pill ── */
 .site-nav-pill-live {
   display: inline-flex;
   align-items: center;
@@ -158,5 +158,28 @@
 
   .site-nav-row {
     padding: 0 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-nav-row {
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .site-nav-cta {
+    gap: 8px;
+  }
+
+  .site-nav-pill-live {
+    gap: 6px;
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .site-nav-btn {
+    gap: 6px;
+    padding: 9px 12px;
+    font-size: 12px;
   }
 }
