@@ -16,14 +16,14 @@ const roadmapTracks = [
     ],
   },
   {
-    title: 'Canary Execution & Proof',
+    title: 'Paper Proof & Canary Gate',
     status: 'active',
     icon: Activity,
-    summary: 'Constrained live execution accumulating measured proof data. Promotion to full deployment is gated on outcomes, not operator confidence.',
+    summary: 'Fresh paper evidence is blocked today. Canary execution stays gated until the strategy clears current proof checks.',
     goals: [
       'Signing policy enforcement gate in the execution path — hardware wallet required above notional threshold',
       'Walk-forward out-of-sample validation required before any strategy candidate can advance',
-      'Dry-run canary running, accumulating data for the short and medium-horizon proof windows',
+      'Canary remains guarded until paper proof and tactical lane checks clear',
     ],
   },
   {
@@ -59,8 +59,9 @@ export function RoadmapPage() {
         description="The roadmap is sequenced to reduce risk and avoid false progress. Public product quality, monetization thinking, and strategy work move in parallel but with different priorities."
         actions={
           <>
-            <Badge variant="success">Canary active</Badge>
-            <Badge variant="brand">Proof window accumulating</Badge>
+            <Badge variant="success">Evidence current</Badge>
+            <Badge variant="warning">Paper proof blocked</Badge>
+            <Badge variant="brand">Local-first</Badge>
           </>
         }
       />
@@ -69,7 +70,7 @@ export function RoadmapPage() {
         <SectionHeading
           kicker="Execution Order"
           title="Each track earns its way to the next"
-          description="Quality foundation complete. Canary execution active. DeFi research underway. Live deployment and the private operator app follow only after measured proof."
+          description="Quality foundation complete. Paper proof is current but blocked. DeFi research is underway. Live deployment and the private operator app follow only after measured proof."
         />
         <div className="grid gap-4 lg:grid-cols-2">
           {roadmapTracks.map((track) => (
@@ -87,8 +88,8 @@ export function RoadmapPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-sm leading-6 text-[color:var(--muted-foreground)]">
-            <GateRow icon={ShieldCheck} title="Paper → Canary" text="Strategy candidate must clear walk-forward out-of-sample validation. In-sample performance alone is insufficient." />
-            <GateRow icon={Activity} title="Canary dry-run → Canary live" text="Positive measured outcomes on both short and medium horizons. Signing policy enforced. No manual override." />
+            <GateRow icon={ShieldCheck} title="Research → Paper" text="Strategy candidate must clear walk-forward out-of-sample validation. In-sample performance alone is insufficient." />
+            <GateRow icon={Activity} title="Paper → Canary" text="Current strategy proof must clear the paper scorecard and tactical lane checks before any canary expansion." />
             <GateRow icon={Server} title="Canary → Full deployment" text="Sustained live canary proof across multiple review windows. Economics must justify the promotion." />
             <GateRow icon={Globe} title="CEX → DeFi execution" text="DeFi must demonstrably beat the best CEX path on after-tax, after-fee compounding. Not satisfied today." />
           </CardContent>
@@ -97,13 +98,13 @@ export function RoadmapPage() {
         <Card className="glass">
           <CardHeader>
             <CardTitle>What Happens Next</CardTitle>
-            <CardDescription>The immediate focus while the canary accumulates data.</CardDescription>
+            <CardDescription>The immediate focus while the proof gate is blocked.</CardDescription>
           </CardHeader>
           <CardContent>
             <ol className="space-y-3 text-sm leading-6 text-[color:var(--muted-foreground)]">
-              <li className="rounded-xl border border-white/70 bg-white/70 p-3">Monitor the canary proof window status. The operator cockpit surfaces the current decision and the reasons behind it in real time.</li>
+              <li className="rounded-xl border border-white/70 bg-white/70 p-3">Keep the paper proof current. The operator cockpit surfaces the current blocker and the next action.</li>
               <li className="rounded-xl border border-white/70 bg-white/70 p-3">Expand the DeFi opportunity research catalogue as more protocol data becomes available.</li>
-              <li className="rounded-xl border border-white/70 bg-white/70 p-3">Publish further transparency updates as the canary produces reviewable outcomes.</li>
+              <li className="rounded-xl border border-white/70 bg-white/70 p-3">Publish transparency updates only when the evidence state changes.</li>
               <li className="rounded-xl border border-white/70 bg-white/70 p-3">Design private operator app access controls when canary proof is established.</li>
             </ol>
           </CardContent>

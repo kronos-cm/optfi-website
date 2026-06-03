@@ -1,13 +1,32 @@
 {
-  "version": 1,
-  "updatedAt": "2026-04-26T12:00:00.000Z",
+  "version": 2,
+  "updatedAt": "2026-06-03T14:00:00.000Z",
   "methodValidationCard": {
-    "title": "Canary Execution",
-    "state": "Active — dry-run phase",
-    "detail": "Execution framework is live and accumulating proof data. Promotion to live trading is gated on measured outcomes.",
-    "variant": "success"
+    "title": "Method Validation",
+    "state": "Blocked - local proof phase",
+    "detail": "Current evidence is fresh but not revenue-ready. Private runtime stays local-first and capital remains blocked until proof gates clear.",
+    "variant": "warning"
   },
   "transparencyUpdates": [
+    {
+      "id": "2026-06-03-local-proof-blocked",
+      "publishedAt": "2026-06-03T14:00:00.000Z",
+      "category": "proof-state",
+      "severity": "warning",
+      "title": "Proof is current, but still blocked",
+      "summary": "The current runtime is local-only with EUR 0 infrastructure burn. The latest paper scorecard is fresh, but it fails the current proof gates and does not justify capital promotion.",
+      "bullets": [
+        "Private trading runtime hosting is off. Current infrastructure burn is EUR 0; model and token usage are the only active variable spend.",
+        "The latest paper scorecard fails drawdown, net PnL, uptime, and window coverage checks.",
+        "DeFi remains research-only. Source ingestion, per-source freshness, accounting, preflight, and signing gates are still incomplete.",
+        "Public pages now describe proof discipline and local-first hosting without claiming that the strategy is profitable."
+      ],
+      "nextSteps": [
+        "Keep evidence fresh through the scorecard and research-gate checks.",
+        "Finish the stale-scorecard contract and cockpit blocker UI.",
+        "Do not promote capital or hosted runtime until the proof gates clear."
+      ]
+    },
     {
       "id": "2026-04-26-canary-execution-live",
       "publishedAt": "2026-04-26T12:00:00.000Z",

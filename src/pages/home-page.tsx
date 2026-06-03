@@ -32,7 +32,7 @@ export function HomePage() {
             <a href="#faq">FAQ</a>
           </div>
           <div className="nav-cta">
-            <span className="pill-live"><span className="dot"></span>Canary live</span>
+            <span className="pill-live"><span className="dot"></span>Local proof</span>
             <a className="btn btn-primary" href="#waitlist">Join waitlist <span className="arrow">→</span></a>
           </div>
         </div>
@@ -56,12 +56,12 @@ export function HomePage() {
             </div>
           </div>
 
-          <a href="/journal/strategy-proof" className="featured">
+          <a href="/journal/proof-before-capital" className="featured">
             <span className="featured-flag">Latest from the journal</span>
             <div className="featured-thumb"></div>
-            <div className="featured-meta"><span className="cat">Strategy thinking</span><span>14 min read</span><span>May 2026</span></div>
-            <h3 className="featured-title">28 strategies walked into the lab. Zero promoted. Here is what that means.</h3>
-            <p className="featured-excerpt">We ran two years of real Kraken data through every strategy we have. Not one cleared the gate. This is not a failure report — it is proof the gate works.</p>
+            <div className="featured-meta"><span className="cat">Proof discipline</span><span>6 min read</span><span>June 2026</span></div>
+            <h3 className="featured-title">What counts as proof before a crypto strategy gets capital.</h3>
+            <p className="featured-excerpt">The cost side is local-first and under control. The capital side is still blocked until current evidence earns it.</p>
             <span className="featured-read">Read entry <span className="arrow">→</span></span>
           </a>
         </div>
@@ -94,57 +94,47 @@ export function HomePage() {
               <div className="kicker"><span className="num">/ 02</span> The journal</div>
               <h2>Notes from a tax-aware crypto build, <span className="lime">written in public.</span></h2>
             </div>
-            <a className="btn btn-ghost" href="#">All entries (42) <span className="arrow">→</span></a>
+            <a className="btn btn-ghost" href="/journal">All entries (4) <span className="arrow">→</span></a>
           </div>
 
           <div className="journal-cats">
-            <span className="cat-chip active">All <span className="count">42</span></span>
-            <span className="cat-chip">Tax &amp; Germany <span className="count">11</span></span>
-            <span className="cat-chip">DeFi field notes <span className="count">8</span></span>
-            <span className="cat-chip">Strategy thinking <span className="count">9</span></span>
-            <span className="cat-chip">Risk &amp; gates <span className="count">7</span></span>
-            <span className="cat-chip">Operator letters <span className="count">7</span></span>
+            <span className="cat-chip active">All <span className="count">4</span></span>
+            <span className="cat-chip">Proof discipline <span className="count">2</span></span>
+            <span className="cat-chip">DeFi research <span className="count">1</span></span>
+            <span className="cat-chip">Strategy thinking <span className="count">1</span></span>
           </div>
 
           <div className="journal-grid">
-            <article className="post post-feature" onClick={() => window.location.href='/journal/strategy-proof'} style={{cursor:'pointer'}}>
-              <div className="post-thumb ph-1"><span className="badge">Strategy</span></div>
-              <div className="post-meta"><span className="cat">Strategy thinking</span><span>14 min read</span><span>May 2026</span></div>
-              <h3 className="post-title">28 strategies walked into the lab. Zero promoted. Here is what that means.</h3>
-              <p className="post-excerpt">We ran two years of real Kraken data through every strategy we have. Not one cleared the gate. This is not a failure report — it is proof the gate works.</p>
-              <a href="/journal/strategy-proof" className="post-read">Read entry <span className="arrow">→</span></a>
+            <article className="post post-feature" onClick={() => window.location.href='/journal/proof-before-capital'} style={{cursor:'pointer'}}>
+              <div className="post-thumb ph-1"><span className="badge">Proof</span></div>
+              <div className="post-meta"><span className="cat">Proof discipline</span><span>6 min read</span><span>June 2026</span></div>
+              <h3 className="post-title">What counts as proof before a crypto strategy gets capital.</h3>
+              <p className="post-excerpt">A strategy that has not earned money in its own proof loop should not be sold as a money engine.</p>
+              <a href="/journal/proof-before-capital" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
-            <article className="post post-side-a">
-              <div className="post-thumb ph-2"><span className="badge">Tax</span></div>
-              <div className="post-meta"><span className="cat">Tax · Germany</span><span>8 min</span><span>Aug 06</span></div>
-              <h3 className="post-title">The 12-month rule, FIFO, and the arithmetic most strategies quietly ignore.</h3>
-              <p className="post-excerpt">A patient walk through how German crypto tax compounds — and why most "APR" claims aren't actually claims.</p>
-              <span className="post-read">Read entry <span className="arrow">→</span></span>
+            <article className="post post-side-a" onClick={() => window.location.href='/journal/local-first-hosting'} style={{cursor:'pointer'}}>
+              <div className="post-thumb ph-2"><span className="badge">Cost</span></div>
+              <div className="post-meta"><span className="cat">Operating discipline</span><span>5 min</span><span>June 2026</span></div>
+              <h3 className="post-title">Why OptFi stays local-first until proof pays for hosting.</h3>
+              <p className="post-excerpt">Infrastructure burn is EUR 0. Private runtime hosting stays off until proof or continuity justifies it.</p>
+              <a href="/journal/local-first-hosting" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
-            <article className="post post-third">
+            <article className="post post-third" onClick={() => window.location.href='/journal/defi-source-timestamp'} style={{cursor:'pointer'}}>
               <div className="post-thumb ph-3"></div>
-              <div className="post-meta"><span className="cat">Strategy</span><span>11 min</span></div>
-              <h3 className="post-title">A backtest is a confession, not a forecast.</h3>
-              <p className="post-excerpt">What out-of-sample really means — and how to read a chart like the people on the other side of it.</p>
-              <span className="post-read">Read entry <span className="arrow">→</span></span>
+              <div className="post-meta"><span className="cat">DeFi research</span><span>5 min</span></div>
+              <h3 className="post-title">Why DeFi APY needs a source timestamp.</h3>
+              <p className="post-excerpt">A yield number cannot be ranked as current evidence until the source age is visible.</p>
+              <a href="/journal/defi-source-timestamp" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
-            <article className="post post-third">
+            <article className="post post-third" onClick={() => window.location.href='/journal/strategy-proof'} style={{cursor:'pointer'}}>
               <div className="post-thumb ph-4"></div>
-              <div className="post-meta"><span className="cat">Operator letter</span><span>6 min</span></div>
-              <h3 className="post-title">August letter: what we measured, what we changed, and what we won't.</h3>
-              <p className="post-excerpt">The monthly accounting of where the platform actually stands — written for people who read the small print.</p>
-              <span className="post-read">Read entry <span className="arrow">→</span></span>
-            </article>
-
-            <article className="post post-third">
-              <div className="post-thumb ph-5"></div>
-              <div className="post-meta"><span className="cat">Risk &amp; gates</span><span>9 min</span></div>
-              <h3 className="post-title">Why nothing promotes to live without measured proof.</h3>
-              <p className="post-excerpt">The principle is dull and the consequence is enormous: a platform that cannot bypass its own controls.</p>
-              <span className="post-read">Read entry <span className="arrow">→</span></span>
+              <div className="post-meta"><span className="cat">Strategy thinking</span><span>14 min</span></div>
+              <h3 className="post-title">28 strategies walked into the lab. Zero promoted. Here is what that means.</h3>
+              <p className="post-excerpt">A zero-promote result can still prove that the gate is doing its job.</p>
+              <a href="/journal/strategy-proof" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
           </div>
 
