@@ -15,7 +15,7 @@ This file tracks the public-safe website content required by the OptFi investmen
 - First P0 proof-before-capital journal draft exists at `/journal/proof-before-capital`.
 - Journal index exists at `/journal`.
 - First P4 DeFi source-freshness journal draft exists at `/journal/defi-source-timestamp`.
-- The next website deliverable is the P1 stale-scorecard contract article.
+- The latest website deliverable is the P1 stale-scorecard contract article; the next content need is the single-green-backtest caution article after the scorecard matrix refresh.
 
 ## Content Definition Of Done
 
@@ -32,7 +32,7 @@ This file tracks the public-safe website content required by the OptFi investmen
 | --- | --- | --- | --- |
 | `P0` | Why OptFi Stays Local-First Until Proof Pays For Hosting | Journal | drafted at `/journal/local-first-hosting` |
 | `P0` | What Counts As Proof Before A Crypto Strategy Gets Capital | Journal | drafted at `/journal/proof-before-capital` |
-| `P1` | Fresh Evidence Beats Backtest Optimism | Journal | planned |
+| `P1` | Fresh Evidence Beats Backtest Optimism | Journal | drafted |
 | `P1` | Why A Single Green Backtest Is Not Permission To Trade | Journal | planned |
 | `P2` | The Case For Low-Turnover Trend Following In Crypto | Journal | planned |
 | `P2` | Shadow Trading Is Not Trading, And That Is The Point | Journal | planned |

@@ -9,6 +9,7 @@ import { DocsSafetyPage } from './pages/docs-safety-page'
 import { DocsOperatorAccessPage } from './pages/docs-operator-access-page'
 import { DocsMonetizationPage } from './pages/docs-monetization-page'
 import { JournalDefiSourceTimestampPage } from './pages/journal-defi-source-timestamp-page'
+import { JournalFreshEvidencePage } from './pages/journal-fresh-evidence-page'
 import { JournalIndexPage } from './pages/journal-index-page'
 import { JournalLocalFirstHostingPage } from './pages/journal-local-first-hosting-page'
 import { JournalProofBeforeCapitalPage } from './pages/journal-proof-before-capital-page'
@@ -30,6 +31,7 @@ function AppRoutes() {
       <Route path="/docs/operator-access" element={<DocsOperatorAccessPage />} />
       <Route path="/docs/monetization" element={<DocsMonetizationPage />} />
       <Route path="/journal" element={<JournalIndexPage />} />
+      <Route path="/journal/fresh-evidence" element={<JournalFreshEvidencePage />} />
       <Route path="/journal/strategy-proof" element={<JournalStrategyProofPage />} />
       <Route path="/journal/proof-before-capital" element={<JournalProofBeforeCapitalPage />} />
       <Route path="/journal/local-first-hosting" element={<JournalLocalFirstHostingPage />} />

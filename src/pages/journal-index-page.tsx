@@ -6,6 +6,14 @@ import { PageContainer, PageHero, SectionHeading } from '../components/page-prim
 
 const entries = [
   {
+    to: '/journal/fresh-evidence',
+    icon: Clock3,
+    category: 'Proof discipline',
+    title: 'Fresh evidence beats backtest optimism',
+    summary: 'The first P1 slice makes evidence freshness a deterministic test contract before more dashboard surface is added.',
+    badge: 'P1 started',
+  },
+  {
     to: '/journal/proof-before-capital',
     icon: ShieldCheck,
     category: 'Proof discipline',
