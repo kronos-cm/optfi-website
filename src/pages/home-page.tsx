@@ -60,8 +60,8 @@ export function HomePage() {
             <span className="featured-flag">Latest from the journal</span>
             <div className="featured-thumb"></div>
             <div className="featured-meta"><span className="cat">Strategy economics</span><span>8 min read</span><span>June 2026</span></div>
-            <h3 className="featured-title">When Arbitrage Stops Being Free Money.</h3>
-            <p className="featured-excerpt">A tiny price gap can look like alpha until the receipt arrives: fees, spread, slippage, and tax-aware accounting.</p>
+            <h3 className="featured-title">When arbitrage stops being free money.</h3>
+            <p className="featured-excerpt">A tiny price gap can look like alpha until the exchange, the book, the clock, and the tax ledger send the receipt.</p>
             <span className="featured-read">Read entry <span className="arrow">→</span></span>
           </a>
         </div>
@@ -110,7 +110,7 @@ export function HomePage() {
             <article className="post post-feature" onClick={() => window.location.href='/journal/when-arbitrage-stops-being-free-money'} style={{cursor:'pointer'}}>
               <div className="post-thumb ph-1"><span className="badge">Fees</span></div>
               <div className="post-meta"><span className="cat">Strategy economics</span><span>8 min read</span><span>June 2026</span></div>
-              <h3 className="post-title">When Arbitrage Stops Being Free Money.</h3>
+              <h3 className="post-title">When arbitrage stops being free money.</h3>
               <p className="post-excerpt">A tiny CEX price gap can disappear under the receipt: fees, spread, slippage, and tax-aware accounting.</p>
               <a href="/journal/when-arbitrage-stops-being-free-money" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
@@ -118,16 +118,16 @@ export function HomePage() {
             <article className="post post-side-a" onClick={() => window.location.href='/journal/local-first-hosting'} style={{cursor:'pointer'}}>
               <div className="post-thumb ph-2"><span className="badge">Cost</span></div>
               <div className="post-meta"><span className="cat">Operating discipline</span><span>5 min</span><span>June 2026</span></div>
-              <h3 className="post-title">Why OptFi stays local-first until proof pays for hosting.</h3>
-              <p className="post-excerpt">Infrastructure burn is EUR 0. Private runtime hosting stays off until proof or continuity justifies it.</p>
+              <h3 className="post-title">We turned the server bill into a gate.</h3>
+              <p className="post-excerpt">Infrastructure burn is EUR 0. Private runtime hosting stays off until proof or continuity earns it.</p>
               <a href="/journal/local-first-hosting" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
             <article className="post post-third" onClick={() => window.location.href='/journal/defi-source-timestamp'} style={{cursor:'pointer'}}>
               <div className="post-thumb ph-3"></div>
               <div className="post-meta"><span className="cat">DeFi research</span><span>5 min</span></div>
-              <h3 className="post-title">Why DeFi APY needs a source timestamp.</h3>
-              <p className="post-excerpt">A yield number cannot be ranked as current evidence until the source age is visible.</p>
+              <h3 className="post-title">A DeFi yield number walked in without a clock.</h3>
+              <p className="post-excerpt">A yield number cannot be ranked as current evidence until the source age is visible and fresh.</p>
               <a href="/journal/defi-source-timestamp" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 

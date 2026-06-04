@@ -1,151 +1,214 @@
-import { BarChart3, CheckCircle2, Clock3, ShieldCheck, Wallet } from 'lucide-react'
-import { Badge } from '../components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { PageContainer, PageHero, SectionHeading } from '../components/page-primitives'
+import './home-page.css'
+import './journal-strategy-proof-page.css'
 
-const proofRules = [
+const proofRows = [
   {
-    icon: Clock3,
-    title: 'Fresh evidence',
-    text: 'The scorecard, paper run, and research gate must be current. A stale pass is treated as no pass.',
+    gate: 'Fresh evidence',
+    current: 'Required',
+    blockedBy: 'Stale, missing, or invalid scorecards',
   },
   {
-    icon: BarChart3,
-    title: 'Repeatable economics',
-    text: 'The result must survive fees, slippage, drawdown checks, and more than one market condition.',
+    gate: 'After-cost economics',
+    current: 'Required',
+    blockedBy: 'Fees, slippage, churn, or weak net PnL',
   },
   {
-    icon: ShieldCheck,
-    title: 'Execution safety',
-    text: 'Signing policy, lane limits, canary gates, and rollback rules must already be enforced.',
+    gate: 'Robustness',
+    current: 'Required',
+    blockedBy: 'One-regime wins and fragile holdout results',
   },
   {
-    icon: Wallet,
-    title: 'Capital fit',
-    text: 'The strategy must earn the right to touch capital at the smallest useful size before any scale decision.',
+    gate: 'Execution safety',
+    current: 'Required',
+    blockedBy: 'Missing limits, signing policy, or rollback path',
   },
-] as const
-
-const blockedToday = [
-  'No robust tactical promote across the current research matrix.',
-  'The latest paper scorecard is fresh, but it fails drawdown, net PnL, uptime, and coverage gates.',
-  'DeFi opportunities are still research-only because source ingestion, accounting, preflight, and signing gates are incomplete.',
 ] as const
 
 export function JournalProofBeforeCapitalPage() {
   return (
-    <PageContainer>
-      <article>
-        <PageHero
-          eyebrow="Journal / Proof discipline"
-          title="What counts as proof before a crypto strategy gets capital"
-          description="A strategy that has not earned money in its own proof loop should not be sold as a money engine. OptFi treats capital access as something the evidence has to earn, not something the roadmap can assume."
-          actions={
-            <>
-              <Badge variant="warning">Current proof: blocked</Badge>
-              <Badge variant="default">Research-only</Badge>
-              <Badge variant="default">No investment advice</Badge>
-            </>
-          }
-        />
-
-        <section className="mt-10 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <Card className="glass">
-            <CardHeader>
-              <div className="mb-2 grid h-10 w-10 place-items-center rounded-xl bg-white/80 text-sky-800 ring-1 ring-white/70">
-                <CheckCircle2 className="h-5 w-5" />
+    <div className="journal-post-root">
+      <article className="post-article">
+        <div className="container post-container">
+          <header className="post-header">
+            <div className="post-header-meta">
+              <span className="post-cat">Proof discipline</span>
+              <span className="post-sep">·</span>
+              <span>7 min read</span>
+              <span className="post-sep">·</span>
+              <span>June 2026</span>
+            </div>
+            <h1 className="post-headline">
+              Capital waits<br />
+              at the locked door.<br />
+              <span className="lime">Proof holds the key.</span>
+            </h1>
+            <p className="post-deck">
+              A strategy that has not earned money inside its own proof loop should not be sold as a money engine.
+              OptFi treats capital access as something evidence has to earn, not something impatience can unlock.
+            </p>
+            <div className="post-byline">
+              <span className="byline-mark">OF</span>
+              <div>
+                <div className="byline-name">OptFi Research</div>
+                <div className="byline-sub">Capital gate · Berlin</div>
               </div>
-              <CardTitle>Proof is permission, not decoration</CardTitle>
-              <CardDescription>
-                The point of a proof gate is to stop a plausible story before it becomes a capital mistake.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
-              <p>
-                In crypto, it is easy to show a chart, a backtest, or a yield number and call it evidence. OptFi uses a narrower definition.
-                Proof has to be fresh, repeatable, after-cost, after-tax aware, and connected to the actual execution path.
-              </p>
-              <p>
-                That standard is intentionally uncomfortable. If the current system cannot prove that it improves capital decisions, it should
-                stay in research mode. The honest product status is not "nearly ready"; it is "blocked until the evidence changes."
-              </p>
-            </CardContent>
-          </Card>
+            </div>
+          </header>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {proofRules.map((rule) => (
-              <Card key={rule.title} className="glass">
-                <CardHeader className="flex flex-row gap-4">
-                  <div className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/80 text-sky-800 ring-1 ring-white/70">
-                    <rule.icon className="h-4 w-4" />
-                  </div>
+          <div className="pull-bar">
+            <blockquote className="pull-quote">
+              "Proof is not the pitch.<br />
+              Proof is the <span className="lime">permission slip.</span>"
+            </blockquote>
+          </div>
+
+          <div className="post-body">
+            <p>
+              The most dangerous sentence in an early trading product is not "we lost money." It is "we are probably ready."
+              Probably is how a research system quietly becomes a capital system before the evidence has caught up.
+            </p>
+
+            <p>
+              OptFi uses a harsher rule. If the current proof package cannot explain why a strategy deserves even the
+              smallest useful allocation, the answer is no. Not "no forever." No today.
+            </p>
+
+            <p>
+              That distinction matters. A blocked gate is not a product failure. It is the product refusing to turn a
+              plausible story into a financial mistake. The current CEX strategy set still has interesting candidates,
+              but interesting is not the same as investable.
+            </p>
+
+            <h2>What proof has to survive</h2>
+
+            <p>
+              A clean chart is not enough. A backtest is not enough. A paper run is not enough if it is stale, unrepeatable,
+              or disconnected from the execution path. The gate cares about the dull parts because the dull parts are where
+              money leaks out.
+            </p>
+
+            <div className="data-card">
+              <div className="data-card-header">
+                <span className="data-label">Capital gate checklist · every item must pass before canary capital</span>
+              </div>
+              <div className="data-table-wrap">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Gate</th>
+                      <th>Decision rule</th>
+                      <th>What blocks it</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {proofRows.map((row) => (
+                      <tr key={row.gate}>
+                        <td><strong>{row.gate}</strong></td>
+                        <td><span className="badge-watch">{row.current}</span></td>
+                        <td>{row.blockedBy}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="data-card-footer">
+                <span>No single green artifact opens the gate.</span>
+                <span>Evidence has to be current, net, robust, and executable.</span>
+              </div>
+            </div>
+
+            <h2>What the gate says today</h2>
+
+            <p>
+              The honest status is still blocked. The latest research work improved the evidence path, the stale-state tests,
+              and the DeFi research hygiene. It did not magically make the CEX strategies profitable under retail execution
+              assumptions.
+            </p>
+
+            <div className="next-steps">
+              <div className="next-steps-header">
+                <span>Current blockers</span>
+              </div>
+              <ul className="next-steps-list">
+                <li>
+                  <span className="next-num">01</span>
                   <div>
-                    <CardTitle className="text-base">{rule.title}</CardTitle>
-                    <CardDescription>{rule.text}</CardDescription>
+                    <strong>No robust tactical promote</strong>
+                    <p>The current matrix has candidates worth watching, not candidates that have earned capital.</p>
                   </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-12 space-y-4">
-          <SectionHeading
-            kicker="Current State"
-            title="What the gate says today"
-            description="The cost side is under control because the system is local-first. The proof side is still blocked."
-          />
-          <div className="grid gap-4 md:grid-cols-3">
-            {blockedToday.map((text, index) => (
-              <Card key={text} className="glass border-amber-200/80 bg-amber-50/70">
-                <CardHeader>
-                  <Badge variant="warning" className="mb-2 w-fit">
-                    Blocker {index + 1}
-                  </Badge>
-                  <CardDescription>{text}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-12 grid gap-4 lg:grid-cols-2">
-          <Card className="glass">
-            <CardHeader>
-              <CardTitle>What would change the decision</CardTitle>
-              <CardDescription>
-                Capital only enters after the evidence improves, not after the narrative gets better.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm leading-7 text-[color:var(--muted-foreground)]">
-              <p>
-                A useful next proof package would show current strategy scorecards across baseline, retail spot, and stress assumptions,
-                plus a paper scorecard that clears net PnL, drawdown, uptime, and coverage gates.
-              </p>
-              <p>
-                Once that exists, the next step is still tiny: a guarded canary with explicit limits, signing enforcement, and measured review windows.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="glass">
-            <CardHeader>
-              <CardTitle>What does not count</CardTitle>
-              <CardDescription>
-                These are useful research inputs, but none of them grants capital access alone.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm leading-6 text-[color:var(--muted-foreground)]">
-                <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 rounded-full bg-rose-500" /><span>A single green backtest.</span></li>
-                <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 rounded-full bg-rose-500" /><span>A headline APY without source age and risk accounting.</span></li>
-                <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 rounded-full bg-rose-500" /><span>A manual override because the operator feels impatient.</span></li>
-                <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 rounded-full bg-rose-500" /><span>A hosted runtime bill that creates pressure to trade.</span></li>
+                </li>
+                <li>
+                  <span className="next-num">02</span>
+                  <div>
+                    <strong>Paper evidence still has to clear the economics</strong>
+                    <p>Net PnL, drawdown, uptime, coverage, fees, and slippage have to survive together.</p>
+                  </div>
+                </li>
+                <li>
+                  <span className="next-num">03</span>
+                  <div>
+                    <strong>DeFi is research-only</strong>
+                    <p>Source timestamps, accounting, risk scoring, preflight, and signing gates come before any wallet action.</p>
+                  </div>
+                </li>
               </ul>
-            </CardContent>
-          </Card>
-        </section>
+            </div>
+
+            <h2>What does not count</h2>
+
+            <p>
+              This is where the product has to stay rude. A single green backtest does not count. A beautiful APY card does not
+              count. A manual override because the operator is tired of waiting does not count. A hosting bill does not count.
+              None of those things proves that capital is safer or smarter inside the system.
+            </p>
+
+            <div className="callout">
+              <div className="callout-icon">!</div>
+              <div>
+                <div className="callout-title">Current OptFi decision</div>
+                <p className="callout-body">
+                  Keep CEX strategy capital blocked until fresh, after-cost evidence clears the gate. Keep DeFi research
+                  visible but non-executable until source hygiene, accounting, risk, and signing controls are complete.
+                </p>
+              </div>
+            </div>
+
+            <h2>What would change the answer</h2>
+
+            <p>
+              A useful proof package would show a current scorecard, a paper run that survives net economics, and a robustness
+              result that does not depend on one lucky regime. Then the next step is still deliberately small: a guarded canary,
+              explicit limits, measured review windows, and a rollback plan already rehearsed.
+            </p>
+
+            <p>
+              That is slower than the fantasy version. It is also the only version that can earn trust. If OptFi cannot say no
+              while the evidence is weak, it has no business saying yes when the stakes are real.
+            </p>
+
+            <div className="stat-strip">
+              <div className="stat-item">
+                <span className="stat-num lime">0</span>
+                <span className="stat-label">capital gates opened today</span>
+              </div>
+              <div className="stat-divider" />
+              <div className="stat-item">
+                <span className="stat-num">4</span>
+                <span className="stat-label">proof dimensions before canary</span>
+              </div>
+              <div className="stat-divider" />
+              <div className="stat-item">
+                <span className="stat-num">1</span>
+                <span className="stat-label">standard: evidence before capital</span>
+              </div>
+            </div>
+
+            <div className="post-footer-nav">
+              <a href="/journal" className="post-back">← Back to the journal</a>
+            </div>
+          </div>
+        </div>
       </article>
-    </PageContainer>
+    </div>
   )
 }

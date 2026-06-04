@@ -1,150 +1,208 @@
-import { AlertTriangle, CheckCircle2, Clock3, FileText, RefreshCcw, ShieldCheck } from 'lucide-react'
-import { Badge } from '../components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { PageContainer, PageHero, SectionHeading } from '../components/page-primitives'
+import './home-page.css'
+import './journal-strategy-proof-page.css'
 
-const gateRules = [
+const evidenceStates = [
   {
-    icon: Clock3,
-    title: 'Current or blocked',
-    text: 'A scorecard that is outside the freshness window cannot be treated as promote evidence.',
+    state: 'current',
+    treatment: 'Can be used by the gate',
+    operatorMeaning: 'The artifact is recent enough to inform the decision.',
   },
   {
-    icon: FileText,
-    title: 'Source named',
-    text: 'The dataset, scorecard path, paper run, and research-gate event have to be visible enough to audit.',
+    state: 'stale',
+    treatment: 'Blocks promotion',
+    operatorMeaning: 'The old result may be true, but it is no longer proof.',
   },
   {
-    icon: RefreshCcw,
-    title: 'Repeatable refresh',
-    text: 'Operators need a command that can refresh the evidence and a test that proves stale handling still works.',
+    state: 'missing',
+    treatment: 'Blocks promotion',
+    operatorMeaning: 'No artifact means no evidence, even if the story sounds plausible.',
   },
   {
-    icon: ShieldCheck,
-    title: 'Capital stays gated',
-    text: 'Fresh evidence is still only one gate. Failing PnL, drawdown, uptime, or coverage keeps capital blocked.',
+    state: 'invalid',
+    treatment: 'Blocks promotion',
+    operatorMeaning: 'A malformed artifact cannot become proof by being convenient.',
   },
-] as const
-
-const currentSlice = [
-  'The freshness checker now has deterministic tests for current, stale, missing, and invalid evidence.',
-  'The commit gate runs script typecheck plus the freshness tests before frontend lint and typecheck.',
-  'The current paper proof remains blocked; this slice improves trust in the gate, not the strategy economics.',
 ] as const
 
 export function JournalFreshEvidencePage() {
   return (
-    <PageContainer>
-      <article>
-        <PageHero
-          eyebrow="Journal / Proof discipline"
-          title="Fresh evidence beats backtest optimism"
-          description="OptFi now treats evidence freshness as a testable contract. A stale or invalid proof artifact is a blocker, even when the old result looked promising."
-          actions={
-            <>
-              <Badge variant="warning">P1 started</Badge>
-              <Badge variant="default">Proof still blocked</Badge>
-              <Badge variant="default">No investment advice</Badge>
-            </>
-          }
-        />
-
-        <section className="mt-10 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <Card className="glass">
-            <CardHeader>
-              <div className="mb-2 grid h-10 w-10 place-items-center rounded-xl bg-white/80 text-sky-800 ring-1 ring-white/70">
-                <AlertTriangle className="h-5 w-5" />
+    <div className="journal-post-root">
+      <article className="post-article">
+        <div className="container post-container">
+          <header className="post-header">
+            <div className="post-header-meta">
+              <span className="post-cat">Proof discipline</span>
+              <span className="post-sep">·</span>
+              <span>6 min read</span>
+              <span className="post-sep">·</span>
+              <span>June 2026</span>
+            </div>
+            <h1 className="post-headline">
+              Old proof can look clean.<br />
+              Fresh proof can still say no.<br />
+              <span className="lime">That is the point.</span>
+            </h1>
+            <p className="post-deck">
+              OptFi now treats evidence freshness as a testable contract. A stale or invalid proof artifact is a blocker,
+              even when the old result was pretty enough to make impatience feel rational.
+            </p>
+            <div className="post-byline">
+              <span className="byline-mark">OF</span>
+              <div>
+                <div className="byline-name">OptFi Research</div>
+                <div className="byline-sub">Evidence gate · Berlin</div>
               </div>
-              <CardTitle>Old proof is not proof</CardTitle>
-              <CardDescription>
-                A stale scorecard can be more dangerous than a failed one because it can look clean while the market context has changed.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
-              <p>
-                Backtests and paper runs are useful only when they are current, reproducible, and connected to the actual gate that would
-                allow or block capital. OptFi now tests the evidence freshness checker itself so the gate does not depend on manual memory.
-              </p>
-              <p>
-                The important detail is not that the current strategy suddenly earns money. It does not. The important detail is that stale,
-                missing, and invalid evidence now have a regression test before the system can move further into P1.
-              </p>
-            </CardContent>
-          </Card>
+            </div>
+          </header>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {gateRules.map((rule) => (
-              <Card key={rule.title} className="glass">
-                <CardHeader className="flex flex-row gap-4">
-                  <div className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/80 text-sky-800 ring-1 ring-white/70">
-                    <rule.icon className="h-4 w-4" />
-                  </div>
+          <div className="pull-bar">
+            <blockquote className="pull-quote">
+              "A stale pass is a failed pass<br />
+              with better <span className="lime">manners.</span>"
+            </blockquote>
+          </div>
+
+          <div className="post-body">
+            <p>
+              Backtests age badly. A result that looked disciplined last month can become a souvenir after the market changes,
+              fees move, data coverage shifts, or a paper run quietly stops matching the system it is supposed to justify.
+            </p>
+
+            <p>
+              This is why evidence freshness became the first P1 slice. It is not glamorous. It does not make the current
+              strategies profitable. It makes the product harder to fool.
+            </p>
+
+            <p>
+              That distinction is important. The system is still not claiming revenue. It is claiming a better refusal:
+              stale evidence cannot dress up as current proof.
+            </p>
+
+            <h2>The old artifact problem</h2>
+
+            <p>
+              A stale scorecard is worse than an obviously missing one because it has just enough polish to be persuasive.
+              It has names, numbers, dates, maybe even a green cell. What it does not have is permission to speak for the
+              current market.
+            </p>
+
+            <div className="data-card">
+              <div className="data-card-header">
+                <span className="data-label">Evidence freshness contract · tested states before promotion logic</span>
+              </div>
+              <div className="data-table-wrap">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>State</th>
+                      <th>Treatment</th>
+                      <th>Operator meaning</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {evidenceStates.map((row) => (
+                      <tr key={row.state} className={row.state === 'current' ? 'row-highlight' : undefined}>
+                        <td><span className="mono">{row.state}</span></td>
+                        <td><span className="badge-watch">{row.treatment}</span></td>
+                        <td>{row.operatorMeaning}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="data-card-footer">
+                <span>Freshness is tested, not remembered.</span>
+                <span>Fresh evidence can still fail PnL, drawdown, uptime, or coverage.</span>
+              </div>
+            </div>
+
+            <h2>What changed first</h2>
+
+            <p>
+              The first P1 delivery was deliberately small: make the stale-state checker deterministic before building more
+              dashboard surface. The proof gate now has tests for current, stale, missing, and invalid evidence, and the commit
+              path runs those checks before the frontend work gets treated as complete.
+            </p>
+
+            <div className="next-steps">
+              <div className="next-steps-header">
+                <span>P1 evidence slice</span>
+              </div>
+              <ul className="next-steps-list">
+                <li>
+                  <span className="next-num">01</span>
                   <div>
-                    <CardTitle className="text-base">{rule.title}</CardTitle>
-                    <CardDescription>{rule.text}</CardDescription>
+                    <strong>Current evidence stays usable</strong>
+                    <p>The gate can accept artifacts that are inside the freshness window.</p>
                   </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </section>
+                </li>
+                <li>
+                  <span className="next-num">02</span>
+                  <div>
+                    <strong>Stale evidence becomes loud</strong>
+                    <p>Old scorecards block promotion instead of becoming quiet footnotes.</p>
+                  </div>
+                </li>
+                <li>
+                  <span className="next-num">03</span>
+                  <div>
+                    <strong>Missing and invalid evidence fail closed</strong>
+                    <p>The system cannot promote a strategy because an artifact was absent, malformed, or inconvenient to parse.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
 
-        <section className="mt-12 space-y-4">
-          <SectionHeading
-            kicker="P1 Slice"
-            title="What changed first"
-            description="The first P1 deliverable is deliberately small: make the freshness gate testable before building more dashboard surface."
-          />
-          <div className="grid gap-4 md:grid-cols-3">
-            {currentSlice.map((text, index) => (
-              <Card key={text} className="glass">
-                <CardHeader>
-                  <Badge variant={index === 2 ? 'warning' : 'brand'} className="mb-2 w-fit">
-                    {index === 2 ? 'Still blocked' : `Delivered ${index + 1}`}
-                  </Badge>
-                  <CardDescription>{text}</CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </section>
+            <h2>Trust improves before revenue does</h2>
 
-        <section className="mt-12 grid gap-4 lg:grid-cols-2">
-          <Card className="glass">
-            <CardHeader>
-              <CardTitle>What happens next</CardTitle>
-              <CardDescription>
-                The next P1 work moves the stale state from script evidence into the operator-facing API and cockpit.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm leading-7 text-[color:var(--muted-foreground)]">
-              <p>
-                The cockpit should show "Proof stale" as a blocker with a refresh action, not as a buried timestamp. The API should return
-                current and stale scorecard states clearly enough that canary promotion cannot accidentally treat stale evidence as valid.
-              </p>
-              <p>
-                After that, the strategy matrix still needs better economics. Fresh losing evidence is honest, but it is not monetizable.
-              </p>
-            </CardContent>
-          </Card>
+            <p>
+              This is not a revenue story yet. It is a trust story. A credible money product has to prove that it can say no,
+              especially when the operator wants a yes. The current CEX proof still says no to capital, and the new evidence
+              slice makes that no easier to audit.
+            </p>
 
-          <Card className="glass border-emerald-200/80 bg-emerald-50/70">
-            <CardHeader>
-              <div className="mb-2 grid h-10 w-10 place-items-center rounded-xl bg-white/80 text-emerald-800 ring-1 ring-white/70">
-                <CheckCircle2 className="h-5 w-5" />
+            <div className="callout">
+              <div className="callout-icon">✓</div>
+              <div>
+                <div className="callout-title">Current OptFi decision</div>
+                <p className="callout-body">
+                  Keep the proof gate blocked when evidence is stale, missing, invalid, or economically weak. The next P1 work
+                  should move that status into the operator-facing API and cockpit so stale proof is visible before capital logic.
+                </p>
               </div>
-              <CardTitle>Trust improves before revenue does</CardTitle>
-              <CardDescription>
-                This is not a revenue claim. It is a trust claim: the product is less likely to fool its operator.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-sm leading-7 text-[color:var(--muted-foreground)]">
-              A credible money product has to prove that it can say no. The current system is still saying no to capital, and the first P1
-              slice makes that "no" easier to verify.
-            </CardContent>
-          </Card>
-        </section>
+            </div>
+
+            <h2>The useful disappointment</h2>
+
+            <p>
+              Fresh losing evidence is still losing evidence. That can feel irritating when the project is burning attention and
+              time. But it is also the point of the gate. The product gets more trustworthy every time it refuses to confuse
+              recency, polish, or optimism with monetizable proof.
+            </p>
+
+            <div className="stat-strip">
+              <div className="stat-item">
+                <span className="stat-num lime">4</span>
+                <span className="stat-label">freshness states under test</span>
+              </div>
+              <div className="stat-divider" />
+              <div className="stat-item">
+                <span className="stat-num">0</span>
+                <span className="stat-label">stale artifacts allowed to promote</span>
+              </div>
+              <div className="stat-divider" />
+              <div className="stat-item">
+                <span className="stat-num">1</span>
+                <span className="stat-label">next surface: API and cockpit blocker</span>
+              </div>
+            </div>
+
+            <div className="post-footer-nav">
+              <a href="/journal" className="post-back">← Back to the journal</a>
+            </div>
+          </div>
+        </div>
       </article>
-    </PageContainer>
+    </div>
   )
 }

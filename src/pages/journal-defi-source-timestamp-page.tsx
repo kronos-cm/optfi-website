@@ -1,132 +1,174 @@
-import { Clock3, DatabaseZap, ShieldAlert, Workflow } from 'lucide-react'
-import { Badge } from '../components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { PageContainer, PageHero, SectionHeading } from '../components/page-primitives'
-
-const rules = [
-  {
-    icon: Clock3,
-    title: 'The timestamp comes first',
-    text: 'Before a yield row can be ranked, OptFi checks whether the source timestamp is current enough to trust for research comparison.',
-  },
-  {
-    icon: ShieldAlert,
-    title: 'Stale APY is blocked',
-    text: 'If the source is stale or missing, the row can stay visible for review, but APY-led ranking is held so it cannot look like a recommendation.',
-  },
-  {
-    icon: Workflow,
-    title: 'Research is not execution',
-    text: 'A fresh source only allows research ordering. It does not create a wallet action, trading instruction, or capital allocation.',
-  },
-] as const
+import './home-page.css'
+import './journal-strategy-proof-page.css'
 
 export function JournalDefiSourceTimestampPage() {
   return (
-    <PageContainer>
-      <article>
-        <PageHero
-          eyebrow="Journal / DeFi research"
-          title="Why DeFi APY needs a source timestamp"
-          description="DeFi yield can change quickly. OptFi treats every APY as untrusted until the source timestamp is fresh enough to support research ranking."
-          actions={
-            <>
-              <Badge variant="warning">Research-only</Badge>
-              <Badge variant="default">No investment advice</Badge>
-              <Badge variant="success">Freshness gate drafted</Badge>
-            </>
-          }
-        />
-
-        <section className="mt-10 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-          <Card className="glass">
-            <CardHeader>
-              <div className="mb-2 grid h-10 w-10 place-items-center rounded-xl bg-white/80 text-sky-800 ring-1 ring-white/70">
-                <DatabaseZap className="h-5 w-5" />
+    <div className="journal-post-root">
+      <article className="post-article">
+        <div className="container post-container">
+          <header className="post-header">
+            <div className="post-header-meta">
+              <span className="post-cat">DeFi research</span>
+              <span className="post-sep">·</span>
+              <span>6 min read</span>
+              <span className="post-sep">·</span>
+              <span>June 2026</span>
+            </div>
+            <h1 className="post-headline">
+              A DeFi yield number<br />
+              walked in without a clock.<br />
+              <span className="lime">We sent it back.</span>
+            </h1>
+            <p className="post-deck">
+              The first DeFi lesson was not about yield. It was about time. An APY without a source timestamp is not evidence.
+              It is a rumour wearing a percentage sign.
+            </p>
+            <div className="post-byline">
+              <span className="byline-mark">OF</span>
+              <div>
+                <div className="byline-name">OptFi Research</div>
+                <div className="byline-sub">DeFi lane · Berlin</div>
               </div>
-              <CardTitle>APY is a snapshot, not a fact</CardTitle>
-              <CardDescription>
-                A DeFi yield number is only meaningful when the source, update time, and assumptions are visible.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 text-sm leading-7 text-[color:var(--muted-foreground)]">
-              <p>
-                A lending pool, liquid staking product, or stable-stable LP can show an attractive yield at one moment and a very different one later.
-                Rewards can be diluted, utilization can change, fees can move, and liquidity can dry up. If the source timestamp is missing, the
-                displayed APY should not be treated as current research evidence.
-              </p>
-              <p>
-                That is why OptFi now blocks APY-led ranking when the DeFi catalogue timestamp is stale or unknown. The row may still be shown for
-                inspection, but it is not allowed to compete with fresher evidence.
-              </p>
-            </CardContent>
-          </Card>
+            </div>
+          </header>
 
-          <div className="grid gap-4">
-            {rules.map((rule) => (
-              <Card key={rule.title} className="glass">
-                <CardHeader className="flex flex-row gap-4">
-                  <div className="mt-1 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/80 text-sky-800 ring-1 ring-white/70">
-                    <rule.icon className="h-4 w-4" />
-                  </div>
+          <div className="pull-bar">
+            <blockquote className="pull-quote">
+              "APY is a moving object.<br />
+              If you do not know when it was seen, you do not know <span className="lime">what</span> you saw."
+            </blockquote>
+          </div>
+
+          <div className="post-body">
+            <p>
+              DeFi makes numbers look clean. A lending pool shows 6.2%. A liquid staking route shows 4.8%.
+              A stable-stable pool flashes something higher, with enough decimals to feel precise. The interface invites the
+              lazy conclusion: rank the rows, pick the top one, call it research.
+            </p>
+
+            <p>
+              OptFi now refuses that move.
+            </p>
+
+            <p>
+              The reason is simple. A DeFi yield number is not a fact by itself. It is a report from a source at a moment in time.
+              Utilisation can move. Rewards can dilute. TVL can shift. A temporary incentive can expire. Liquidity can look deep
+              until the exit trade asks the pool a harder question.
+            </p>
+
+            <h2>The missing timestamp changed the product</h2>
+
+            <p>
+              The early DeFi table did what many yield tables do: it made APY the loudest column. That was wrong. A high APY with
+              a stale source is less useful than a boring APY with a current source. So the table now asks a question before it ranks:
+              do we know when this source was updated?
+            </p>
+
+            <div className="data-card">
+              <div className="data-card-header">
+                <span className="data-label">DeFi opportunity row · source hygiene before yield ranking</span>
+              </div>
+              <div className="data-table-wrap">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>State</th>
+                      <th>APY ranking</th>
+                      <th>Verdict</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span className="mono">fresh_source</span></td>
+                      <td className="pos">Allowed for research ordering</td>
+                      <td><span className="badge-watch">Review</span></td>
+                    </tr>
+                    <tr className="row-highlight">
+                      <td><span className="mono">stale_source</span></td>
+                      <td className="warn">Blocked from APY-led ranking</td>
+                      <td><span className="badge-watch">Research only</span></td>
+                    </tr>
+                    <tr className="row-dim">
+                      <td><span className="mono">missing_source_time</span></td>
+                      <td className="neg">No ranking</td>
+                      <td><span className="badge-watch">No proof</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="data-card-footer">
+                <span>Freshness is a prerequisite, not a recommendation.</span>
+                <span>APY still needs risk, gas, tax, and accounting checks.</span>
+              </div>
+            </div>
+
+            <h2>The table had to become less seductive</h2>
+
+            <p>
+              A yield table that always sorts by the biggest number is not neutral. It trains the eye to chase the row with the
+              loudest promise. That is exactly the wrong instinct for DeFi. High APY can mean real opportunity, but it can also mean
+              reward inflation, low liquidity, smart-contract risk, impermanent loss, governance risk, or simply stale data.
+            </p>
+
+            <p>
+              So the current DeFi research lane does something intentionally boring. If the source timestamp is stale or missing,
+              APY-led ranking is blocked. The row can remain visible for inspection, but it cannot compete as current evidence.
+            </p>
+
+            <div className="callout">
+              <div className="callout-icon">i</div>
+              <div>
+                <div className="callout-title">Current OptFi decision</div>
+                <p className="callout-body">
+                  DeFi remains research-only. A fresh timestamp makes a row eligible for research ordering. It does not create
+                  a wallet action, a trade instruction, or a capital allocation.
+                </p>
+              </div>
+            </div>
+
+            <h2>The timestamp is the first honesty test</h2>
+
+            <p>
+              This is the public lesson: before asking whether a yield is attractive, ask whether the number is alive.
+              A timestamp is not the whole proof. It is the first line on the evidence ticket. Without it, everything downstream
+              is theatre.
+            </p>
+
+            <div className="next-steps">
+              <div className="next-steps-header">
+                <span>What still has to be true</span>
+              </div>
+              <ul className="next-steps-list">
+                <li>
+                  <span className="next-num">01</span>
                   <div>
-                    <CardTitle className="text-base">{rule.title}</CardTitle>
-                    <CardDescription>{rule.text}</CardDescription>
+                    <strong>Source attribution</strong>
+                    <p>The protocol, source, update time, and stale threshold need to be visible before ranking.</p>
                   </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </section>
+                </li>
+                <li>
+                  <span className="next-num">02</span>
+                  <div>
+                    <strong>Risk accounting</strong>
+                    <p>Smart-contract risk, governance risk, impermanent loss, gas, and lockup must sit beside APY.</p>
+                  </div>
+                </li>
+                <li>
+                  <span className="next-num">03</span>
+                  <div>
+                    <strong>No execution shortcut</strong>
+                    <p>Research rows do not become wallet actions until accounting and signing gates are implemented.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
 
-        <section className="mt-12 space-y-4">
-          <SectionHeading
-            kicker="Freshness Gate"
-            title="What happens when the source is stale"
-            description="The system changes the table behavior before the operator can infer too much from a yield number."
-          />
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="glass">
-              <CardHeader>
-                <CardTitle className="text-base">Warning</CardTitle>
-                <CardDescription>The DeFi table shows a source warning above the rows.</CardDescription>
-              </CardHeader>
-            </Card>
-            <Card className="glass">
-              <CardHeader>
-                <CardTitle className="text-base">No APY ranking</CardTitle>
-                <CardDescription>Rows fall back to protocol and name ordering instead of net-yield ordering.</CardDescription>
-              </CardHeader>
-            </Card>
-            <Card className="glass">
-              <CardHeader>
-                <CardTitle className="text-base">No proof</CardTitle>
-                <CardDescription>Stale DeFi data cannot be compared against CEX strategy evidence.</CardDescription>
-              </CardHeader>
-            </Card>
+            <div className="post-footer-nav">
+              <a href="/journal" className="post-back">← Back to the journal</a>
+            </div>
           </div>
-        </section>
-
-        <section className="mt-12">
-          <Card className="glass border-amber-200/80 bg-amber-50/70">
-            <CardHeader>
-              <CardTitle>This is not a yield recommendation</CardTitle>
-              <CardDescription>
-                The timestamp rule is a research hygiene rule. It does not say a fresh APY is safe, profitable, tax-efficient, or suitable for any person.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm leading-7 text-[color:var(--muted-foreground)]">
-              <p>
-                A fresh timestamp only answers one narrow question: is the source recent enough to rank for research review? Smart-contract risk,
-                governance risk, impermanent loss, gas, tax treatment, wallet policy, and accounting readiness still need separate checks.
-              </p>
-              <p>
-                OptFi keeps DeFi in research-only mode until the broader proof and safety gates are satisfied.
-              </p>
-            </CardContent>
-          </Card>
-        </section>
+        </div>
       </article>
-    </PageContainer>
+    </div>
   )
 }
