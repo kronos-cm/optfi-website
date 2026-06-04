@@ -64,40 +64,45 @@ export function JournalDefiSourceTimestampPage() {
               do we know when this source was updated?
             </p>
 
+            <p>
+              In the current research lane, that means something specific: the protocol source or API response must expose an
+              observation time, and OptFi only treats it as current if that timestamp is no more than 24 hours old at review time.
+            </p>
+
             <div className="data-card">
               <div className="data-card-header">
-                <span className="data-label">DeFi opportunity row · source hygiene before yield ranking</span>
+                <span className="data-label">DeFi opportunity row · source freshness rule before yield ranking</span>
               </div>
               <div className="data-table-wrap">
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>State</th>
+                      <th>Source freshness</th>
                       <th>APY ranking</th>
                       <th>Verdict</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td><span className="mono">fresh_source</span></td>
-                      <td className="pos">Allowed for research ordering</td>
+                      <td><strong>Timestamp visible, 0-24h old</strong></td>
+                      <td className="pos">Can be ordered by APY for research review</td>
                       <td><span className="badge-watch">Review</span></td>
                     </tr>
                     <tr className="row-highlight">
-                      <td><span className="mono">stale_source</span></td>
-                      <td className="warn">Blocked from APY-led ranking</td>
+                      <td><strong>Timestamp visible, older than 24h</strong></td>
+                      <td className="warn">Kept visible, blocked from APY-led ranking</td>
                       <td><span className="badge-watch">Research only</span></td>
                     </tr>
                     <tr className="row-dim">
-                      <td><span className="mono">missing_source_time</span></td>
-                      <td className="neg">No ranking</td>
+                      <td><strong>No source timestamp exposed</strong></td>
+                      <td className="neg">No ranking, no evidence status</td>
                       <td><span className="badge-watch">No proof</span></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <div className="data-card-footer">
-                <span>Freshness is a prerequisite, not a recommendation.</span>
+                <span>Fresh means observed within the last 24 hours.</span>
                 <span>APY still needs risk, gas, tax, and accounting checks.</span>
               </div>
             </div>
@@ -113,6 +118,7 @@ export function JournalDefiSourceTimestampPage() {
             <p>
               So the current DeFi research lane does something intentionally boring. If the source timestamp is stale or missing,
               APY-led ranking is blocked. The row can remain visible for inspection, but it cannot compete as current evidence.
+              A row only becomes "fresh" after it shows a named source and a timestamp inside the 24-hour freshness window.
             </p>
 
             <div className="callout">
