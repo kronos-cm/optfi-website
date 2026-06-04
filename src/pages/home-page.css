@@ -641,16 +641,12 @@ section {
   grid-column: span 5;
 }
 
-.post-third {
-  grid-column: span 4;
-}
-
-.post-half {
-  grid-column: span 6;
-}
-
 .post-wide {
   grid-column: span 12;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: 32px;
+  align-items: start;
 }
 
 .post-thumb {
@@ -666,6 +662,12 @@ section {
 }
 
 .post-feature .post-thumb {
+  aspect-ratio: 16/10;
+}
+
+.post-wide .post-thumb {
+  grid-row: 1 / span 5;
+  margin-bottom: 0;
   aspect-ratio: 16/10;
 }
 
@@ -737,16 +739,16 @@ section {
   letter-spacing: -0.025em;
 }
 
-.post-third .post-title {
-  font-size: 20px;
-}
-
-.post-half .post-title {
-  font-size: 24px;
-}
-
 .post-wide .post-title {
   font-size: 30px;
+  max-width: 22ch;
+}
+
+.post-wide .post-meta,
+.post-wide .post-title,
+.post-wide .post-excerpt,
+.post-wide .post-read {
+  grid-column: 2;
 }
 
 .post-excerpt {
@@ -756,8 +758,13 @@ section {
   margin: 0 0 16px;
 }
 
-.post-side-a .post-excerpt, .post-third .post-excerpt {
+.post-side-a .post-excerpt {
   font-size: 13.5px;
+}
+
+.post-wide .post-excerpt {
+  font-size: 14.5px;
+  max-width: 56ch;
 }
 
 .post:hover .post-title {
@@ -1239,6 +1246,13 @@ footer {
   }
   .journal-grid > * {
     grid-column: span 12;
+  }
+  .post-wide {
+    display: flex;
+  }
+  .post-wide .post-thumb {
+    width: 100%;
+    margin-bottom: 22px;
   }
   .nav-links {
     display: none;

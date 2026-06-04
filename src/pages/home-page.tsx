@@ -24,7 +24,7 @@ export function HomePage() {
       {/* Nav */}
       <nav className="nav">
         <div className="container nav-row">
-          <a href="#" className="brand"><span className="brand-mark"></span>OPTFI</a>
+          <a href="/" className="brand"><span className="brand-mark"></span>OPTFI</a>
           <div className="nav-links">
             <a href="#thesis">Thesis</a>
             <a href="#journal">Journal</a>
@@ -261,18 +261,17 @@ export function HomePage() {
             <div className="foot-col">
               <h5>The journal</h5>
               <ul>
-                <li><a href="#journal">All entries</a></li>
-                <li><a href="#journal">Operator letters</a></li>
-                <li><a href="#journal">Tax in Germany</a></li>
-                <li><a href="#journal">DeFi field notes</a></li>
+                <li><a href="/journal/when-arbitrage-stops-being-free-money">Arbitrage costs</a></li>
+                <li><a href="/journal/defi-source-timestamp">DeFi source age</a></li>
+                <li><a href="/journal/strategy-proof">Strategy lab</a></li>
               </ul>
             </div>
             <div className="foot-col">
               <h5>Company</h5>
               <ul>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Imprint</a></li>
-                <li><a href="#">Privacy</a></li>
+                <li><a href="mailto:hello@optfi.eu">Contact</a></li>
+                <li><a href="/transparency">Transparency</a></li>
+                <li><a href="/status">Status</a></li>
               </ul>
             </div>
           </div>

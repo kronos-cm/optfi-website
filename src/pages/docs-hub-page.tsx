@@ -18,22 +18,17 @@ const filters: Array<{ key: 'all' | DocCategory; label: string }> = [
 
 export function DocsHubPage() {
   const [activeFilter, setActiveFilter] = useState<'all' | DocCategory>('all')
-  const [showPlanned, setShowPlanned] = useState(true)
 
   const visibleDocs = useMemo(() => {
     return publicDocPages.filter((doc) => {
-      if (!showPlanned && doc.status === 'planned') {
-        return false
-      }
       if (activeFilter !== 'all' && doc.category !== activeFilter) {
         return false
       }
       return true
     })
-  }, [activeFilter, showPlanned])
+  }, [activeFilter])
 
   const liveCount = publicDocPages.filter((doc) => doc.status === 'live').length
-  const plannedCount = publicDocPages.filter((doc) => doc.status === 'planned').length
 
   return (
     <PageContainer>
@@ -44,7 +39,6 @@ export function DocsHubPage() {
         actions={
           <>
             <Badge variant="success">{liveCount} live pages</Badge>
-            <Badge variant="warning">{plannedCount} planned pages</Badge>
           </>
         }
       />
@@ -79,15 +73,6 @@ export function DocsHubPage() {
                 )
               })}
             </div>
-            <label className="flex items-center gap-3 rounded-xl border border-white/70 bg-white/70 px-3 py-2 text-sm">
-              <input
-                type="checkbox"
-                checked={showPlanned}
-                onChange={(event) => setShowPlanned(event.target.checked)}
-                className="h-4 w-4 rounded border-slate-300"
-              />
-              <span>Show planned pages (recommended while docs are being built)</span>
-            </label>
             <div className="rounded-xl border border-white/70 bg-white/70 p-4 text-sm leading-6 text-[color:var(--muted-foreground)]">
               <p className="font-medium text-[color:var(--foreground)]">Current build policy</p>
               <p className="mt-1">
@@ -126,7 +111,7 @@ export function DocsHubPage() {
         <SectionHeading
           kicker="Documentation Pages"
           title="Public docs map"
-          description="Curated pages available now and the next public-facing pages planned for product, safety, and operations communication."
+          description="Curated live pages for product, safety, operations, and strategy communication."
         />
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {visibleDocs.map((doc) => (
