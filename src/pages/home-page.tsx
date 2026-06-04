@@ -97,10 +97,9 @@ export function HomePage() {
           </div>
 
           <div className="journal-cats">
-            <span className="cat-chip active">All <span className="count">6</span></span>
+            <span className="cat-chip active">All <span className="count">5</span></span>
             <span className="cat-chip">Proof discipline <span className="count">2</span></span>
             <span className="cat-chip">Strategy economics <span className="count">1</span></span>
-            <span className="cat-chip">Operating discipline <span className="count">1</span></span>
             <span className="cat-chip">DeFi research <span className="count">1</span></span>
             <span className="cat-chip">Strategy thinking <span className="count">1</span></span>
           </div>
@@ -114,12 +113,12 @@ export function HomePage() {
               <a href="/journal/when-arbitrage-stops-being-free-money" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
-            <article className="post post-side-a" onClick={() => window.location.href='/journal/local-first-hosting'} style={{cursor:'pointer'}}>
-              <div className="post-thumb ph-2"><span className="badge">Cost</span></div>
-              <div className="post-meta"><span className="cat">Operating discipline</span><span>5 min</span><span>June 2026</span></div>
-              <h3 className="post-title">We turned the server bill into a gate.</h3>
-              <p className="post-excerpt">Infrastructure burn is EUR 0. Private runtime hosting stays off until proof or continuity earns it.</p>
-              <a href="/journal/local-first-hosting" className="post-read">Read entry <span className="arrow">→</span></a>
+            <article className="post post-side-a" onClick={() => window.location.href='/journal/fresh-evidence'} style={{cursor:'pointer'}}>
+              <div className="post-thumb ph-2"><span className="badge">Proof</span></div>
+              <div className="post-meta"><span className="cat">Proof discipline</span><span>6 min</span><span>June 2026</span></div>
+              <h3 className="post-title">Old proof can look clean. Fresh proof can still say no.</h3>
+              <p className="post-excerpt">A stale or invalid proof artifact is a blocker, even when the old result looked promising.</p>
+              <a href="/journal/fresh-evidence" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
             <article className="post post-third" onClick={() => window.location.href='/journal/defi-source-timestamp'} style={{cursor:'pointer'}}>
