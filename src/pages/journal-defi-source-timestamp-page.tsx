@@ -17,28 +17,18 @@ const defiFreshnessChart = {
   top: 30,
   bottom: 58,
   maxAge: 36,
-  maxApy: 12,
 }
 
-const defiFreshnessPoints = [
-  { age: 0, apy: defiFreshnessExample.displayedApy },
-  { age: 12, apy: defiFreshnessExample.displayedApy },
-  { age: 24, apy: defiFreshnessExample.displayedApy },
-  { age: defiFreshnessExample.sourceAgeHours, apy: defiFreshnessExample.displayedApy },
-] as const
+const defiFreshnessRankableAges = [0, 12, 24] as const
 
 function defiFreshnessX(age: number) {
   const span = defiFreshnessChart.width - defiFreshnessChart.left - defiFreshnessChart.right
   return defiFreshnessChart.left + (age / defiFreshnessChart.maxAge) * span
 }
 
-function defiFreshnessY(apy: number) {
+function defiFreshnessStatusY(status: 'rankable' | 'blocked') {
   const span = defiFreshnessChart.height - defiFreshnessChart.top - defiFreshnessChart.bottom
-  return defiFreshnessChart.top + span - (apy / defiFreshnessChart.maxApy) * span
-}
-
-function defiFreshnessLinePoints() {
-  return defiFreshnessPoints.map((point) => `${defiFreshnessX(point.age)},${defiFreshnessY(point.apy)}`).join(' ')
+  return status === 'rankable' ? defiFreshnessChart.top + 66 : defiFreshnessChart.top + span - 28
 }
 
 export function JournalDefiSourceTimestampPage() {
@@ -121,8 +111,8 @@ export function JournalDefiSourceTimestampPage() {
               <svg className="defi-freshness-svg" viewBox={`0 0 ${defiFreshnessChart.width} ${defiFreshnessChart.height}`} role="img" aria-labelledby="defi-freshness-title defi-freshness-desc">
                 <title id="defi-freshness-title">DeFi APY source age example</title>
                 <desc id="defi-freshness-desc">
-                  A sample DeFi APY is still displayed at 9.8 percent after 31 hours, but the source age places it outside the
-                  24-hour freshness window, so OptFi blocks it from APY-led ranking.
+                  A sample DeFi APY is still displayed at 9.8 percent after 31 hours, but the ranking eligibility drops from
+                  rankable to blocked once the source age passes 24 hours.
                 </desc>
                 <rect
                   className="defi-zone-fresh"
@@ -138,20 +128,31 @@ export function JournalDefiSourceTimestampPage() {
                   width={defiFreshnessChart.width - defiFreshnessChart.right - defiFreshnessX(24)}
                   height={defiFreshnessChart.height - defiFreshnessChart.top - defiFreshnessChart.bottom}
                 />
-                {[0, 6, 12].map((tick) => (
-                  <g key={tick}>
+                {(['rankable', 'blocked'] as const).map((status) => (
+                  <g key={status}>
                     <line
                       className="defi-grid-line"
                       x1={defiFreshnessChart.left}
                       x2={defiFreshnessChart.width - defiFreshnessChart.right}
-                      y1={defiFreshnessY(tick)}
-                      y2={defiFreshnessY(tick)}
+                      y1={defiFreshnessStatusY(status)}
+                      y2={defiFreshnessStatusY(status)}
                     />
-                    <text className="defi-axis-label" x={defiFreshnessChart.left - 12} y={defiFreshnessY(tick) + 4} textAnchor="end">
-                      {tick}%
+                    <text
+                      className="defi-axis-label defi-status-label"
+                      x={defiFreshnessChart.left + 8}
+                      y={defiFreshnessStatusY(status) + (status === 'rankable' ? -12 : 18)}
+                      textAnchor="start"
+                    >
+                      {status === 'rankable' ? 'Can rank' : 'Blocked'}
                     </text>
                   </g>
                 ))}
+                <g className="defi-reported-apy">
+                  <rect x={defiFreshnessX(1)} y={defiFreshnessChart.top + 122} width="204" height="24" rx="12" />
+                  <text x={defiFreshnessX(1) + 14} y={defiFreshnessChart.top + 138}>
+                    Displayed APY remains {defiFreshnessExample.displayedApy.toFixed(1)}%
+                  </text>
+                </g>
                 <line
                   className="defi-freshness-boundary"
                   x1={defiFreshnessX(24)}
@@ -160,28 +161,39 @@ export function JournalDefiSourceTimestampPage() {
                   y2={defiFreshnessChart.height - defiFreshnessChart.bottom}
                 />
                 <text className="defi-zone-label fresh" x={defiFreshnessX(12)} y={defiFreshnessChart.top + 18} textAnchor="middle">
-                  0-24h: review allowed
+                  0-24h: can rank
                 </text>
                 <text className="defi-zone-label stale" x={defiFreshnessX(30)} y={defiFreshnessChart.top + 18} textAnchor="middle">
-                  24h+: ranking blocked
+                  24h+: visible, not rankable
                 </text>
-                <polyline className="defi-apy-line" points={defiFreshnessLinePoints()} />
-                {defiFreshnessPoints.map((point) => (
-                  <circle key={point.age} className="defi-apy-dot" cx={defiFreshnessX(point.age)} cy={defiFreshnessY(point.apy)} r="4" />
+                <path
+                  className="defi-eligibility-line"
+                  d={`M ${defiFreshnessX(0)} ${defiFreshnessStatusY('rankable')} H ${defiFreshnessX(24)}`}
+                />
+                <path
+                  className="defi-drop-line"
+                  d={`M ${defiFreshnessX(24)} ${defiFreshnessStatusY('rankable')} V ${defiFreshnessStatusY('blocked')}`}
+                />
+                <path
+                  className="defi-blocked-line"
+                  d={`M ${defiFreshnessX(24)} ${defiFreshnessStatusY('blocked')} H ${defiFreshnessX(36)}`}
+                />
+                {defiFreshnessRankableAges.map((age) => (
+                  <circle key={age} className="defi-rank-dot" cx={defiFreshnessX(age)} cy={defiFreshnessStatusY('rankable')} r="4" />
                 ))}
                 <circle
                   className="defi-landing-dot"
                   cx={defiFreshnessX(defiFreshnessExample.sourceAgeHours)}
-                  cy={defiFreshnessY(defiFreshnessExample.displayedApy)}
+                  cy={defiFreshnessStatusY('blocked')}
                   r="8"
                 />
                 <text
                   className="defi-landing-label"
                   x={defiFreshnessX(defiFreshnessExample.sourceAgeHours)}
-                  y={defiFreshnessY(defiFreshnessExample.displayedApy) + 28}
+                  y={defiFreshnessStatusY('blocked') - 18}
                   textAnchor="middle"
                 >
-                  lands here: 31h old
+                  31h old: ranking blocked
                 </text>
                 {[0, 12, 24, 31, 36].map((tick) => (
                   <text key={tick} className="defi-axis-label" x={defiFreshnessX(tick)} y={defiFreshnessChart.height - 28} textAnchor="middle">
@@ -189,7 +201,7 @@ export function JournalDefiSourceTimestampPage() {
                   </text>
                 ))}
                 <text className="defi-axis-caption" x={(defiFreshnessChart.width + defiFreshnessChart.left - defiFreshnessChart.right) / 2} y={defiFreshnessChart.height - 10} textAnchor="middle">
-                  Source age when OptFi reviews the row
+                  Source age when OptFi reviews the row, not APY performance
                 </text>
               </svg>
 

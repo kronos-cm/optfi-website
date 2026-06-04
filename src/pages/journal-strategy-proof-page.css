@@ -590,17 +590,31 @@
   stroke-dasharray: 6 6;
 }
 
-.defi-apy-line {
+.defi-eligibility-line,
+.defi-drop-line,
+.defi-blocked-line {
   fill: none;
-  stroke: var(--fg-2);
-  stroke-width: 2;
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.defi-apy-dot {
+.defi-eligibility-line {
+  stroke: #6de67c;
+}
+
+.defi-drop-line {
+  stroke: var(--lime);
+  stroke-dasharray: 5 5;
+}
+
+.defi-blocked-line {
+  stroke: var(--warn);
+}
+
+.defi-rank-dot {
   fill: var(--bg-2);
-  stroke: var(--fg-2);
+  stroke: #6de67c;
   stroke-width: 2;
 }
 
@@ -613,11 +627,25 @@
 .defi-axis-label,
 .defi-axis-caption,
 .defi-zone-label,
-.defi-landing-label {
+.defi-landing-label,
+.defi-reported-apy text {
   font-family: 'Geist Mono', monospace;
   font-size: 10px;
   fill: var(--muted);
   letter-spacing: 0.03em;
+}
+
+.defi-reported-apy rect {
+  fill: rgba(11, 12, 10, 0.64);
+  stroke: var(--rule-strong);
+}
+
+.defi-reported-apy text {
+  fill: var(--fg);
+}
+
+.defi-status-label {
+  fill: var(--fg-2);
 }
 
 .defi-zone-label.fresh {
