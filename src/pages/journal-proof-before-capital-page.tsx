@@ -204,7 +204,7 @@ export function JournalProofBeforeCapitalPage() {
             </div>
 
             <div className="post-footer-nav">
-              <a href="/journal" className="post-back">← Back to the journal</a>
+              <a href="/#journal" className="post-back">← Back to the journal</a>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react'
+import { useEffect, type PropsWithChildren } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import './site-nav.css'
 
@@ -6,6 +6,17 @@ export function SiteShell({ children }: PropsWithChildren) {
   const location = useLocation()
   const isHome = location.pathname === '/'
   const isDocs = location.pathname.startsWith('/docs')
+
+  useEffect(() => {
+    if (!location.hash) {
+      return
+    }
+
+    window.requestAnimationFrame(() => {
+      const target = document.getElementById(decodeURIComponent(location.hash.slice(1)))
+      target?.scrollIntoView({ block: 'start' })
+    })
+  }, [location.hash, location.pathname])
 
   return (
     <div className="site-nav-root">
@@ -31,9 +42,9 @@ export function SiteShell({ children }: PropsWithChildren) {
               <NavLink to="/transparency" className={({ isActive }) => isActive ? 'active' : ''}>
                 Transparency
               </NavLink>
-              <NavLink to="/journal" className={({ isActive }) => isActive ? 'active' : ''}>
+              <a href="/#journal">
                 Journal
-              </NavLink>
+              </a>
             </div>
 
             <div className="site-nav-cta">
@@ -107,7 +118,7 @@ export function SiteShell({ children }: PropsWithChildren) {
               <p style={{ fontSize: '11px', letterSpacing: '0.08em', textTransform: 'uppercase', color: '#6f6c5e', margin: '0 0 12px' }}>Company</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px' }}>
                 <NavLink to="/transparency" style={{ color: '#b8b4a3', textDecoration: 'none' }}>Transparency</NavLink>
-                <NavLink to="/journal" style={{ color: '#b8b4a3', textDecoration: 'none' }}>Journal</NavLink>
+                <a href="/#journal" style={{ color: '#b8b4a3', textDecoration: 'none' }}>Journal</a>
               </div>
             </div>
           </div>

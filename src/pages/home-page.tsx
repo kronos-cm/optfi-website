@@ -94,7 +94,6 @@ export function HomePage() {
               <div className="kicker"><span className="num">/ 02</span> The journal</div>
               <h2>Notes from a tax-aware crypto build, <span className="lime">written in public.</span></h2>
             </div>
-            <a className="btn btn-ghost" href="/journal">All entries (6) <span className="arrow">→</span></a>
           </div>
 
           <div className="journal-cats">
