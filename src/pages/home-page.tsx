@@ -56,12 +56,12 @@ export function HomePage() {
             </div>
           </div>
 
-          <a href="/journal/proof-before-capital" className="featured">
+          <a href="/journal/when-arbitrage-stops-being-free-money" className="featured">
             <span className="featured-flag">Latest from the journal</span>
             <div className="featured-thumb"></div>
-            <div className="featured-meta"><span className="cat">Proof discipline</span><span>6 min read</span><span>June 2026</span></div>
-            <h3 className="featured-title">What counts as proof before a crypto strategy gets capital.</h3>
-            <p className="featured-excerpt">The cost side is local-first and under control. The capital side is still blocked until current evidence earns it.</p>
+            <div className="featured-meta"><span className="cat">Strategy economics</span><span>8 min read</span><span>June 2026</span></div>
+            <h3 className="featured-title">When Arbitrage Stops Being Free Money.</h3>
+            <p className="featured-excerpt">A tiny price gap can look like alpha until the receipt arrives: fees, spread, slippage, and tax-aware accounting.</p>
             <span className="featured-read">Read entry <span className="arrow">→</span></span>
           </a>
         </div>
@@ -94,23 +94,25 @@ export function HomePage() {
               <div className="kicker"><span className="num">/ 02</span> The journal</div>
               <h2>Notes from a tax-aware crypto build, <span className="lime">written in public.</span></h2>
             </div>
-            <a className="btn btn-ghost" href="/journal">All entries (4) <span className="arrow">→</span></a>
+            <a className="btn btn-ghost" href="/journal">All entries (6) <span className="arrow">→</span></a>
           </div>
 
           <div className="journal-cats">
-            <span className="cat-chip active">All <span className="count">4</span></span>
+            <span className="cat-chip active">All <span className="count">6</span></span>
             <span className="cat-chip">Proof discipline <span className="count">2</span></span>
+            <span className="cat-chip">Strategy economics <span className="count">1</span></span>
+            <span className="cat-chip">Operating discipline <span className="count">1</span></span>
             <span className="cat-chip">DeFi research <span className="count">1</span></span>
             <span className="cat-chip">Strategy thinking <span className="count">1</span></span>
           </div>
 
           <div className="journal-grid">
-            <article className="post post-feature" onClick={() => window.location.href='/journal/proof-before-capital'} style={{cursor:'pointer'}}>
-              <div className="post-thumb ph-1"><span className="badge">Proof</span></div>
-              <div className="post-meta"><span className="cat">Proof discipline</span><span>6 min read</span><span>June 2026</span></div>
-              <h3 className="post-title">What counts as proof before a crypto strategy gets capital.</h3>
-              <p className="post-excerpt">A strategy that has not earned money in its own proof loop should not be sold as a money engine.</p>
-              <a href="/journal/proof-before-capital" className="post-read">Read entry <span className="arrow">→</span></a>
+            <article className="post post-feature" onClick={() => window.location.href='/journal/when-arbitrage-stops-being-free-money'} style={{cursor:'pointer'}}>
+              <div className="post-thumb ph-1"><span className="badge">Fees</span></div>
+              <div className="post-meta"><span className="cat">Strategy economics</span><span>8 min read</span><span>June 2026</span></div>
+              <h3 className="post-title">When Arbitrage Stops Being Free Money.</h3>
+              <p className="post-excerpt">A tiny CEX price gap can disappear under the receipt: fees, spread, slippage, and tax-aware accounting.</p>
+              <a href="/journal/when-arbitrage-stops-being-free-money" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
             <article className="post post-side-a" onClick={() => window.location.href='/journal/local-first-hosting'} style={{cursor:'pointer'}}>

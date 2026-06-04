@@ -1,10 +1,18 @@
-import { BookOpenText, Clock3, FlaskConical, ShieldCheck } from 'lucide-react'
+import { ArrowRightLeft, BookOpenText, Clock3, FlaskConical, ShieldCheck } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Badge } from '../components/ui/badge'
 import { Card, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
 import { PageContainer, PageHero, SectionHeading } from '../components/page-primitives'
 
 const entries = [
+  {
+    to: '/journal/when-arbitrage-stops-being-free-money',
+    icon: ArrowRightLeft,
+    category: 'Strategy economics',
+    title: 'When Arbitrage Stops Being Free Money',
+    summary: 'A data-backed note on why visible CEX price gaps can disappear under fees, spread, slippage, and tax-aware accounting.',
+    badge: 'New',
+  },
   {
     to: '/journal/fresh-evidence',
     icon: Clock3,
