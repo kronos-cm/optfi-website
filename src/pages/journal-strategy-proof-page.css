@@ -527,6 +527,179 @@
   }
 }
 
+/* ── DeFi freshness example chart ── */
+
+.defi-freshness-card {
+  background:
+    linear-gradient(180deg, rgba(212, 255, 58, 0.04), rgba(212, 255, 58, 0) 38%),
+    var(--bg-2);
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 2em 0;
+  overflow: hidden;
+}
+
+.defi-freshness-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 8px;
+}
+
+.defi-freshness-kicker {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.defi-freshness-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--fg);
+  line-height: 1.35;
+}
+
+.defi-freshness-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 10px 0 12px;
+}
+
+.defi-zone-fresh {
+  fill: rgba(109, 230, 124, 0.07);
+}
+
+.defi-zone-stale {
+  fill: rgba(255, 122, 69, 0.08);
+}
+
+.defi-grid-line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.defi-freshness-boundary {
+  stroke: var(--lime);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+
+.defi-apy-line {
+  fill: none;
+  stroke: var(--fg-2);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.defi-apy-dot {
+  fill: var(--bg-2);
+  stroke: var(--fg-2);
+  stroke-width: 2;
+}
+
+.defi-landing-dot {
+  fill: var(--warn);
+  stroke: var(--bg-2);
+  stroke-width: 3;
+}
+
+.defi-axis-label,
+.defi-axis-caption,
+.defi-zone-label,
+.defi-landing-label {
+  font-family: 'Geist Mono', monospace;
+  font-size: 10px;
+  fill: var(--muted);
+  letter-spacing: 0.03em;
+}
+
+.defi-zone-label.fresh {
+  fill: #6de67c;
+}
+
+.defi-zone-label.stale,
+.defi-landing-label {
+  fill: var(--warn);
+}
+
+.defi-landing-label {
+  font-weight: 700;
+}
+
+.defi-example-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.defi-example-strip > div {
+  padding: 12px 14px;
+  border-right: 1px solid var(--rule);
+  background: rgba(11, 12, 10, 0.34);
+  min-width: 0;
+}
+
+.defi-example-strip > div:last-child {
+  border-right: none;
+}
+
+.defi-example-value,
+.defi-example-label {
+  display: block;
+  font-family: 'Geist Mono', monospace;
+}
+
+.defi-example-value {
+  font-size: 0.82rem;
+  color: var(--fg);
+  font-weight: 700;
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}
+
+.defi-example-value.warn {
+  color: var(--warn);
+}
+
+.defi-example-label {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+@media (max-width: 700px) {
+  .defi-freshness-head {
+    flex-direction: column;
+  }
+
+  .defi-example-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .defi-example-strip > div:nth-child(2) {
+    border-right: none;
+  }
+
+  .defi-example-strip > div:nth-child(-n+2) {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .defi-zone-label {
+    font-size: 8px;
+  }
+}
+
 /* ── Fixture grid ── */
 
 .fixture-grid {
