@@ -106,7 +106,7 @@ export function HomePage() {
 
           <div className="journal-grid">
             <article className="post post-feature" onClick={() => window.location.href='/journal/when-arbitrage-stops-being-free-money'} style={{cursor:'pointer'}}>
-              <div className="post-thumb ph-1"><span className="badge">Fees</span></div>
+              <div className="post-thumb art-arbitrage"><span className="badge">Fees</span></div>
               <div className="post-meta"><span className="cat">Strategy economics</span><span>8 min read</span><span>June 2026</span></div>
               <h3 className="post-title">When arbitrage stops being free money.</h3>
               <p className="post-excerpt">A tiny CEX price gap can disappear once fees, spread, slippage, and tax-aware accounting hit the chart.</p>
@@ -114,7 +114,7 @@ export function HomePage() {
             </article>
 
             <article className="post post-side-a" onClick={() => window.location.href='/journal/fresh-evidence'} style={{cursor:'pointer'}}>
-              <div className="post-thumb ph-2"><span className="badge">Proof</span></div>
+              <div className="post-thumb art-fresh-evidence"><span className="badge">Proof</span></div>
               <div className="post-meta"><span className="cat">Proof discipline</span><span>6 min</span><span>June 2026</span></div>
               <h3 className="post-title">Old proof can look clean. Fresh proof can still say no.</h3>
               <p className="post-excerpt">A stale or invalid proof artifact is a blocker, even when the old result looked promising.</p>
@@ -122,15 +122,23 @@ export function HomePage() {
             </article>
 
             <article className="post post-third" onClick={() => window.location.href='/journal/defi-source-timestamp'} style={{cursor:'pointer'}}>
-              <div className="post-thumb ph-3"></div>
+              <div className="post-thumb art-defi-source"><span className="badge">Source age</span></div>
               <div className="post-meta"><span className="cat">DeFi research</span><span>5 min</span></div>
               <h3 className="post-title">A DeFi yield number walked in without a clock.</h3>
               <p className="post-excerpt">A yield number cannot be ranked as current evidence until the source age is visible and fresh.</p>
               <a href="/journal/defi-source-timestamp" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
+            <article className="post post-third" onClick={() => window.location.href='/journal/proof-before-capital'} style={{cursor:'pointer'}}>
+              <div className="post-thumb art-proof-capital"><span className="badge">Capital</span></div>
+              <div className="post-meta"><span className="cat">Proof discipline</span><span>7 min</span><span>June 2026</span></div>
+              <h3 className="post-title">Capital waits at the locked door. Proof holds the key.</h3>
+              <p className="post-excerpt">Capital stays blocked until fresh, after-cost evidence clears the gate.</p>
+              <a href="/journal/proof-before-capital" className="post-read">Read entry <span className="arrow">→</span></a>
+            </article>
+
             <article className="post post-third" onClick={() => window.location.href='/journal/strategy-proof'} style={{cursor:'pointer'}}>
-              <div className="post-thumb ph-4"></div>
+              <div className="post-thumb art-strategy-proof"><span className="badge">Gate</span></div>
               <div className="post-meta"><span className="cat">Strategy thinking</span><span>14 min</span></div>
               <h3 className="post-title">28 strategies walked into the lab. Zero promoted. Here is what that means.</h3>
               <p className="post-excerpt">A zero-promote result can still prove that the gate is doing its job.</p>

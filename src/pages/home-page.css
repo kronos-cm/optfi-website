@@ -367,11 +367,25 @@ h1.headline .lime {
 
 .featured-thumb {
   aspect-ratio: 16/10;
-  background: radial-gradient(circle at 30% 35%, #3e5848 0%, #1a2218 60%, var(--bg-2) 100%);
+  background:
+    linear-gradient(180deg, rgba(11, 12, 10, 0.02), rgba(11, 12, 10, 0.45)),
+    url('/journal/arbitrage-fees.webp') center / cover;
   position: relative;
   margin: 0 0 20px;
   overflow: hidden;
   border: 1px solid var(--rule);
+}
+
+.featured-thumb::before,
+.post-thumb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(212, 255, 58, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(11, 12, 10, 0), rgba(11, 12, 10, 0.52));
+  pointer-events: none;
+  z-index: 1;
 }
 
 .featured-thumb::after {
@@ -379,6 +393,8 @@ h1.headline .lime {
   position: absolute;
   inset: 0;
   background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .featured-meta {
@@ -635,30 +651,35 @@ section {
   margin-bottom: 22px;
   overflow: hidden;
   border: 1px solid var(--rule);
+  background-color: var(--bg-2);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .post-feature .post-thumb {
   aspect-ratio: 16/10;
 }
 
-.ph-1 {
-  background: radial-gradient(circle at 30% 30%, #3a5246 0%, #16201a 60%, var(--bg-2) 100%);
+.art-arbitrage {
+  background-image: url('/journal/arbitrage-fees.webp');
 }
 
-.ph-2 {
-  background: linear-gradient(135deg, #3a2a18 0%, #1e1610 100%);
+.art-fresh-evidence {
+  background-image: url('/journal/fresh-evidence.webp');
 }
 
-.ph-3 {
-  background: radial-gradient(circle at 70% 40%, #4a3a26 0%, #1a1410 60%, var(--bg-2) 100%);
+.art-defi-source {
+  background-image: url('/journal/defi-source-timestamp.webp');
+  background-position: 52% center;
 }
 
-.ph-4 {
-  background: linear-gradient(135deg, #2a3a4a 0%, #101820 100%);
+.art-proof-capital {
+  background-image: url('/journal/proof-before-capital.webp');
 }
 
-.ph-5 {
-  background: radial-gradient(circle at 50% 70%, #5a4a3a 0%, #221a14 60%, var(--bg-2) 100%);
+.art-strategy-proof {
+  background-image: url('/journal/strategy-proof.webp');
 }
 
 .post-thumb::after {
@@ -667,6 +688,7 @@ section {
   inset: 0;
   background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px);
   pointer-events: none;
+  z-index: 2;
 }
 
 .post-thumb .badge {
@@ -681,6 +703,7 @@ section {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   border: 1px solid var(--rule);
+  z-index: 3;
 }
 
 .post-meta {
