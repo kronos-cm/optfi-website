@@ -10,7 +10,6 @@ import { DocsOperatorAccessPage } from './pages/docs-operator-access-page'
 import { DocsMonetizationPage } from './pages/docs-monetization-page'
 import { JournalArbitrageFreeMoneyPage } from './pages/journal-arbitrage-free-money-page'
 import { JournalDefiSourceTimestampPage } from './pages/journal-defi-source-timestamp-page'
-import { JournalFreshEvidencePage } from './pages/journal-fresh-evidence-page'
 import { JournalProofBeforeCapitalPage } from './pages/journal-proof-before-capital-page'
 import { JournalStrategyProofPage } from './pages/journal-strategy-proof-page'
 import { RoadmapPage } from './pages/roadmap-page'
@@ -30,7 +29,6 @@ function AppRoutes() {
       <Route path="/docs/operator-access" element={<DocsOperatorAccessPage />} />
       <Route path="/docs/monetization" element={<DocsMonetizationPage />} />
       <Route path="/journal/when-arbitrage-stops-being-free-money" element={<JournalArbitrageFreeMoneyPage />} />
-      <Route path="/journal/fresh-evidence" element={<JournalFreshEvidencePage />} />
       <Route path="/journal/strategy-proof" element={<JournalStrategyProofPage />} />
       <Route path="/journal/proof-before-capital" element={<JournalProofBeforeCapitalPage />} />
       <Route path="/journal/defi-source-timestamp" element={<JournalDefiSourceTimestampPage />} />

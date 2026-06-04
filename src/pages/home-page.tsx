@@ -97,8 +97,8 @@ export function HomePage() {
           </div>
 
           <div className="journal-cats">
-            <span className="cat-chip active">All <span className="count">5</span></span>
-            <span className="cat-chip">Proof discipline <span className="count">2</span></span>
+            <span className="cat-chip active">All <span className="count">4</span></span>
+            <span className="cat-chip">Proof discipline <span className="count">1</span></span>
             <span className="cat-chip">Strategy economics <span className="count">1</span></span>
             <span className="cat-chip">DeFi research <span className="count">1</span></span>
             <span className="cat-chip">Strategy thinking <span className="count">1</span></span>
@@ -113,23 +113,7 @@ export function HomePage() {
               <a href="/journal/when-arbitrage-stops-being-free-money" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
-            <article className="post post-side-a" onClick={() => window.location.href='/journal/fresh-evidence'} style={{cursor:'pointer'}}>
-              <div className="post-thumb art-fresh-evidence"><span className="badge">Proof</span></div>
-              <div className="post-meta"><span className="cat">Proof discipline</span><span>7 min</span><span>June 2026</span></div>
-              <h3 className="post-title">The scorecard looked alive. The timestamp said otherwise.</h3>
-              <p className="post-excerpt">A stale scorecard can stay visible for review, but it cannot unlock promotion.</p>
-              <a href="/journal/fresh-evidence" className="post-read">Read entry <span className="arrow">→</span></a>
-            </article>
-
-            <article className="post post-third" onClick={() => window.location.href='/journal/defi-source-timestamp'} style={{cursor:'pointer'}}>
-              <div className="post-thumb art-defi-source"><span className="badge">Source age</span></div>
-              <div className="post-meta"><span className="cat">DeFi research</span><span>5 min</span></div>
-              <h3 className="post-title">A DeFi yield number walked in without a clock.</h3>
-              <p className="post-excerpt">A yield number cannot be ranked as current evidence until the source age is visible and fresh.</p>
-              <a href="/journal/defi-source-timestamp" className="post-read">Read entry <span className="arrow">→</span></a>
-            </article>
-
-            <article className="post post-third" onClick={() => window.location.href='/journal/proof-before-capital'} style={{cursor:'pointer'}}>
+            <article className="post post-side-a" onClick={() => window.location.href='/journal/proof-before-capital'} style={{cursor:'pointer'}}>
               <div className="post-thumb art-proof-capital"><span className="badge">Capital</span></div>
               <div className="post-meta"><span className="cat">Proof discipline</span><span>7 min</span><span>June 2026</span></div>
               <h3 className="post-title">Capital waits at the locked door. Proof holds the key.</h3>
@@ -137,7 +121,15 @@ export function HomePage() {
               <a href="/journal/proof-before-capital" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
-            <article className="post post-third" onClick={() => window.location.href='/journal/strategy-proof'} style={{cursor:'pointer'}}>
+            <article className="post post-half" onClick={() => window.location.href='/journal/defi-source-timestamp'} style={{cursor:'pointer'}}>
+              <div className="post-thumb art-defi-source"><span className="badge">Source age</span></div>
+              <div className="post-meta"><span className="cat">DeFi research</span><span>5 min</span></div>
+              <h3 className="post-title">A DeFi yield number walked in without a clock.</h3>
+              <p className="post-excerpt">A yield number cannot be ranked as current evidence until the source age is visible and fresh.</p>
+              <a href="/journal/defi-source-timestamp" className="post-read">Read entry <span className="arrow">→</span></a>
+            </article>
+
+            <article className="post post-half" onClick={() => window.location.href='/journal/strategy-proof'} style={{cursor:'pointer'}}>
               <div className="post-thumb art-strategy-proof"><span className="badge">Gate</span></div>
               <div className="post-meta"><span className="cat">Strategy thinking</span><span>14 min</span></div>
               <h3 className="post-title">28 strategies walked into the lab. Zero promoted. Here is what that means.</h3>

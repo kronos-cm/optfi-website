@@ -645,6 +645,10 @@ section {
   grid-column: span 4;
 }
 
+.post-half {
+  grid-column: span 6;
+}
+
 .post-thumb {
   aspect-ratio: 16/9;
   position: relative;
@@ -663,10 +667,6 @@ section {
 
 .art-arbitrage {
   background-image: url('/journal/arbitrage-fees.webp');
-}
-
-.art-fresh-evidence {
-  background-image: url('/journal/fresh-evidence.webp');
 }
 
 .art-defi-source {
@@ -739,6 +739,10 @@ section {
 
 .post-third .post-title {
   font-size: 20px;
+}
+
+.post-half .post-title {
+  font-size: 24px;
 }
 
 .post-excerpt {
