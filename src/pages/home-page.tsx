@@ -61,7 +61,7 @@ export function HomePage() {
             <div className="featured-thumb"></div>
             <div className="featured-meta"><span className="cat">Strategy economics</span><span>8 min read</span><span>June 2026</span></div>
             <h3 className="featured-title">When arbitrage stops being free money.</h3>
-            <p className="featured-excerpt">A tiny price gap can look like alpha until the exchange, the book, the clock, and the tax ledger send the receipt.</p>
+            <p className="featured-excerpt">A tiny price gap can look like alpha until the chart separates the visible spread from what you actually keep.</p>
             <span className="featured-read">Read entry <span className="arrow">→</span></span>
           </a>
         </div>
@@ -111,7 +111,7 @@ export function HomePage() {
               <div className="post-thumb ph-1"><span className="badge">Fees</span></div>
               <div className="post-meta"><span className="cat">Strategy economics</span><span>8 min read</span><span>June 2026</span></div>
               <h3 className="post-title">When arbitrage stops being free money.</h3>
-              <p className="post-excerpt">A tiny CEX price gap can disappear under the receipt: fees, spread, slippage, and tax-aware accounting.</p>
+              <p className="post-excerpt">A tiny CEX price gap can disappear once fees, spread, slippage, and tax-aware accounting hit the chart.</p>
               <a href="/journal/when-arbitrage-stops-being-free-money" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 

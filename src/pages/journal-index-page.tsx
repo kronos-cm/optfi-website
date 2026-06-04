@@ -9,8 +9,8 @@ const entries = [
     to: '/journal/when-arbitrage-stops-being-free-money',
     icon: ArrowRightLeft,
     category: 'Strategy economics',
-    title: 'When arbitrage stops being free money. The receipt arrives first.',
-    summary: 'A data-backed story on why visible CEX price gaps can disappear under fees, spread, slippage, and tax-aware accounting.',
+    title: 'When arbitrage stops being free money. The spread is not the profit.',
+    summary: 'A visual, data-backed story on why visible CEX price gaps can disappear under fees, spread, slippage, and tax-aware accounting.',
     badge: 'New',
   },
   {

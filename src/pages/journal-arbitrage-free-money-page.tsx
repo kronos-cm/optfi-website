@@ -40,6 +40,63 @@ const feeRows = [
   },
 ] as const
 
+const arbitrageExample = [
+  {
+    label: 'Signal',
+    detail: 'Visible 1.20% gap',
+    ideal: 120,
+    real: 120,
+  },
+  {
+    label: 'Buy fill',
+    detail: 'Entry taker fee',
+    ideal: 120,
+    real: 80,
+  },
+  {
+    label: 'Sell fill',
+    detail: 'Exit taker fee',
+    ideal: 120,
+    real: 40,
+  },
+  {
+    label: 'Book moves',
+    detail: 'Spread and slippage',
+    ideal: 120,
+    real: 25,
+  },
+  {
+    label: 'Tax reserve',
+    detail: 'If taxable',
+    ideal: 120,
+    real: 18,
+  },
+] as const
+
+const chart = {
+  width: 640,
+  height: 292,
+  left: 54,
+  right: 24,
+  top: 26,
+  bottom: 56,
+  max: 130,
+}
+
+function chartX(index: number) {
+  const span = chart.width - chart.left - chart.right
+  return chart.left + (span / (arbitrageExample.length - 1)) * index
+}
+
+function chartY(value: number) {
+  const span = chart.height - chart.top - chart.bottom
+  return chart.top + span - (value / chart.max) * span
+}
+
+function linePoints(key: 'ideal' | 'real') {
+  return arbitrageExample.map((point, index) => `${chartX(index)},${chartY(point[key])}`).join(' ')
+}
+
 export function JournalArbitrageFreeMoneyPage() {
   return (
     <div className="journal-post-root">
@@ -56,7 +113,7 @@ export function JournalArbitrageFreeMoneyPage() {
             <h1 className="post-headline">
               When arbitrage stops<br />
               being free money.<br />
-              <span className="lime">The receipt arrives first.</span>
+              <span className="lime">The spread is not the profit.</span>
             </h1>
             <p className="post-deck">
               A tiny price gap between exchanges is a beautiful thing on a screen. Then the trade pays entry fees, exit fees,
@@ -95,6 +152,84 @@ export function JournalArbitrageFreeMoneyPage() {
               The visible spread is not the executable spread. The executable spread is what remains after the exchange, the book,
               the clock, and the tax ledger have all had their turn.
             </p>
+
+            <h2>A tiny edge gets smaller in time</h2>
+
+            <p>
+              Here is the same idea with numbers. Start with EUR 10,000 and a visible 1.20% cross-exchange gap.
+              The idealised line keeps the full EUR 120. The real-life line assumes two Kraken Pro first-tier taker fills,
+              a 0.15% spread/slippage adjustment, and an illustrative 30% tax reserve on the profit left after costs if the
+              disposal is taxable. The exact tax answer depends on the operator, holding period, classification, and records.
+            </p>
+
+            <div className="arb-graph-card">
+              <div className="arb-graph-head">
+                <div>
+                  <div className="arb-graph-kicker">Illustrative EUR 10,000 arbitrage</div>
+                  <div className="arb-graph-title">EUR 120 on the screen can become EUR 18 kept</div>
+                </div>
+                <div className="arb-graph-legend" aria-hidden="true">
+                  <span><i className="ideal" />Idealised gain</span>
+                  <span><i className="real" />After fees and tax reserve</span>
+                </div>
+              </div>
+
+              <svg className="arb-graph-svg" viewBox={`0 0 ${chart.width} ${chart.height}`} role="img" aria-labelledby="arb-chart-title arb-chart-desc">
+                <title id="arb-chart-title">Idealised gain versus after-cost arbitrage result over execution time</title>
+                <desc id="arb-chart-desc">
+                  An illustrative chart where a EUR 120 visible gain stays flat in the idealised case, while the real-life
+                  line falls to EUR 18 after entry fee, exit fee, spread and slippage, and a tax reserve.
+                </desc>
+                {[0, 60, 120].map((tick) => (
+                  <g key={tick}>
+                    <line className="arb-grid-line" x1={chart.left} x2={chart.width - chart.right} y1={chartY(tick)} y2={chartY(tick)} />
+                    <text className="arb-axis-label" x={chart.left - 12} y={chartY(tick) + 4} textAnchor="end">
+                      EUR {tick}
+                    </text>
+                  </g>
+                ))}
+                <line className="arb-axis-line" x1={chart.left} x2={chart.width - chart.right} y1={chartY(0)} y2={chartY(0)} />
+                <polyline className="arb-line-ideal" points={linePoints('ideal')} />
+                <polyline className="arb-line-real" points={linePoints('real')} />
+                {arbitrageExample.map((point, index) => (
+                  <g key={point.label}>
+                    <circle className="arb-dot-ideal" cx={chartX(index)} cy={chartY(point.ideal)} r="4" />
+                    <circle className="arb-dot-real" cx={chartX(index)} cy={chartY(point.real)} r="5" />
+                    <text className="arb-x-label" x={chartX(index)} y={chart.height - 28} textAnchor="middle">
+                      {point.label}
+                    </text>
+                    <text className="arb-x-detail" x={chartX(index)} y={chart.height - 12} textAnchor="middle">
+                      {point.detail}
+                    </text>
+                  </g>
+                ))}
+                <text className="arb-line-label ideal" x={chartX(4)} y={chartY(120) - 12} textAnchor="end">
+                  EUR 120 ideal
+                </text>
+                <text className="arb-line-label real" x={chartX(4)} y={chartY(18) - 12} textAnchor="end">
+                  EUR 18 kept
+                </text>
+              </svg>
+
+              <div className="arb-cost-strip">
+                <div>
+                  <span className="arb-cost-value lime">+EUR 120</span>
+                  <span className="arb-cost-label">visible gross gap</span>
+                </div>
+                <div>
+                  <span className="arb-cost-value">-EUR 80</span>
+                  <span className="arb-cost-label">two taker fills</span>
+                </div>
+                <div>
+                  <span className="arb-cost-value">-EUR 15</span>
+                  <span className="arb-cost-label">spread/slippage</span>
+                </div>
+                <div>
+                  <span className="arb-cost-value">-EUR 7.50</span>
+                  <span className="arb-cost-label">tax reserve</span>
+                </div>
+              </div>
+            </div>
 
             <h2>The fee table is not fine print</h2>
 
