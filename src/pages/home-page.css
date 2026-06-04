@@ -649,6 +649,10 @@ section {
   grid-column: span 6;
 }
 
+.post-wide {
+  grid-column: span 12;
+}
+
 .post-thumb {
   aspect-ratio: 16/9;
   position: relative;
@@ -672,10 +676,6 @@ section {
 .art-defi-source {
   background-image: url('/journal/defi-source-timestamp.webp');
   background-position: 52% center;
-}
-
-.art-proof-capital {
-  background-image: url('/journal/proof-before-capital.webp');
 }
 
 .art-strategy-proof {
@@ -743,6 +743,10 @@ section {
 
 .post-half .post-title {
   font-size: 24px;
+}
+
+.post-wide .post-title {
+  font-size: 30px;
 }
 
 .post-excerpt {
