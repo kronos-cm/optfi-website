@@ -115,9 +115,9 @@ export function HomePage() {
 
             <article className="post post-side-a" onClick={() => window.location.href='/journal/fresh-evidence'} style={{cursor:'pointer'}}>
               <div className="post-thumb art-fresh-evidence"><span className="badge">Proof</span></div>
-              <div className="post-meta"><span className="cat">Proof discipline</span><span>6 min</span><span>June 2026</span></div>
-              <h3 className="post-title">Old proof can look clean. Fresh proof can still say no.</h3>
-              <p className="post-excerpt">A stale or invalid proof artifact is a blocker, even when the old result looked promising.</p>
+              <div className="post-meta"><span className="cat">Proof discipline</span><span>7 min</span><span>June 2026</span></div>
+              <h3 className="post-title">The scorecard looked alive. The timestamp said otherwise.</h3>
+              <p className="post-excerpt">A stale scorecard can stay visible for review, but it cannot unlock promotion.</p>
               <a href="/journal/fresh-evidence" className="post-read">Read entry <span className="arrow">→</span></a>
             </article>
 
